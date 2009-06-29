@@ -1,0 +1,108 @@
+.TH "n64dasm" "1" "1.4" "Marshall B. Rogers" "N64 development tools"
+.SH "NAME"
+.LP 
+\fBn64dasm\fR \-\- Disassemble MIPS R4300i machine code
+.SH "SYNOPSIS"
+.LP 
+n64dasm [\-GuUaHdcLh] [\-E \fIoffset\fP] [\-f \fIfile\fP] [\-O \fIorder\fP] [\-p \fIaddress\fP] [\-S \fIoffset\fP] [\-s \fIspacing\fP] [\-Y \fIsymtab\fP]
+.SH "DESCRIPTION"
+.LP 
+n64dasm is a tiny and flexible disassembler for raw binary blobs containing machine code from the MIPS R4300i processor. It has a myriad of options controlling output, and has primitive symbol table support.
+.LP 
+Reads/writes from a file/stdin to a file, stdout, or pager.
+.SH "OPTIONS"
+.LP 
+.TP 
+\fB\-a\fR
+Display the current PC on the left side of the disassembly.
+
+.TP 
+\fB\-c\fR
+Produce colors in the output disassembly (primative syntax hilighting). If the \fB\-a\fR option is specified, the address will be bold.
+
+.TP 
+\fB\-d\fR
+Prefix the registers with a dollar sign.
+
+.TP 
+\fB\-E\fR \fIoffset\fP
+Reads up until \fIoffset\fP in the input file before starting read. This option is invalid if n64dasm is reading from stdin.
+
+.TP 
+\fB\-f\fR \fIfile\fP
+Uses the specified \fIfile\fP for input. You can also use "\-" to signify standard input.
+
+.TP 
+\fB\-G\fR
+Parse the input as a GameShark code.
+
+.TP 
+\fB\-H\fR
+Display the the hexadecimal representation of each instruction on the left side. If \fB\-a\fR is specified, the raw instruction will be printed to the right of the address.
+
+.TP 
+\fB\-L\fR
+Reroute all output to the pager specified by the environment variable PAGER. If there is none, it will get passed to `less`.
+
+.TP 
+\fB\-O\fR \fIorder\fP
+Swaps the input from the specified byte \fIorder\fP. Valid orders are: 0123 (default), 3210 (32\-bit little endian), 1032 (16\-bit little endian, or `V64 endian`)
+
+.TP 
+\fB\-o\fR \fIfile\fP
+Uses the specified \fIfile\fP for output. You can also use "\-" to signify standard input. Using this option in conjunction with \fB\-L\fP is an error.
+
+.TP 
+\fB\-p\fR \fIaddress\fP
+Sets the PC start to hexadecimal number specified by \fIaddress\fP. The default is 0, and this value is typically set to something like 0x80000000 (the start of the N64's cached RAM).
+
+.TP 
+\fB\-S\fR \fIoffset\fP
+Seeks to \fIoffset\fP in the input file before starting read. This option is invalid if n64dasm is reading from stdin.
+
+.TP 
+\fB\-s\fR \fIspacing\fP
+Sets the spacing between opcodes and their operands to \fIspacing\fP.
+
+.TP 
+\fB\-U\fR
+Print the operands in upper case.
+
+.TP 
+\fB\-u\fR
+Print the opcodes in upper case.
+
+.TP 
+\fB\-Y\fR \fIfile\fP
+Uses \fIfile\fR as the symbol table.
+.SH "ENVIRONMENT VARIABLES"
+.LP 
+.TP 
+\fBPAGER\fP
+When invoked with the \fB\-L\fR flag, \fBn64dasm\fR will pipe the output into the program specified by PAGER. The program must be less or something less\-like, as less specific options are specified by the program (\-SR# 8). If PAGER is unset, \fBless\fR is used.
+.SH "EXAMPLES"
+.LP 
+By default, the program reads from stdin, so if you want to disassemble a file you have sitting around:
+.br 
+$ n64dasm < mybinary.bin
+.LP 
+Alternativly you can run it as:
+.br 
+$ n64dasm \-fL mybinary.bin
+.br 
+Which will read from the file 'mybinary.bin' and write the output into the pager specified by PAGER.
+.LP 
+$ n64dasm \-f ROM.bin \-S 0x1000 \-E 0x2000 \-p 0x80000400 \-a
+.br 
+Will disassemble some code at the entry point.
+.LP 
+$ n64dasm \-ac \-f ROM.bin \-Y syms.txt \-S 0x1000 \-E 0x2000 \-p 0x80173c60
+.br 
+Will read from the file ROM.bin, set the PC to 0x80173C60, read symbols from syms.txt, enable the use of colors, enable address output, and adjust the output accordingly.
+.SH "AUTHORS"
+.LP 
+Marshall B. Rogers (mbr@64.vg)
+.br 
+http://z64dev.sourceforge.net/
+.br 
+http://www.64.vg/
