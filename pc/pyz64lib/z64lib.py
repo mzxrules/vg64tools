@@ -21,17 +21,22 @@ ActorTypes = {
 
 
 def GenActorEntryFmt(endianess):
-    """Returns FMT strings to be used with struct to unpack file pointers"""
+    """Returns FMT strings to be used with struct to unpack actor file pointers"""
     return "%sLLLLxxxxLLxxxx"	% endianess
 def GenSceneEntryFmt(endianess):
+    """Returns FMT strings to be used with struct to unpack scene file pointers"""
     return "%sLLLLL"		% endianess
 def GenObjectEntryFmt(endianess):
+    """Returns FMT strings to be used with struct to unpack object file pointers"""
     return "%sLL"		% endianess
 def GenFileEntryFmt(endianess):
+    """Returns FMT strings to be used with struct to unpack file pointers"""
     return "%sLLLL"		% endianess
 def GenActorHeaderFmt(endianess):
+    """Returns FMT strings to be used with struct to unpack actor headers"""
     return "%sLLLLL"		% endianess
 def GenActorInfoFmt(endianess):
+    """Returns FMT strings to be used with struct to unpack actor info (actor number, type, object)"""
     return "%sHBxxxxxH"		% endianess
 def GenActorFileFmt(endianess,textlen,datalen,rodatalen,bsslen, no_rels):
     """Returns a FMT string to be used with struct to unpack a actor's part's"""
@@ -135,4 +140,3 @@ def ScanForHierarchies(File, endianess, FileBank):
 def ScanForAnimations(File, endianess, FileBank):
     """Finds  animations within a zelda 64 resource file"""
     return []
-#47 464 17 626
