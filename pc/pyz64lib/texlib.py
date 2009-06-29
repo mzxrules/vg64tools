@@ -52,7 +52,7 @@ def BMP24_TO_CI5551(infile,alpha=(1,1,1)):
     del pal
     lp=len(pal_)
     if lp&7:
-        pal_ += '/x00' * (lp - lp&0xFFF8+8)
+        pal_ += '/x00' * (lp&0xFFF8+8 - lp)
     return (xs,ys),tex, pal_
 
 def BMP32_TO_8888(infile):
@@ -96,5 +96,5 @@ def BMP32_TO_CI8888(infile):
     del pal
     lp=len(pal_)
     if lp&7:
-        pal_ += '/x00' * (lp - lp&0xFFF8+8)
+        pal_ += '/x00' * (lp&0xFFF8+8 - lp)
     return (xs,ys),tex, pal_
