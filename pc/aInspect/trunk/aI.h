@@ -40,10 +40,10 @@ enum ZASect
 
 /* Program info */
 #define PROGRAM_NAME    "aI"
-#define PROGRAM_VERSION "v1.0.0"
+#define PROGRAM_VERSION "v1.0.1"
 #define VERSION_MAJOR   1
 #define VERSION_MINOR   0
-#define VERSION_MICRO   0
+#define VERSION_MICRO   1
 
 
 /* ----------------------------------------------

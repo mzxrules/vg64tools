@@ -153,14 +153,14 @@ static int mflag;       /* Relocate actor                 */
 
 /* Generic flags */
 static int hflag;       /* Format integral values (k,m)   */
-
-/* Relocate options */
 static int Sflag;       /* Original address base of actor */
 static uint32_t Sval;
-static int Tflag;       /* Target address of actor        */
-static uint32_t Tval;
-static int Wflag;       /* Filename to write to           */
-static char * Wval;
+
+/* Relocate options */
+static int Tflag;       /* Target address of actor        
+static uint32_t Tval;*/
+static int Wflag;       /* Filename to write to           
+static char * Wval;*/
 
 /* Input file */
 static char * input_filename;
@@ -243,6 +243,17 @@ do_args ( int argc, char ** argv )
              *  Generic flags
              */
             
+            case 'S':
+            {
+              /* Read value */
+              sscanf( optarg, "%X", &Sval );
+              
+              MESG( "Setting base address to 0x%08X.", Sval );
+              
+              Sflag = 1;
+            }
+            break;
+            
             case 'h':
             {
               MESG( "Formating integral values." );
@@ -309,7 +320,7 @@ list_sections ( ZAct * h )
         printf( 
             "%-10s0x%08X\t%s\n",
             za_section_names[i],
-            offset,
+            Sval + offset,
             size_str
         );
         
@@ -358,8 +369,8 @@ list_relocations ( ZAct * h )
             "%-10s%-20s0x%08X\t0x%08X\n", 
             za_section_names[str_sec],
             za_reloc_types[r >> 24 & 0xF],
-            r & 0x00FFFFFF,
-            base + (r & 0x00FFFFFF)
+            (r & 0x00FFFFFF),
+            Sval + base + (r & 0x00FFFFFF)
         );
     }
 }
@@ -404,6 +415,12 @@ main ( int argc, char ** argv )
     /* Open our actor file */
     h = za_open( input_filename );
     
+    /* Error... */
+    if( !h )
+    {
+        exit( EXIT_FAILURE );
+    }
+    
     
     /* List sections */
     if( lflag )
@@ -423,3 +440,4 @@ main ( int argc, char ** argv )
         
     return 0;
 }
+
