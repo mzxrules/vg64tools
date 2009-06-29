@@ -383,7 +383,7 @@ main ( int argc, char ** argv )
     ZAct * h;
     
     /* Header */
-	MESG( 
+    MESG( 
         "%s", 
         PROGRAM_NAME " " 
         PROGRAM_VERSION 
