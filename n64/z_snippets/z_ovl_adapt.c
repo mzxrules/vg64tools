@@ -1,3 +1,23 @@
+/*
+*   Rewritten `z_ovl_adapt` function
+*   Copyright (c) 2009  Marshall B. Rogers [mbr@64.vg]
+*
+*   This program is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 2 of the License, or
+*   any later version.
+*
+*   This program is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public
+*   Licence along with this program; if not, write to the Free
+*   Software Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+*   Boston, MA  02110-1301, USA
+*/
+
 #include <stdio.h>
 #include <stdint.h>
 
@@ -5,7 +25,6 @@
 /* ----------------------------------------------
    Constants
    ---------------------------------------------- */
-
 
 /* 
   Section IDs -- 
@@ -65,7 +84,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
     for( i = 0, total = 0; i < S_COUNT; i++ )
     {
         /* Address to the section = beginning of file + accum. size */
-        section_addr[i + 1] = data + total;
+        section_addr[i + 1] = (void*)((uint32_t)data + total);
         
         /* Update accum. size */
         total += section_sizes[i];
@@ -76,7 +95,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
     {
         uint32_t w;
         uint32_t * tgt;
-        int type, v;
+        int type;
         
         /* Grab next word */
         w = ovl->relocations[i];
