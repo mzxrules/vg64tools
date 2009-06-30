@@ -1,5 +1,6 @@
 /*
 *   Rewritten `z_map_process` function
+*   Addresses: 0x8009840C(DBG), 0x800817A0(US 1.0)
 *   Copyright (c) 2009  Marshall B. Rogers [mbr@64.vg]
 *
 *   This program is free software; you can redistribute it and/or modify
@@ -29,7 +30,7 @@ typedef uint8_t u8;
 
 typedef void (*MapByteHandler)
 (
-	void *,
+    void *,
     void *
 );
 

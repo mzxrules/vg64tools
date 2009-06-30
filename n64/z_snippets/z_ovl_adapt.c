@@ -1,5 +1,6 @@
 /*
 *   Rewritten `z_ovl_adapt` function
+*   Addresses: 0x800FC2C0(DBG)
 *   Copyright (c) 2009  Marshall B. Rogers [mbr@64.vg]
 *
 *   This program is free software; you can redistribute it and/or modify
@@ -48,6 +49,14 @@ enum
 #define R_PAIR1     5
 #define R_PAIR2     6
 
+
+/* ----------------------------------------------
+   Data types
+   ---------------------------------------------- */
+   
+/* Aliases */
+typedef uint32_t u32;
+
 /*
   Header structure -- 
   Overlay header describing the section sizes, the amount of relocations, and
@@ -55,9 +64,9 @@ enum
 */
 struct ovl_header
 {
-    uint32_t sizes[S_COUNT];
+    u32 sizes[S_COUNT];
     int relocate_count;
-    uint32_t relocations[];
+    u32 relocations[];
 };
 
 
@@ -69,10 +78,10 @@ void
 z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
 {
     int i, total;
-    uint32_t * section_sizes;
+    u32 * section_sizes;
     void * section_addr[S_COUNT + 1];
-    uint32_t pair_vals[32];
-    uint32_t * pair_addrs[32];
+    u32 pair_vals[32];
+    u32 * pair_addrs[32];
     
     /* First one is initialized to zero */
     section_addr[0] = NULL;
@@ -84,7 +93,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
     for( i = 0, total = 0; i < S_COUNT; i++ )
     {
         /* Address to the section = beginning of file + accum. size */
-        section_addr[i + 1] = (void*)((uint32_t)data + total);
+        section_addr[i + 1] = (void*)((u32)data + total);
         
         /* Update accum. size */
         total += section_sizes[i];
@@ -93,8 +102,8 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
     /* Begin relocating */
     for( i = 0; i < ovl->relocate_count; i++ )
     {
-        uint32_t w;
-        uint32_t * tgt;
+        u32 w;
+        u32 * tgt;
         int type;
         
         /* Grab next word */
@@ -122,16 +131,16 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
             /* Generic pointer */
             case R_PTR:
             {
-              *tgt = (uint32_t)data + (*tgt - (uint32_t)ovl_base);
+              *tgt = (u32)data + (*tgt - (u32)ovl_base);
             }
             break;
             
             /* Jump target */
             case R_J:
             {
-              uint32_t new_tgt;
+              u32 new_tgt;
               
-              new_tgt = (((uint32_t)data & 0x00FFFFFF) >> 2) + ((*tgt & 0x03FFFFFF) - (((uint32_t)ovl_base & 0x00FFFFFF) >> 2));
+              new_tgt = (((u32)data & 0x00FFFFFF) >> 2) + ((*tgt & 0x03FFFFFF) - (((u32)ovl_base & 0x00FFFFFF) >> 2));
               
               *tgt &= ~0x03FFFFFF;
               *tgt |= new_tgt;
@@ -158,7 +167,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
             case R_PAIR2:
             {
               int reg;
-              uint32_t addr, hi, lo;
+              u32 addr, hi, lo;
               short val;
               
               /* Get the register affected */
@@ -171,7 +180,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
               pair_vals[reg] += val;
               
               /* Relocate it */
-              addr = (uint32_t)data + (pair_vals[reg] - (uint32_t)ovl_base);
+              addr = (u32)data + (pair_vals[reg] - (u32)ovl_base);
               
               /* Set values */
               lo = addr & 0xFFFF;
