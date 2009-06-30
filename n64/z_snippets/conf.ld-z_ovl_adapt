@@ -1,0 +1,3 @@
+ENTRY_POINT = z_ovl_adapt;
+ADDRESS_START = 0x800FC2C0;
+

@@ -1,0 +1,4 @@
+ENTRY_POINT = z_map_process;
+ADDRESS_START = 0x8009840C;
+type_handlers = 0x801274A0;
+
