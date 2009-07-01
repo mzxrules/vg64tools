@@ -268,7 +268,7 @@ pfi_do ( void )
     /* Doop doop. Log return address? */
     if( pfi_logra )
     {
-	    /* Need to open handle? */
+        /* Need to open handle? */
         if( !ra_log )
         {
             /* Yep */
