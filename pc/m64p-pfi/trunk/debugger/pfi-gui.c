@@ -159,7 +159,7 @@ pfi_gtk_gui[] =
 
 "<?xml version=\"1.0\"?>"
 "<interface>"
-"  <requires lib=\"gtk+\" version=\"2.16\"/>"
+"  <requires lib=\"gtk+\" version=\"2.14\"/>"
 "  <!-- interface-naming-policy toplevel-contextual -->"
 "  <object class=\"GtkWindow\" id=\"m64pd-PrintfIntercept\">"
 "    <property name=\"border_width\">8</property>"
