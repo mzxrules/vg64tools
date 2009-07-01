@@ -23,7 +23,7 @@ extern int        pfi_argstart;
 extern FILE     * pfi_logfile;
 extern int        pfi_append;
 extern GMutex   * pfi_mutex;
-extern int        pfi_log_ra;
+extern int        pfi_logra;
 
 static FILE * ra_log;
 
@@ -264,6 +264,20 @@ pfi_do ( void )
     /* Get format string */
     fmtptr = (uint32_t)reg[A0 + pfi_argstart] & MMASK;
     mem_get_str( format, fmtptr );
+    
+    /* Doop doop. Log return address? */
+    if( pfi_logra )
+    {
+	    /* Need to open handle? */
+        if( !ra_log )
+        {
+            /* Yep */
+            ra_log = fopen( "ra_log.txt", "w" );
+        }
+        
+        /* Write! */
+        fprintf( ra_log, "[0x%08X]: %s", (uint32_t)reg[RA], format );
+    }
     
     /* Preprae it */
     pfi_sprintf( target, format, stack + pfi_argstart + 1 );

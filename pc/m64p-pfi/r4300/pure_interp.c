@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <glib.h>
+#include <stdint.h>
 
 #include "r4300.h"
 #include "exception.h"

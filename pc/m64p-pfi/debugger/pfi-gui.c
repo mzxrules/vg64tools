@@ -18,6 +18,7 @@ GtkWidget * pfi_gui_e_file;
 GtkWidget * pfi_gui_e_arg_start;
 GtkWidget * pfi_gui_e_address;
 GtkWidget * pfi_gui_c_append;
+GtkWidget * pfi_gui_c_logra;
 
 /* Options */
 int        pfi_enabled;
@@ -25,6 +26,7 @@ uint32_t   pfi_address;
 int        pfi_argstart;
 FILE     * pfi_logfile;
 int        pfi_append;
+int        pfi_logra;
 
 /* Mutal exclusion for fucking around with settings */
 GMutex * pfi_mutex;
@@ -41,6 +43,7 @@ syms[] =
     { "e-arg-start",           &pfi_gui_e_arg_start },
     { "e-address",             &pfi_gui_e_address   },
     { "c-append",              &pfi_gui_c_append    },
+    { "c-logra",               &pfi_gui_c_logra     },
     { NULL }
 };
 
@@ -73,6 +76,7 @@ enable ( GtkButton * b, gpointer udata )
     pfi_argstart = gtk_spin_button_get_value_as_int( GTK_SPIN_BUTTON(pfi_gui_e_arg_start) );
     sscanf( gtk_entry_get_text(GTK_ENTRY(pfi_gui_e_address)), "%X", &pfi_address );
     pfi_append = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON(pfi_gui_c_append) );
+    pfi_logra = gtk_toggle_button_get_active( GTK_TOGGLE_BUTTON(pfi_gui_c_logra) );
     fname = gtk_file_chooser_get_filename( GTK_FILE_CHOOSER(pfi_gui_e_file) );
     if( pfi_logfile )
         fclose( pfi_logfile );
@@ -152,6 +156,7 @@ void pfi_gui_show ( void )
 
 const char 
 pfi_gtk_gui[] =
+
 "<?xml version=\"1.0\"?>"
 "<interface>"
 "  <requires lib=\"gtk+\" version=\"2.16\"/>"
@@ -205,8 +210,7 @@ pfi_gtk_gui[] =
 "                            <property name=\"visible\">True</property>"
 "                            <property name=\"has_tooltip\">True</property>"
 "                            <property name=\"tooltip_markup\">Argument # of the format string</property>"
-"                            <property name=\"tooltip_text\" translatable=\"yes\">Argument # of the format string."
-"                            Arguments must come immediately afterwards.</property>"
+"                            <property name=\"tooltip_text\" translatable=\"yes\">Argument # of the format string.                            Arguments must come immediately afterwards.</property>"
 "                            <property name=\"xalign\">0</property>"
 "                            <property name=\"label\" translatable=\"yes\">Arg start:</property>"
 "                          </object>"
@@ -324,13 +328,34 @@ pfi_gtk_gui[] =
 "                              </packing>"
 "                            </child>"
 "                            <child>"
-"                              <object class=\"GtkCheckButton\" id=\"c-append\">"
-"                                <property name=\"label\" translatable=\"yes\">Append</property>"
+"                              <object class=\"GtkTable\" id=\"table2\">"
 "                                <property name=\"visible\">True</property>"
-"                                <property name=\"can_focus\">True</property>"
-"                                <property name=\"receives_default\">False</property>"
-"                                <property name=\"tooltip_text\" translatable=\"yes\">Whether to append to the log file or just create a new one.</property>"
-"                                <property name=\"draw_indicator\">True</property>"
+"                                <property name=\"n_columns\">2</property>"
+"                                <property name=\"column_spacing\">4</property>"
+"                                <property name=\"row_spacing\">4</property>"
+"                                <property name=\"homogeneous\">True</property>"
+"                                <child>"
+"                                  <object class=\"GtkCheckButton\" id=\"c-append\">"
+"                                    <property name=\"label\" translatable=\"yes\">Append</property>"
+"                                    <property name=\"visible\">True</property>"
+"                                    <property name=\"can_focus\">True</property>"
+"                                    <property name=\"receives_default\">False</property>"
+"                                    <property name=\"draw_indicator\">True</property>"
+"                                  </object>"
+"                                </child>"
+"                                <child>"
+"                                  <object class=\"GtkCheckButton\" id=\"c-logra\">"
+"                                    <property name=\"label\" translatable=\"yes\">Log $ra</property>"
+"                                    <property name=\"visible\">True</property>"
+"                                    <property name=\"can_focus\">True</property>"
+"                                    <property name=\"receives_default\">False</property>"
+"                                    <property name=\"draw_indicator\">True</property>"
+"                                  </object>"
+"                                  <packing>"
+"                                    <property name=\"left_attach\">1</property>"
+"                                    <property name=\"right_attach\">2</property>"
+"                                  </packing>"
+"                                </child>"
 "                              </object>"
 "                              <packing>"
 "                                <property name=\"position\">1</property>"
@@ -453,3 +478,4 @@ pfi_gtk_gui[] =
 "    <property name=\"page_size\">10</property>"
 "  </object>"
 "</interface>";
+
