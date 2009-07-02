@@ -265,6 +265,9 @@ pfi_do ( void )
     fmtptr = (uint32_t)reg[A0 + pfi_argstart] & MMASK;
     mem_get_str( format, fmtptr );
     
+    /* Preprae it */
+    pfi_sprintf( target, format, stack + pfi_argstart + 1 );
+    
     /* Doop doop. Log return address? */
     if( pfi_logra )
     {
@@ -276,11 +279,8 @@ pfi_do ( void )
         }
         
         /* Write! */
-        fprintf( ra_log, "[0x%08X]: %s", (uint32_t)reg[RA], format );
+        fprintf( ra_log, "[0x%08X]: %s", (uint32_t)reg[RA], target );
     }
-    
-    /* Preprae it */
-    pfi_sprintf( target, format, stack + pfi_argstart + 1 );
     
     /* Write it to file */
     if( pfi_logfile )
