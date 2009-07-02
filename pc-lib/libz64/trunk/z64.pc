@@ -1,0 +1,15 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+glib_genmarshal=glib-genmarshal
+gobject_query=gobject-query
+glib_mkenums=glib-mkenums
+
+Name: z64
+Description: Zelda 64 library
+Version: 1.0
+Libs: -L${libdir} -lz64
+Libs.private: 
+Cflags: -I${includedir}/z64/ 

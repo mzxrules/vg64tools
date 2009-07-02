@@ -1,0 +1,12 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: n64rom
+Description: N64 ROM library
+Version: 1.0
+Libs: -L${libdir} -ln64
+Libs.private: 
+Cflags: -I${includedir}/n64rom 
+
