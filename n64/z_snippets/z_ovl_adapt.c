@@ -77,7 +77,7 @@ struct ovl_header
 void
 z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
 {
-    int i, total;
+    int i, total, offset;
     u32 * section_sizes;
     void * section_addr[S_COUNT + 1];
     u32 pair_vals[32];
@@ -85,6 +85,9 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
     
     /* First one is initialized to zero */
     section_addr[0] = NULL;
+    
+    /* Memory offset */
+    offset = (uint32_t)ovl_base - (uint32_t)data;
     
     /* Set pointer to section sizes... */
     section_sizes = ovl->sizes;
@@ -131,7 +134,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
             /* Generic pointer */
             case R_PTR:
             {
-              *tgt = (u32)data + (*tgt - (u32)ovl_base);
+              *tgt += offset;
             }
             break;
             
@@ -139,8 +142,10 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
             case R_J:
             {
               u32 new_tgt;
+              u32 old_tgt;
               
-              new_tgt = (((u32)data & 0x00FFFFFF) >> 2) + ((*tgt & 0x03FFFFFF) - (((u32)ovl_base & 0x00FFFFFF) >> 2));
+              old_tgt = *tgt & 0x03FFFFFF;
+              new_tgt = old_tgt + (offset / 4);;
               
               *tgt &= ~0x03FFFFFF;
               *tgt |= new_tgt;
@@ -180,7 +185,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
               pair_vals[reg] += val;
               
               /* Relocate it */
-              addr = (u32)data + (pair_vals[reg] - (u32)ovl_base);
+              addr = pair_vals[reg] + offset;
               
               /* Set values */
               lo = addr & 0xFFFF;
