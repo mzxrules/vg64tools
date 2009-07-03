@@ -50,7 +50,7 @@ main ( int argc, char ** argv )
             uint32_t * w, val;
             
             /* Set which word to read */
-            if( values[i].shamt > 32 )
+            if( values[i].shamt >= 32 )
             {
                 w = &w0;
                 s = values[i].shamt - 32;
@@ -68,7 +68,12 @@ main ( int argc, char ** argv )
             val = (*w >> s) & mask;
             
             /* Display it */
-            printf( "%-7s: %8X\n", values[i].name, val );
+            printf( 
+                "%-7s: %8X    0x%016llX\n", 
+                values[i].name, 
+                val, 
+                ((uint64_t)mask << (uint64_t)values[i].shamt) 
+            );
         }
         
         /* Newline */
