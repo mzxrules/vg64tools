@@ -34,22 +34,6 @@ SECTIONS
 		__text_end = . ;
 	}
 	
-	/* Read-only data */
-	.rodata ALIGN( 8 ):
-	{
-		/* Pad with NULL */
-		FILL( 0 );
-		
-		/* Address to start of rodata section */
-		__rodata_start = . ;
-		
-		/* Data goes here*/
-		*(.rodata);
-		
-		/* Address to end of rodata section */
-		__rodata_end = . ;
-	}
-	
 	/* Initialized data */
         .data ALIGN( 8 ): 
 	{ 
@@ -69,6 +53,22 @@ SECTIONS
 		
 		/* Address to end of data section */
 		__data_end = . ;
+	}
+	
+	/* Read-only data */
+	.rodata ALIGN( 8 ):
+	{
+		/* Pad with NULL */
+		FILL( 0 );
+		
+		/* Address to start of rodata section */
+		__rodata_start = . ;
+		
+		/* Data goes here*/
+		*(.rodata);
+		
+		/* Address to end of rodata section */
+		__rodata_end = . ;
 	}
 	
 	/* Memory initialized to zero */
