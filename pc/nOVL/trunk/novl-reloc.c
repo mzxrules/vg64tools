@@ -47,7 +47,7 @@ static uint32_t hilopair_regs[32];
    ---------------------------------------------- */
 
 /* Relocate a 32-bit pointer */
-static void
+static int
 novl_reloc_mips_32 ( uint32_t * i, uint32_t address, int type, int offset )
 {
     uint32_t w;
@@ -62,10 +62,12 @@ novl_reloc_mips_32 ( uint32_t * i, uint32_t address, int type, int offset )
     *i = g_htonl( w );
     
     /**/ DEBUG_R( "%s: 0x%08X -> 0x%08X", STRTYPE(type), w - offset, w );
+    
+    return NOVL_RELOC_SUCCESS;
 }
 
 /* Relocate a 26-bit (jump target) pointer */
-static void
+static int
 novl_reloc_mips_26 ( uint32_t * i, uint32_t address, int type, int offset )
 {
     #define MKR(x)  (((x)<<2)|0x80000000)
@@ -82,7 +84,8 @@ novl_reloc_mips_26 ( uint32_t * i, uint32_t address, int type, int offset )
     if( !(MKR(old_tgt) >= bin_min && MKR(old_tgt) < bin_max) )
     {
         DEBUG_R( "%s: skipping 0x%08X - out of bounds", STRTYPE(type), MKR(old_tgt) );
-        return;
+        
+        return NOVL_RELOC_FAIL;
     }
     
     /* Make new target */
@@ -96,10 +99,12 @@ novl_reloc_mips_26 ( uint32_t * i, uint32_t address, int type, int offset )
     *i = g_htonl( w );
     
     /**/ DEBUG_R( "%s: 0x%08X -> 0x%08X", STRTYPE(type), MKR(old_tgt), MKR(new_tgt) );
+    
+    return NOVL_RELOC_SUCCESS;
 }
 
 /* Relocate the high part of an immediate value */
-static void
+static int
 novl_reloc_mips_hi16 ( uint32_t * i, uint32_t address, int type, int offset )
 {
     uint32_t w;
@@ -116,10 +121,12 @@ novl_reloc_mips_hi16 ( uint32_t * i, uint32_t address, int type, int offset )
     
     /* Store pointer to this current instruction */
     hilopair_ptrs[reg] = i;
+    
+    return NOVL_RELOC_SUCCESS;
 }
 
 /* Relocate the low part of an immediate value */
-static void
+static int
 novl_reloc_mips_lo16 ( uint32_t * i, uint32_t address, int type, int offset )
 {
     int16_t val;
@@ -143,7 +150,8 @@ novl_reloc_mips_lo16 ( uint32_t * i, uint32_t address, int type, int offset )
     if( !(hilopair_regs[reg] >= bin_min  && hilopair_regs[reg] < bin_max) )
     {
         DEBUG_R( "HI16/LO16: Skipping 0x%08X - out of bounds", hilopair_regs[reg] );
-        return;
+        
+        return NOVL_RELOC_FAIL;
     }
     
     /* Relocate it */
@@ -161,6 +169,8 @@ novl_reloc_mips_lo16 ( uint32_t * i, uint32_t address, int type, int offset )
     *hilopair_ptrs[reg] = g_htonl( (old_w & 0xFFFF0000) | hi );
     
     /**/ DEBUG_R( "HI16/LO16: 0x%08X -> 0x%08X", hilopair_regs[reg], new_addr );
+    
+    return NOVL_RELOC_SUCCESS;
 }
 
 
@@ -204,10 +214,7 @@ novl_reloc_do ( uint32_t * i, uint32_t address, int type, int offset )
     }
     
     /* Call it */
-    handler( i, address, type, offset );
-    
-    /* Hopefully it worked! */
-    return TRUE;
+    return handler( i, address, type, offset );
 }
 
 /* Generate a Nintendo relocation */

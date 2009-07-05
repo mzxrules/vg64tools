@@ -46,6 +46,10 @@
 /* Uncomment this to disable colors in output
 #define NOVL_NO_COLORS */
 
+/* Relocation return values */
+#define NOVL_RELOC_FAIL     2
+#define NOVL_RELOC_SUCCESS  3
+
 
 #include "mesg.h"
 #include "func.h"
@@ -55,7 +59,7 @@
    Data types
    ---------------------------------------------- */
 
-typedef void (*novlDoReloc)
+typedef int (*novlDoReloc)
 (
     uint32_t *, /* Pointer to instruction in memory */
     uint32_t,   /* Address                          */

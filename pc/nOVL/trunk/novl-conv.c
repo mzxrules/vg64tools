@@ -308,14 +308,6 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
                 /* Calculate offset */
                 off = (uint32_t)rel.r_offset - elf_ep;
                 
-                /* Skip this relocation? */
-                if( ((rel.r_info >> 32) & 0) )
-                {
-                    /* Yeah, address isn't under our jurisdiction */
-                    /**/DEBUG( "Hopping over relocation entry for 0x%08X.", (uint32_t)rel.r_offset );
-                    continue;
-                }
-                
                 /* Relocate! */
                 v = novl_reloc_do( (uint32_t*)(&memory[off]), (int)rel.r_offset, (int)rel.r_info, offset );
                 
@@ -326,6 +318,13 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
                     ERROR( "Relocation type %s has no registered handler. Abort.", novl_str_reloc((int)rel.r_info) );
                     DEBUG( "%i,%i", (int)rel.r_offset, (int)rel.r_info );
                     exit( EXIT_FAILURE );
+                }
+                
+                /* Do we generate a relocation? */
+                if( v == NOVL_RELOC_FAIL )
+                {
+                    /* No */
+                    continue;
                 }
                 
                 /* Generate a nintendo relocation */
@@ -342,6 +341,14 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
      Now all we have to do is generate the header and write the data to disk
     */
     
+    /* Get last address */
+    greatest = 0;
+    for( i = OVL_S_COUNT - 1; i >= 0; i-- )
+    {
+        if( greatest < starts[i] + sizes[i] )
+          greatest = starts[i] + sizes[i];
+    }
+    
     /* Copy sizes */
     memcpy( new_head.sizes, sizes, sizeof(new_head.sizes) );
     new_head.relocation_count = ninty_count;
@@ -352,6 +359,7 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     
     /* Write it */
     header_offset = greatest - elf_ep;
+    DEBUG( "Head offset: 0x%X", header_offset );
     fseek( ovl_out, header_offset, SEEK_SET );
     v = fwrite( &new_head, 1, sizeof(new_head), ovl_out );
     MESG( "Wrote section descriptions (%ib).", v );
@@ -381,5 +389,9 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     
     /* Free up some memory */
     g_list_free( ninty_relocs );
+    
+    /* Done with elf file */
+    elf_end( elf );
+    close( elf_fd );
 }
 
