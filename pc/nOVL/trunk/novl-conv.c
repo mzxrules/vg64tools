@@ -219,7 +219,10 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
         /* Set the start addr & size */
         if( !*spec[id].start )
             *spec[id].start = sh_header.sh_addr;
-        *spec[id].size += (sh_header.sh_size - (sh_header.sh_size % 8) + 8);
+        if( sh_header.sh_size % 8 )
+            *spec[id].size += (sh_header.sh_size - (sh_header.sh_size % 8) + 8);
+        else
+            *spec[id].size += sh_header.sh_size;
         
         /* Can we load this into memory? */
         if( sh_header.sh_type == SHT_PROGBITS )
