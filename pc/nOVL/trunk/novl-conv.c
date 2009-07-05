@@ -104,7 +104,7 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     GList * seek;
     uint32_t header_offset;
     struct ovl_header_t new_head;
-    GList * ninty_relocs;
+    GList * ninty_relocs, * last;
     int ninty_count;
     char * name;
     Elf_Data * data;
@@ -295,6 +295,7 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
         DEBUG( "Processing relocation entries from '%s'.", name ) ;
         
         data = NULL;
+        last = NULL;
         
         /* Get section data */
         for( n = 0; n < sh_header.sh_size && (data = elf_getdata(section, data)); n += data->d_size )
@@ -320,10 +321,25 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
                     exit( EXIT_FAILURE );
                 }
                 
-                /* Do we generate a relocation? */
+                /* Skip relocation generation? */
                 if( v == NOVL_RELOC_FAIL )
                 {
-                    /* No */
+                    /* We may also have to remove the first half of a HI16/LO16
+                       reloc */
+                    if( (int)rel.r_info == R_MIPS_LO16 )
+                    {
+                        GList * n;
+                        
+                        /* Yep */
+                        n = last;
+                        
+                        /* Seek last back one */
+                        last = last->prev;
+                        
+                        /* Remove node */
+                        ninty_relocs = g_list_delete_link( ninty_relocs, n );
+                        ninty_count--;
+                    }
                     continue;
                 }
                 
@@ -331,6 +347,16 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
                 nr = novl_reloc_mk(id + 1, (int)rel.r_offset - starts[id], (int)rel.r_info);
                 ninty_relocs = g_list_append( ninty_relocs, GUINT_TO_POINTER(nr) );
                 ninty_count++;
+                
+                /* Set last link node */
+                if( !last )
+                {
+                    last = g_list_last( ninty_relocs );
+                }
+                else
+                {
+                    last = last->next;
+                }
             }
         }
     }
@@ -365,10 +391,10 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     MESG( "Wrote section descriptions (%ib).", v );
     
     /* Write the relocation entries */
-    for( seek = ninty_relocs, v = 0; seek; seek = seek->next )
+    for( seek = ninty_relocs, v = 0; seek && seek->data; seek = seek->next )
     {
         uint32_t w;
-        
+            
         w = GPOINTER_TO_UINT(seek->data);
         w = g_htonl( w );
         
