@@ -258,7 +258,7 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     #ifdef NOVL_DEBUG
      for( i = 0; i < OVL_S_COUNT; i++ )
      {
-         DEBUG( "%-8s 0x%08X %ib", spec[i].marker, *spec[i].start, *spec[i].size );
+         DEBUG( " %-8s 0x%08X %ib", spec[i].marker, *spec[i].start, *spec[i].size );
      }
     #endif
     

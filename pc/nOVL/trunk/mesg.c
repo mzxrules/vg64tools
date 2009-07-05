@@ -28,7 +28,7 @@
 
 #ifdef NOVL_NO_COLORS
  char *
- mesg_strip_contro_characters ( char * str )
+ mesg_strip_control_characters ( char * str )
  {
      char * src, * tgt, * new;
      int c;
@@ -73,7 +73,7 @@ mk_mesg_f ( char * symbol, char * fmt, va_list ap )
     length = strlen( final );
     
     #ifdef NOVL_NO_COLORS
-     stripped = mesg_strip_contro_characters( final );
+     stripped = mesg_strip_control_characters( final );
      fprintf( stderr, "%s", stripped );
      free( stripped );
     #else
@@ -136,7 +136,7 @@ ERROR ( char * fmt, ... )
     int len;
     
     va_start( ap, fmt );
-    len = mk_mesg_f( "[" ANSI_SET_FG_GREEN "@" ANSI_RESET_DEFAULT "] ", fmt, ap );
+    len = mk_mesg_f( "[" ANSI_SET_FG_GREEN "@" ANSI_RESET_DEFAULT "]", fmt, ap );
     va_end( ap );
     
     return len;
@@ -150,7 +150,7 @@ ERROR ( char * fmt, ... )
     int len;
     
     va_start( ap, fmt );
-    len = mk_mesg_f( "[" ANSI_SET_FG_CYAN "*" ANSI_RESET_DEFAULT "] ", fmt, ap );
+    len = mk_mesg_f( "[" ANSI_SET_FG_CYAN "*" ANSI_RESET_DEFAULT "]", fmt, ap );
     va_end( ap );
     
     return len;
