@@ -19,7 +19,7 @@ SECTIONS
 	. = ADDRESS_START;
 
 	/* Machine code */
-	.text :
+	.text ALIGN( 8 ):
 	{
 		/* Pad with NULL */
 		FILL( 0 );
