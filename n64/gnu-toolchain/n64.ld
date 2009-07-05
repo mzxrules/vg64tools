@@ -19,7 +19,7 @@ SECTIONS
 	. = ADDRESS_START;
 
 	/* Machine code */
-	.text ALIGN( 8 ):
+	.text ALIGN( 4 ):
 	{
 		/* Pad with NULL */
 		FILL( 0 );
@@ -31,6 +31,7 @@ SECTIONS
 		*(.text)
 		
 		/* Address to end of text section */
+		. = ALIGN( 8 );
 		__text_end = . ;
 	}
 	
