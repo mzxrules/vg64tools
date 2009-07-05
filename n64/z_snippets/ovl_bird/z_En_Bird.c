@@ -54,13 +54,14 @@ void bird_func0x809C1BB8(struct z64_actor_t * a0, u32 * a1)
 }
 
 void bird_func0x809C1CA0(u32 * a0, u32 * a1)
-    {
+{
+    return;
 /* wtf?
 sw	a0,0(sp)
 jr	ra
 sw	a1,4(sp)
 */
-    }
+}
 
 void bird_func0x809C1CAC(struct z64_actor_t * a0, u32 * a1)
 {
@@ -131,7 +132,7 @@ void bird_func0x809C1E40(struct z64_actor_t * a0, u32 * a1)
     }
     else
     {
-        tmp = _func0x80078068(a0, a1)
+        tmp = _func0x80078068(a0, a1);
         /*sll	a1,v0,0x10
           sra	a1,a1,0x10
           tmp <<= 16;
@@ -144,11 +145,11 @@ void bird_func0x809C1E40(struct z64_actor_t * a0, u32 * a1)
     a0->v0198 -= 1;
     if (a0->v0198 >= 0)
     {
-        bird_func0x809C1CAC(a0, a0->variable)
+        bird_func0x809C1CAC(a0, a0->variable);
     }
 }
 
-void bird_func0x809C1F5C(struct z64_actor_t * a0, a1)
+void bird_func0x809C1F5C(struct z64_actor_t * a0)
 {
     a0->v01B8 = a0->v01B8+a0->v01BC;
     goto a0->next_routine;
