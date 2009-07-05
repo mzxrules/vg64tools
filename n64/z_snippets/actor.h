@@ -173,8 +173,8 @@ struct z64_actor_t
     u16 v019C;
     u16 v019E;
     /* 0x1A0 */
-    u32 v01A0;
-    u32 v01A4;
+    f32 v01A0;
+    f32 v01A4;
     f32 v01A8;
     f32 v01AC;
     /* 0x1B0 */
