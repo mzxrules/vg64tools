@@ -11,6 +11,31 @@ typedef signed short    s16;
 typedef float           f32;
 typedef double          f64;
 
+/* Local functions */
+extern void bird_func0x809C1BB0( struct z64_actor_t * a0, u32 * a1 );
+extern void bird_func0x809C1BB8( struct z64_actor_t * a0, u32 * a1 );
+extern void bird_func0x809C1CA0( u32 * a0, u32 * a1);
+extern void bird_func0x809C1CAC( struct z64_actor_t * a0, u32 * a1 );
+extern void bird_func0x809C1D60( struct z64_actor_t * a0, u32 * a1 );
+extern void bird_func0x809C1E00( void * a0, u32 * actor_var);
+extern void bird_func0x809C1E40( struct z64_actor_t * a0, u32 * a1 );
+extern void bird_func0x809C1F5C( struct z64_actor_t * a0);
+extern void bird_func0x809C1F8C( struct z64_actor_t * a, void * wut );
+
+/* External functions */
+extern void _func0x800780DC( u32, u32 location );
+extern void _func0x8002D62C( u32, u32 );
+extern void _func0x800A457C( u32, u32, u32 hierarchy, u32 animation, u32, u32, u32 );
+extern void _func0x8002B1E0( u32, u32, u32 * a2 );
+extern void _func0x800A2000( u32 animation );
+extern void _func0x80077D90( int * a0, int * a1 );
+extern void _func0x800A51A0( u32, u32 animation, u32, f32, u32, u32, f32 );
+extern void _func0x80100290( f32 );
+extern void _func0x80078310( u32, f32, u32, f32, f32 );
+extern void _func0x800A49FC( u32 );
+extern void _func0x80077B58( u32, u32, u16 );
+extern void _func0x800A15C8( void *, u32, u32, u32 );
+
 struct actor_spec_t
 {
     0x0072,	/* Actor number */
@@ -19,10 +44,10 @@ struct actor_spec_t
     0x00000000,
     0x0077,	/* Object number */
     0x000001DC,	/* ??? */
-    0x809C1BB8,	/* init */
-    0x809C1CA0,	/* routine1 */
-    0x809C1F5C,	/* routine2 */
-    0x809C1F8C	/* routine3 */
+    bird_func0x809C1BB8,	/* init */
+    bird_func0x809C1CA0,	/* routine1 */
+    bird_func0x809C1F5C,	/* routine2 */
+    bird_func0x809C1F8C		/* routine3 */
 };
     
 
@@ -35,7 +60,7 @@ void bird_func0x809C1BB8(struct z64_actor_t * a0, u32 * a1)
 {
     _func0x800780DC(0, 0x809C1FF0);
     _func0x8002D62C(a0, 0x3C23D70A);
-    _func0x800A457C(a0, a0 + 0x014C, 0x06002190, 0x0600006C, 0, 0); /* Animation init */
+    _func0x800A457C(a1, a0 + 0x014C, 0x06002190, 0x0600006C, 0, 0, 0); /* Animation init */
     _func0x8002B1E0(a0 + 0x00B4, 0x45ABE000, 0x8003B5EC);
       
     a0->_0x00AE = 0;
@@ -81,8 +106,8 @@ void bird_func0x809C1CAC(struct z64_actor_t * a0, u32 * a1)
     }
 
     _func0x80077D90(5, 35);
-    _func0x800A51A0(a0 + 0x14C, 0x0600006C, *f0, 0.0, *v0, 0, 0.0);
-    _func0x809C1BB0(a0, 0x809C1D60); /* Local */
+    _func0x800A51A0(a0 + 0x14C, 0x0600006C, *f0, 0.0f, *v0, 0, 0.0f);
+    bird_func0x809C1BB0(a0, 0x809C1D60); /* Local */
 }
 
 void bird_func0x809C1D60(struct z64_actor_t * a0, u32 * a1)
@@ -126,7 +151,7 @@ void bird_func0x809C1E40(struct z64_actor_t * a0, u32 * a1)
     
     if !(a0->v01B0 < *f0) && !(a0->v0198 < 4)
     {
-        *f0 = _func0x80100290(a0, a1, a0->v01B4);
+        *f0 = _func0x80100290(a0->v01B4);
         tmp = *f0 * a0->v01A4;
         a0->y_rot_unknown_1 += tmp;
     }
@@ -151,7 +176,7 @@ void bird_func0x809C1E40(struct z64_actor_t * a0, u32 * a1)
 
 void bird_func0x809C1F5C(struct z64_actor_t * a0)
 {
-    a0->v01B8 = a0->v01B8+a0->v01BC;
+    a0->v01B8 = a0->v01B8 + a0->v01BC;
     goto a0->next_routine;
 }
 
