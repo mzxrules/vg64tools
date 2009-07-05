@@ -1,0 +1,4 @@
+ENTRY_POINT = bird_ep;
+ADDRESS_START = 0x809C1BB0;
+func_800a15c8 = 0x800A15C8;
+
