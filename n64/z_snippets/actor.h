@@ -29,9 +29,9 @@ struct z64_actor_t
     
     /*0x10*/
     f32 z_unknown;              /* Same, but for Z                      */
-    s16 initial_x_rot;          /* Needs to be confirmed - But I think it is only written to upon loading the actor */
-    s16 initial_y_rot;          /* Same, but for Y                      */
-    s16 initial_z_rot;          /* Same, but for Z                      */
+    u16 initial_x_rot;          /* Needs to be confirmed - But I think it is only written to upon loading the actor */
+    u16 initial_y_rot;          /* Same, but for Y                      */
+    u16 initial_z_rot;          /* Same, but for Z                      */
     u16 buffer;                 /* I *think* this is a buffer so the next part has 4 byte alignment */
     u16 variable;               /* Actor Variable                       */
     u16 unknown_2;              /* Unknown                              */
@@ -43,18 +43,18 @@ struct z64_actor_t
     f32 z_rw;                   /* Same, but for Z                      */
     
     /*0x30*/
-    s16 x_rot_unknown_1;        /* Copy of initial_x rot?               */
-    s16 y_rot_unknown_1;        /* Same, but for Y                      */
-    s16 z_rot_unknown_1;        /* Same, but for Z                      */
+    u16 x_rot_unknown_1;        /* Copy of initial_x rot?               */
+    u16 y_rot_unknown_1;        /* Same, but for Y                      */
+    u16 z_rot_unknown_1;        /* Same, but for Z                      */
     u16 unknown_4;              /* Buffer?                              */
     f32 unknown_5;              /* X pos + small rand? constantly changing */
     f32 unknown_6;              /* Same? (for Y)                        */
     
     /*0x40*/
     f32 unknown_7;              /* Same? (for Z)                        */
-    s16 x_rot_unknown_2;        /* Copy of initial_x rot?               */
-    s16 y_rot_unknown_2;        /* Same, but for Y                      */
-    s16 z_rot_unknown_2;        /* Same, but for Z                      */
+    u16 x_rot_unknown_2;        /* Copy of initial_x rot?               */
+    u16 y_rot_unknown_2;        /* Same, but for Y                      */
+    u16 z_rot_unknown_2;        /* Same, but for Z                      */
     u16 unknown_8;              /* Buffer?                              */
     u32 unknown_9;              /* Unknown                              */
     
@@ -67,7 +67,7 @@ struct z64_actor_t
     f32 y_accel;
     f32 z_accel;
     
-    int _0x0068;
+    f32 _0x0068;
     int _0x006C;
     /* 0x70 */
     int _0x0070;
@@ -93,7 +93,8 @@ struct z64_actor_t
     u8  _0x00AF;
     /* 0xB0 */
     int _0x00B0;
-    int _0x00B4;
+    u16 _0x00B4;
+    u16 _0x00B6;
     int _0x00B8;
     f32 _0x00BC;
     /* 0xC0 */

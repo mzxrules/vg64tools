@@ -1,8 +1,6 @@
-/*   \
-:bird:
-\   */
-
-/* this code most likely will not compile */
+/* z_En_Bird.c
+ spinout and ZZT32
+*/
 
 #include "../actor.h"
 
@@ -89,22 +87,20 @@ void bird_func0x809C1CAC(struct z64_actor_t * a0, u32 * a1)
 void bird_func0x809C1D60(struct z64_actor_t * a0, u32 * a1)
 {
     f32 * f0;
-    f32 * f12;
     
-    f12 = (float*)(a0+0x1B4);
-    *f0 = _func0x80100290(f12);
+    *f0 = _func0x80100290(a0->v01B4);
     _func0x80078310(a0 + 0x68, 0.0, 0x3DCCCCCD, 0.5, 0.0);
     a0->_0x00BC = a0->_0x00BC+(a0->_0x01A0 * f0);
 
-    if (actw[0x19C/4] == 0)
+    if (a0->v019C == 0)
     {
-        actf[0x168/4] = actf[0x68/4] + actf[0x68/4];
+        a0->v0168 = a0->_0x0068 + a0->_0x0068;
     }
     _func0x800A49FC(a0+0x14C);
-    actw[198/4] -= 1;
-    if (actw[198/4])
+    a0->v0198 -= 1;
+    if (a0->v0198)
     {
-        bird_func0x809C1E00(a0,acth[0x1C/8]); /* Local jump. Second argument
+        bird_func0x809C1E00(a0,a0->variable); /* Local jump. Second argument
                                                  is the actor variable */
     }
 }
@@ -118,106 +114,44 @@ void bird_func0x809C1E00(void * a0, u32 * actor_var)
 void bird_func0x809C1E40(struct z64_actor_t * a0, u32 * a1)
 {
     f32 * f0;
+    int tmp;
 
     *f0 = _func0x80100290(a0->v01A4); /* This function might actually return two
                                          floats, but the function it is called by
                                          only appears to use two of them */
-    actf[0xBC/4] = actf[0xBC/4] + (*f0 * a0->v01A0);
+    a0->_0x00BC = a0->_0x00BC + (*f0 * a0->v01A0);
     _func0x80078310(a0+0x68, a0->v01A8, 0x3DCCCCCD, a0->v01AC, 0);
-    _func0x80078028(a0+0x24, a0+0x2C);
+    *f0 =_func0x80078028(a0+0x24, a0+0x2C);
     
-    /* incomplete
-addiu	sp,sp,-56
-sw	ra,36(sp)
-sw	s0,32(sp)
-sw	a1,60(sp)
-move	s0,a0
-jal	0x80100290
-lwc1	$f12,436(a0)
-lwc1	$f6,416(s0)
-lwc1	$f4,188(s0)
-mtc1	zero,$f16
-mul.s	$f8,$f0,$f6
-lw	a1,424(s0)
-lui	a2,0x3dcc
-ori	a2,a2,0xcccd
-addiu	a0,s0,104
-add.s	$f10,$f4,$f8
-swc1	$f10,188(s0)
-jal	0x80078310
-swc1	$f16,16(sp)
-addiu	a0,s0,36
-addiu	a1,s0,8
-sw	a1,40(sp)
-jal	0x80078028
-sw	a0,44(sp)
-
-I got to here <------------------
-
-lwc1	$f18,432(s0)
-lw	a0,44(sp)
-lw	a1,40(sp)
-c.lt.s	$f18,$f0
-nop
-bc1t	0x809c1ed0
-nop
-lw	t6,408(s0)
-slti	at,t6,4
-beqz	at,0x809c1ef4
-nop
-jal	0x80078068
-nop
-sll	a1,v0,0x10
-sra	a1,a1,0x10
-addiu	a0,s0,50
-jal	0x80077b58
-lh	a2,448(s0)
-b	0x809c1f20
-lh	t3,50(s0)
-jal	0x80100290
-lwc1	$f12,436(s0)
-lwc1	$f6,420(s0)
-lh	t7,50(s0)
-mul.s	$f4,$f0,$f6
-trunc.w.s	$f8,$f4
-mfc1	t1,$f8
-nop
-addu	t2,t7,t1
-sh	t2,50(s0)
-lh	t3,50(s0)
-addiu	a0,s0,332
-jal	0x800a49fc
-sh	t3,182(s0)
-lw	t4,408(s0)
-move	a0,s0
-addiu	t5,t4,-1
-bgez	t5,0x809c1f48
-sw	t5,408(s0)
-jal	0x809c1cac
-lh	a1,28(s0)
-lw	ra,36(sp)
-lw	s0,32(sp)
-addiu	sp,sp,56
-jr	ra
-nop
-*/
+    if !(a0->v01B0 < *f0) && !(a0->v0198 < 4)
+    {
+        *f0 = _func0x80100290(a0, a1, a0->v01B4);
+        tmp = *f0 * a0->v01A4;
+        a0->y_rot_unknown_1 += tmp;
+    }
+    else
+    {
+        tmp = _func0x80078068(a0, a1)
+        /*sll	a1,v0,0x10
+          sra	a1,a1,0x10
+          tmp <<= 16;
+          tmp >>= 16; 
+          Needed?*/
+        _func0x8077B58(a0 + 0x32, tmp, a0->v01C0);
+    }
+    a0->_0x00B6 = a0->y_rot_unknown_1;
+    _func0x800A49FC(a0+0x14C);
+    a0->v0198 -= 1;
+    if (a0->v0198 >= 0)
+    {
+        bird_func0x809C1CAC(a0, a0->variable)
+    }
 }
-void bird_func0x809C1F5C(a0, a1)
+
+void bird_func0x809C1F5C(struct z64_actor_t * a0, a1)
 {
-/*
-addiu	sp,sp,-24
-sw	ra,20(sp)
-lwc1	$f4,436(a0)
-lwc1	$f6,440(a0)
-lw	t9,400(a0)
-add.s	$f8,$f4,$f6
-jalr	t9
-swc1	$f8,436(a0)
-lw	ra,20(sp)
-addiu	sp,sp,24
-jr	ra
-nop
-*/
+    a0->v01B8 = a0->v01B8+a0->v01BC;
+    goto a0->next_routine;
 }
 
 void bird_func0x809C1F8C( struct z64_actor_t * a, void * wut )
