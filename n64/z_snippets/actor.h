@@ -3,22 +3,118 @@
 
 #include "mips.h"
 
-struct actor_spec_t
+
+/* ----------------------------------------------
+   Macros/constants
+   ---------------------------------------------- */
+
+/* Get a value of arbitrary type from any address in the actor */
+#define AVAL(a,t,o)          \
+(                            \
+    *((*t)((u8*)(a) + (o)))  \
+)
+
+/* Get the address */
+#define AADDR(a,o)           \
+(                            \
+    (void*)((u8*)(a)+(o))    \
+)
+
+/* Make an actor header... */
+#define MK_AHEAD(name,num,typ,stat,u,objn,u2,finit,f1,f2,f3)    \
+struct actor_spec_t                                             \
+name =                                                          \
+{                                                               \
+    (num),                                                      \
+    (typ),                                                      \
+    (stat),                                                     \
+    (u),                                                        \
+    (objn),                                                     \
+    { 0, 0 },                                                   \
+    (u2),                                                       \
+    (ZAFunc)(finit),                                            \
+    (ZAFunc)(f1),                                               \
+    (ZAFunc)(f2),                                               \
+    (ZAFunc)(f3)                                                \
+}
+
+
+/* ----------------------------------------------
+   Data types & structures
+   ---------------------------------------------- */
+
+/* A function handler for an actor */
+typedef void (*ZAFunc)( void *, void * );
+
+/* A float triad (X/Y/Z) accessible also as u32 */
+union z64_xyz_t
 {
-    u16 actor_number;
-    u8 actor_type;
-    u8 actor_status;
-    u32 _NULL;
-    u16 object_number;
-    u16 _NULL_;
-    u32 _NULL__;
-    u32 init;
-    u32 func_1;
-    u32 func_2;
-    u32 func_3;
+    /* Floating point */
+    struct { f32 x,  y,  z;  };
+    
+    /* Unsigned 32-bit */
+    struct { u32 rx, ry, rz; };
 };
 
+/* Rotation triad */
+struct z64_rot_t
+{
+    s16 x;
+    s16 y;
+    s16 z;
+};
+
+/* The actor's "header" */
+struct actor_spec_t
+{
+    u16     actor_number;
+    u8      actor_type;
+    u8      actor_status;
+    u32     __u0000;
+    u16     object_number;
+    u8      __pad0001[2];
+    u32     __u0001;
+    
+    ZAFunc  init;
+    ZAFunc  func_1;
+    ZAFunc  func_2;
+    ZAFunc  func_3;
+};
+
+/* Actor structure */
 struct z64_actor_t
+{
+    u16                     number;
+    u8                      type;
+    u8                      status;
+    u8                      __pad0000[4];
+    union z64_xyz_t         coords_1;
+    struct z64_rot_t        rotation_1;
+    u8                      __pad0001[2];
+    u16                     variable;
+    u8                      __pad0002[6];
+    union z64_xyz_t         coords_2;
+    struct z64_rot_t        rotation_2;
+    u8                      __pad0003[2];
+    union z64_xyz_t         coords_3;
+    struct z64_rot_t        rotation_3;
+    u8                      __pad0004[6];
+    union z64_xyz_t         scale;
+    union z64_xyz_t         acceleration;
+    u8                      __pad0005[184];
+    struct z64_actor_t *    previous;
+    struct z64_actor_t *    next;
+    ZAFunc                  f_init;
+    ZAFunc                  f_routine1;
+    ZAFunc                  f_routine2;
+    ZAFunc                  f_routine3;
+    ZAFunc                  f_code_entry;
+    u8                      __pad0006[84];
+    ZAFunc                  f_next;
+};
+
+/* Old structure... */
+struct z64_actor_old_t
 {
     u16 actor_number;           /* actor number                         */
     u8  actor_type;             /* 2 = link 4 = npcs etc.               */
