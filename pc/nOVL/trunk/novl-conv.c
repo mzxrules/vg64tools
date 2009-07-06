@@ -111,6 +111,7 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     int i, n, v;
     uint32_t tmp;
     uint32_t greatest;
+    uint32_t backwards;
     
     ninty_relocs = NULL;
     ninty_count = 0;
@@ -419,7 +420,23 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     MESG( "Wrote relocation entries (%ib).", v );
     
     /* Write offset from here to header */
-    tmp = g_htonl( ftell(ovl_out) - header_offset + 4 );
+    backwards = ftell(ovl_out) - header_offset + 4;
+    
+    /* Check alignment */
+    if( ((i = ftell(ovl_out)) + 4) % 16 )
+    {
+        int new;
+        
+        /* Where do we seek to now? */
+        new = i-((i+4)%16)+16;
+        
+        /* Update */
+        backwards += new - i;
+        
+        fseek( ovl_out, new, SEEK_SET );
+    }
+        
+    tmp = g_htonl( backwards );
     v = fwrite( &tmp, 1, sizeof(tmp), ovl_out );
     MESG( "Finalized footer (%ib).", v );
     
