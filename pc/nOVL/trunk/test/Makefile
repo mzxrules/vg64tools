@@ -1,6 +1,6 @@
 PROGRAM = ovl-example
 
-PARTS = $(PROGRAM).o
+PARTS = crt0.o $(PROGRAM).o
 
 CC = mips-gcc
 AR = mips-ar
