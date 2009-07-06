@@ -27,7 +27,7 @@ En_Bird_f1:
         /*
         *# Original address: 0x809c1bb8
         */
-
+#if 0
         .set            noreorder
         .set            noat
         .global         En_Bird_f2
@@ -96,7 +96,7 @@ En_Bird_f2:
         .end            En_Bird_f2
         .set            at
         .set            noreorder
-
+#endif
         
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         

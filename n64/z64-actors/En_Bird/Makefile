@@ -2,14 +2,14 @@ PROGRAM = En_Bird
 FINAL = ovl_En_Bird
 ADDRESS = 0x809C1BB0
 
-PARTS = header.o $(PROGRAM).o
+PARTS = header.o $(PROGRAM).o func.o
 
 CC   = mips-gcc
 LD   = mips-ld
 NOVL = nOVL
 
 ASFLAGS = -I ../../z_snippets
-CFLAGS = -G 0 -O3 --std=gnu99 -mtune=vr4300 -I ../../z_snippets
+CFLAGS = -G 0 -Os --std=gnu99 -mtune=vr4300 -I ../../z_snippets
 LDFLAGS = -L ../../gnu-toolchain -T z64-ovl.ld --emit-relocs
 
 default: $(PROGRAM).ovl
