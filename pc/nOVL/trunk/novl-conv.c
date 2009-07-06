@@ -224,6 +224,16 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
         else
             *spec[id].size += sh_header.sh_size;
         
+        /* Check that .text is at the entry point */
+        if( id == OVL_S_TEXT && starts[OVL_S_TEXT] != elf_ep )
+        {
+            ERROR( "The entry point is NOT equal to the start of the .text section." );
+            ERROR( "EP: 0x%08X  .text: 0x%08X", elf_ep, starts[OVL_S_TEXT] );
+            ERROR( "Ensure that the entry point function is linked in at the beginning." );
+            
+            exit( EXIT_FAILURE );
+        }
+        
         /* Can we load this into memory? */
         if( sh_header.sh_type == SHT_PROGBITS )
         {
@@ -238,7 +248,10 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
             /* Sanity check... */
             if( (sh_header.sh_addr + sh_header.sh_size) - elf_ep > sizeof(memory) )
             {
-                ERROR( "Error - memory bounds reached." );
+                ERROR( 
+                  "Error - memory bounds reached. Check ELF entry point vs .text "
+                  "start address."
+                );
                 exit( EXIT_FAILURE );
             }
             
