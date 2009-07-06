@@ -412,9 +412,12 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     
     /* Write the data */
     fseek( ovl_out, 0, SEEK_SET );
-    v = fwrite( memory, 1, header_offset, ovl_out );
+    for( i = 0; i < OVL_S_BSS; i++ )
+    {
+        v = fwrite( memory + (starts[i] - elf_ep), 1, sizes[i], ovl_out );
+        MESG( "Wrote section %s (%ib).", spec[i].marker, v );
+    }
     fclose( ovl_out );
-    MESG( "Wrote binary data (%ib).", v );
     
     /* Free up some memory */
     g_list_free( ninty_relocs );
