@@ -1,9 +1,9 @@
 INCLUDE conf.ld
 
 
-/* Libaries here */
-SEARCH_DIR( /usr/n64/mips/lib )
-SEARCH_DIR( /usr/n64/lib/gcc/mips/3.4.6/ )
+/* Libaries here -- add your own if you need to*/
+SEARCH_DIR( /usr/mips/mips/lib )
+SEARCH_DIR( /usr/mips/lib/gcc/mips/3.4.6/ )
 
 /* This script is for MIPS */
 OUTPUT_ARCH( mips )
