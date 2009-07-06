@@ -383,7 +383,7 @@ $Lf7_04:
         /*
         *# Original address: 0x809c1f5c
         */
-
+#if 0
         .set            noreorder
         .set            noat
         .global         En_Bird_f8
@@ -407,7 +407,7 @@ En_Bird_f8:
         .end            En_Bird_f8
         .set            at
         .set            noreorder    
-        
+#endif
 
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
