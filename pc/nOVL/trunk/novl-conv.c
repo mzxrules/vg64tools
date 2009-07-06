@@ -385,7 +385,7 @@ novl_conv ( uint32_t tgt_addr, char * in, char * out )
     
     /* Get last address */
     greatest = 0;
-    for( i = OVL_S_COUNT - 1; i >= 0; i-- )
+    for( i = OVL_S_BSS - 1; i >= 0; i-- )
     {
         if( greatest < starts[i] + sizes[i] )
           greatest = starts[i] + sizes[i];
