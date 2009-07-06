@@ -28,7 +28,11 @@ SECTIONS
 		__text_start = . ;
 
 		/* Data goes here */
-		*(.text)
+		*(.init);
+		*(.text);
+		*(.ctors);
+        	*(.dtors);
+        	*(.fini);
 		
 		/* Address to end of text section */
 		. = ALIGN( 16 );
@@ -51,7 +55,7 @@ SECTIONS
 		/* Data pointer */
 		. = ALIGN( 8 );
 		_gp = . ;
-         	*(.sdata);
+		*(.sdata);
 		
 		/* Address to end of data section */
 		. = ALIGN( 16 );
@@ -84,9 +88,9 @@ SECTIONS
 		__bss_start = . ;
 			
 		/* BSS data */
-		*(.bss)
-		*(.sbss)
-		*(.scommon)
+		*(.scommon);
+		*(.sbss);
+		*(.bss);
 		
 		/* Address to end of BSS section */
 		. = ALIGN( 8 );
@@ -95,7 +99,7 @@ SECTIONS
 	
 	/* End of our memory use */
 	. = ALIGN( 8 );
-	end = .;
+	end = . ;
 }
 
 
