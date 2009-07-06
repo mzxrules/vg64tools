@@ -45,12 +45,13 @@ SECTIONS
 		__data_start = . ;
 		
 		/* Data goes here*/
-		*(.data)
+		*(.data);
+		*(.data.*);
 		
 		/* Data pointer */
 		. = ALIGN( 8 );
 		_gp = . ;
-         	*(.sdata)
+         	*(.sdata);
 		
 		/* Address to end of data section */
 		. = ALIGN( 16 );
@@ -68,6 +69,8 @@ SECTIONS
 		
 		/* Data goes here*/
 		*(.rodata);
+		*(.rodata.*);
+		*(.eh_frame);
 		
 		/* Address to end of rodata section */
 		. = ALIGN( 16 );
@@ -83,6 +86,7 @@ SECTIONS
 		/* BSS data */
 		*(.bss)
 		*(.sbss)
+		*(.scommon)
 		
 		/* Address to end of BSS section */
 		. = ALIGN( 8 );
