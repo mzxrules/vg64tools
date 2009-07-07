@@ -37,7 +37,7 @@ void En_Bird_f2 ( void * _a0, void * _a1 )
     AVAL(a0,u32,408) = 0;
     AVAL(a0,u32,416) = 0;
     AVAL(a0,u32,420) = 0;
-    AVAL(a0,u32,424) = 0x3FC00000;
+    AVAL(a0,u32,424) = 0x3F000000; /* Animation speed */
     AVAL(a0,u32,428) = 0x3F000000;
     AVAL(a0,u32,432) = 0x42200000;
     
@@ -51,6 +51,47 @@ void En_Bird_f2 ( void * _a0, void * _a1 )
         (void*)(int)a0->variable 
     );
 }
+
+void En_Bird_f5( void * a0, void * a1 )
+{
+    struct z64_actor_t * a;
+    a = (struct z64_actor_t*)a0;
+
+    f32 f0;
+    
+    f0 = func_80100290(
+	AVAL(a0,f32,0x1B4)
+    );
+
+    func_80078310(
+	a0 + 0x68,
+	0,		/* float (0.0) */
+	0x3DCCCCCD,	/* float (0.1) */
+	0x3F000000,	/* float (0.5) */
+	0		/* float (0.0) */
+    );
+
+    AVAL(a0,f32,0x00BC) += (AVAL(a0,f32,0x1A0) * f0);
+
+    if (AVAL(a0,u16,0x19C) == 0)
+    {
+       AVAL(a0,f32,0x168) = AVAL(a0,f32,0x0068) + AVAL(a0,f32,0x0068);
+    }
+
+    func_800A49FC(
+	a0+0x14C
+    );
+
+    AVAL(a0,u32,0x198) -= 1;
+    if (AVAL(a0,u32,0x198))
+    {
+        En_Bird_f6(
+		a0,
+		a->variable
+	); 
+    }
+}
+
 /*
 void En_Bird_f4 ( void * a0, void * a1 )
 {
@@ -98,7 +139,7 @@ void En_Bird_f4 ( void * a0, void * a1 )
     );
 }
 */
-void En_Bird_f6(void * a0, void * a1 )
+void En_Bird_f6(void * a0, u16 a1 )
 {
     struct z64_actor_t * a;
     a = (struct z64_actor_t*)a0;

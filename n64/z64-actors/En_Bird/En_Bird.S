@@ -191,7 +191,7 @@ $Lf4_02:
         /*
         *# Original address: 0x809c1d60
         */
-
+#if 0
         .set            noreorder
         .set            noat
         .global         En_Bird_f5
@@ -246,7 +246,7 @@ $Lf5_02:
         .set            at
         .set            noreorder
         
-
+#endif
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
