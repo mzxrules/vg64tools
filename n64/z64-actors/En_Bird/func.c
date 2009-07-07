@@ -2,6 +2,13 @@
 #include <actor.h>
 #include "bird.h"
 
+void En_Bird_f1 (void * a0, void * a1 )
+{
+    struct z64_actor_t * a;
+    a = (struct z64_actor_t*)a0;
+    AVAL(a0,u32,400) = (u32)a1;
+}
+
 void En_Bird_f2 ( void * _a0, void * _a1 )
 {
     struct z64_actor_old_t * a0;
@@ -52,44 +59,9 @@ void En_Bird_f2 ( void * _a0, void * _a1 )
     );
 }
 
-void En_Bird_f5( void * a0, void * a1 )
+void En_Bird_f3( void * a0, void * a1 )
 {
-    struct z64_actor_t * a;
-    a = (struct z64_actor_t*)a0;
-
-    f32 f0;
-    
-    f0 = func_80100290(
-	AVAL(a0,f32,0x1B4)
-    );
-
-    func_80078310(
-	a0 + 0x68,
-	0,		/* float (0.0) */
-	0x3DCCCCCD,	/* float (0.1) */
-	0x3F000000,	/* float (0.5) */
-	0		/* float (0.0) */
-    );
-
-    AVAL(a0,f32,0x00BC) += (AVAL(a0,f32,0x1A0) * f0);
-
-    if (AVAL(a0,u16,0x19C) == 0)
-    {
-       AVAL(a0,f32,0x168) = AVAL(a0,f32,0x0068) + AVAL(a0,f32,0x0068);
-    }
-
-    func_800A49FC(
-	a0+0x14C
-    );
-
-    AVAL(a0,u32,0x198) -= 1;
-    if (AVAL(a0,u32,0x198))
-    {
-        En_Bird_f6(
-		a0,
-		a->variable
-	); 
-    }
+    return;
 }
 
 /*
@@ -139,6 +111,47 @@ void En_Bird_f4 ( void * a0, void * a1 )
     );
 }
 */
+
+void En_Bird_f5( void * a0, void * a1 )
+{
+    struct z64_actor_t * a;
+    a = (struct z64_actor_t*)a0;
+
+    f32 f0;
+    
+    f0 = func_80100290(
+	AVAL(a0,f32,0x1B4)
+    );
+
+    func_80078310(
+	a0 + 0x68,
+	0,		/* float (0.0) */
+	0x3DCCCCCD,	/* float (0.1) */
+	0x3F000000,	/* float (0.5) */
+	0		/* float (0.0) */
+    );
+
+    AVAL(a0,f32,0x00BC) += (AVAL(a0,f32,0x1A0) * f0);
+
+    if (AVAL(a0,u16,0x19C) == 0)
+    {
+       AVAL(a0,f32,0x168) = AVAL(a0,f32,0x0068) + AVAL(a0,f32,0x0068);
+    }
+
+    func_800A49FC(
+	a0+0x14C
+    );
+
+    AVAL(a0,u32,0x198) -= 1;
+    if (AVAL(a0,u32,0x198))
+    {
+        En_Bird_f6(
+		a0,
+		a->variable
+	); 
+    }
+}
+
 void En_Bird_f6(void * a0, u16 a1 )
 {
     struct z64_actor_t * a;

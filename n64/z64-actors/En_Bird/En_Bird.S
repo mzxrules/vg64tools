@@ -3,7 +3,7 @@
         .text
         
         
-        
+#if 0        
         /*
         *# Original address: 0x809c1bb0
         */
@@ -20,7 +20,7 @@ En_Bird_f1:
         .end            En_Bird_f1
         .set            reorder
         
-
+#endif
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
@@ -104,7 +104,7 @@ En_Bird_f2:
         /*
         *# Original address: 0x809c1ca0
         */
-
+#if 0
         .set            noreorder
         .global         En_Bird_f3
         .ent            En_Bird_f3
@@ -118,7 +118,7 @@ En_Bird_f3:
         .end            En_Bird_f3
         .set            reorder
         
-        
+#endif        
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
@@ -230,7 +230,7 @@ $Lf5_01:
         addiu           a0,s0,332
         lw              t7,408(s0)
         move            a0,s0
-        addiu           t8,t7,-1
+        addiu           t8#if 0,t7,-1
         bgtz            t8,$Lf5_02
         sw              t8,408(s0)
         jal             En_Bird_f6
