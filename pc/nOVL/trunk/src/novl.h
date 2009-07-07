@@ -27,6 +27,7 @@
 #include <libelf.h>
 #include <gelf.h>
 #include <glib.h>
+#include "mips-reloc.h"
 
 
 /* ----------------------------------------------
