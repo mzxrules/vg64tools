@@ -1,4 +1,0 @@
-ENTRY_POINT = n64start;
-ADDRESS_START = 0x80400000;
-kprintf = 0x80002130;
-
