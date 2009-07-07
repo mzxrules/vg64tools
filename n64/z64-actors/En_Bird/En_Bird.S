@@ -125,7 +125,7 @@ En_Bird_f3:
         /*
         *# Original address: 0x809c1cac
         */
-
+#if 1
         .set            noreorder
         .set            noat
         .global         En_Bird_f4
@@ -184,7 +184,7 @@ $Lf4_02:
         .set            at
         .set            noreorder
         
-
+#endif
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
@@ -253,7 +253,7 @@ $Lf5_02:
         /*
         *# Original address: 0x809c1e00
         */
-
+#if 0
         .set            noreorder
         .global         En_Bird_f6
         .ent            En_Bird_f6
@@ -280,7 +280,7 @@ En_Bird_f6:
         .set            at
         .set            noreorder
         
-
+#endif
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
@@ -415,7 +415,7 @@ En_Bird_f8:
         /*
         *# Original address: 0x809c1f8c
         */
-
+#if 0
         .set            noreorder
         .set            noat
         .global         En_Bird_f9
@@ -446,7 +446,7 @@ En_Bird_f9:
         
 
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
-
+#endif
         
         /*
         *# Data; original addr: 0x809c1ff0
