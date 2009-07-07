@@ -14,7 +14,7 @@ then
 fi
 mkdir -p "${BB}"
 cd "${BB}"
-export CFLAGS_FOR_TARGET="-Os"
+export CFLAGS_FOR_TARGET="-Os -G 0"
 ../"${BV}"/configure --prefix="${1}" --target=mips --disable-multilib 
 nice -n 5 make
 sudo PATH="${PATH}" make install
