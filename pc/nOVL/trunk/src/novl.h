@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <limits.h>
 #include <elf.h>
 #include <libelf.h>
 #include <gelf.h>
@@ -40,12 +41,6 @@
 #define NOVL_FULL_NAME      "Nintendo Overlay Tool"
 #define NOVL_AUTHOR         "Marshall R. <mbr@64.vg>"
 
-/* Comment out for no debug text */
-#define NOVL_DEBUG
-
-/* Uncomment this to disable colors in output
-#define NOVL_NO_COLORS */
-
 /* Relocation return values */
 #define NOVL_RELOC_FAIL     2
 #define NOVL_RELOC_SUCCESS  3
@@ -53,6 +48,17 @@
 
 #include "mesg.h"
 #include "func.h"
+
+
+/* ----------------------------------------------
+   Macros
+   ---------------------------------------------- */
+
+/* Record a (CLI) flag */
+#define SET_FLAG(f)        (settings.flags[(f) & 0xFF] = 1)
+
+/* Get a (CLI) flag */
+#define GET_FLAG(f)        (settings.flags[(f) & 0xFF])
 
 
 /* ----------------------------------------------
@@ -70,11 +76,12 @@ typedef int (*novlDoReloc)
 /* Settings structure */
 struct novl_settings_t
 {
-    int mode;
+    int opmode;
+    int verbosity;
     int no_colors;
     int human_readable;
     uint32_t ovl_base;
-    
+    uint8_t flags[UCHAR_MAX + 1];
 };
 
 

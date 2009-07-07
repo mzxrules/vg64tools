@@ -47,15 +47,11 @@ enum nOVLopmode
    ---------------------------------------------- */
 
 /* Getopt format string */
-static char * flags_fmt = "clrDdvho:A:?";
-
-/* Command line arguments - flags */
-static int Aflag, cflag, lflag, hflag, rflag, oflag, Dflag, dflag, vflag;
+static char * flags_fmt = "clrDdVgvsho:A:?";
 
 /* Command line arguments - values */
 static uint32_t Aval;
 static char * oval;
-static int opmode;
 
 /* Filenames */
 static GList * filenames;
@@ -71,8 +67,8 @@ show_usage ( int argc, char ** argv )
 {
     char * s = "[" ANSI_SET_FG_YELLOW "?" ANSI_RESET_DEFAULT "]";
     
-    mk_mesg( s, "Application prototype:" );
-    mk_mesg( s, "%s [-lrcDd] [-nhv] [-A address] [-o filename]", argv[0] );
+    mk_mesg( NOVL_VERBOSE_NOTICE, s, "Application prototype:" );
+    mk_mesg( NOVL_VERBOSE_NOTICE, s, "%s [-lrcDd] [-ghVvs] [-A address] [-o filename]", argv[0] );
     
     exit( EXIT_FAILURE );
 }
@@ -123,7 +119,7 @@ disassemble ( char * filename, int all )
             mr4kd_disassemble( w, addr, buff );
             
             /* Print it */
-            if( vflag )
+            if( GET_FLAG('V') )
                 printf( "%08X: (%08X) %s\n", addr, w, buff );
             else
                 printf( "%08X: %s\n", addr, buff );
@@ -201,7 +197,7 @@ list_sections ( char * filename )
     /* Print them */
     for( i = 0; ovl->sections[i]; i++ )
     {
-        if( hflag )
+        if( GET_FLAG('h') )
             format_value( size, ovl->sections[i]->size );
         else
             snprintf( size, sizeof(size), "%i", ovl->sections[i]->size );
@@ -226,20 +222,22 @@ static void
 convert_elf ( char * filename )
 {
     /* We need the -o flag */
-    if( !oflag )
+    if( !GET_FLAG('o') )
     {
         ERROR( "Please specify an output file with -o." );
         exit( EXIT_FAILURE );
     }
     
     /* We need the -A flag */
-    if( !Aflag )
+    if( !GET_FLAG('A') )
     {
         ERROR( "Please specify a target address with -A." );
         exit( EXIT_FAILURE );
     }
     
     novl_conv( Aval, filename, oval );
+    
+    NOTICE( "Finished conversion." );
 }
 
 
@@ -247,7 +245,7 @@ convert_elf ( char * filename )
 static void
 check_opmode ( void )
 {
-    if( opmode )
+    if( settings.opmode )
     {
         ERROR( "You can only specify one of the -clr options!" );
         exit( EXIT_FAILURE );
@@ -263,6 +261,9 @@ args_process ( int argc, char ** argv )
     /* Loop through arguments */
     while( (c = getopt(argc, argv, flags_fmt)) != -1 )
     {
+        /* Note flag */
+        SET_FLAG(c);
+        
         /* Handle... */
         switch( c )
         {
@@ -270,12 +271,7 @@ args_process ( int argc, char ** argv )
             case 'l':
             {
               check_opmode();
-              lflag = 1;
-              opmode = OP_LIST_SECTIONS;
-              settings.mode = opmode;
-              
-              
-              MESG( "List sections mode." );
+              settings.opmode = OP_LIST_SECTIONS;
             }
             break;
             
@@ -283,11 +279,7 @@ args_process ( int argc, char ** argv )
             case 'r':
             {
               check_opmode();
-              rflag = 1;
-              opmode = OP_LIST_RELOCATIONS;
-              settings.mode = opmode;
-              
-              MESG( "List relocations mode." );
+              settings.opmode = OP_LIST_RELOCATIONS;
             }
             break;
             
@@ -295,33 +287,21 @@ args_process ( int argc, char ** argv )
             case 'c':
             {
               check_opmode();
-              cflag = 1;
-              opmode = OP_CONVERT;
-              settings.mode = opmode;
-              
-              MESG( "ELF -> overlay convert mode." );
+              settings.opmode = OP_CONVERT;
             }
             break;
             
-            /* Disassemble text */
+            /* Disassemble .text */
             case 'd':
             {
-              dflag = 1;
-              opmode = OP_DISASSEMBLE;
-              settings.mode = opmode;
-              
-              MESG( "Disassembly mode." );
+              settings.opmode = OP_DISASSEMBLE;
             }
             break;
             
             /* Disassemble all */
             case 'D':
             {
-              Dflag = 1;
-              opmode = OP_DISASSEMBLE_ALL;
-              settings.mode = opmode;
-              
-              MESG( "Disassemble ALL mode." );
+              settings.opmode = OP_DISASSEMBLE_ALL;
             }
             break;
             
@@ -330,10 +310,7 @@ args_process ( int argc, char ** argv )
             case 'A':
             {
               sscanf( optarg, "%X", &Aval );
-              Aflag = 1;
               settings.ovl_base = Aval;
-              
-              MESG( "Overlay base address set to 0x%08X.", Aval );
             }
             break;
             
@@ -341,30 +318,38 @@ args_process ( int argc, char ** argv )
             case 'o':
             {
               oval = optarg;
-              oflag = 1;
-              
-              MESG( "Writing overlay to \"%s\".", oval );
             }
             break;
             
             /* Make int values human readable */
             case 'h':
             {
-              hflag = 1;
               settings.human_readable = 1;
-              
-              MESG( "Printing human readable values." );
             }
             break;
             
-            /* Display instructions raw */
-            case 'v':
+            /* Disable colors in output */
+            case 'g':
             {
-              vflag = 1;
-              
-              MESG( "Displaying raw instructions in disassembly output." );
+              settings.no_colors = 1;
             }
             break;
+            
+            
+            /* Alter verbosity */
+            case 'v':
+            {
+              settings.verbosity++;
+            }
+            break;
+            
+            /* Silent mode -- no output */
+            case 's':
+            {
+              settings.verbosity = -1;
+            }
+            break;
+            
             
             case '?': default:
              show_usage( argc, argv );
@@ -372,23 +357,9 @@ args_process ( int argc, char ** argv )
         }
     }
     
-    /* No filename arguments? */
-    if( optind == argc )
-    {
-        ERROR( "Please provide at least one filename as an argument." );
-        exit( EXIT_FAILURE );
-    }
-    
     /* The rest of the arguments are filenames */
     for( i = optind; i < argc; i++ )
     {
-        /* Check... */
-        if( opmode == OP_CONVERT && i == optind + 1 )
-        {
-            ERROR( "Only one filename required for this mode." );
-            exit( EXIT_FAILURE );
-        }
-        
         /* Append it to our list */
         filenames = g_list_append( filenames, argv[i] );
     }
@@ -402,8 +373,11 @@ main ( int argc, char ** argv )
 {
     GList * s;
     
+    /* Process the arguments */
+    args_process( argc, argv );
+    
     /* Header */
-    MESG( 
+    NOTICE( 
         ANSI_SET_FG_WHITE_BOLD 
         NOVL_NAME 
         ANSI_RESET_DEFAULT
@@ -412,33 +386,63 @@ main ( int argc, char ** argv )
         " by "
         NOVL_AUTHOR
     );
-    MESG(
+    NOTICE(
         "Built: "
         __DATE__ " " __TIME__
     );
     
-    /* Process the arguments */
-    args_process( argc, argv );
+    /* Doop doop. Analyze flags */
+    if( GET_FLAG('A') )
+        DEBUG( "Base address set to 0x%08X.", settings.ovl_base );
+    if( GET_FLAG('o') )
+        DEBUG( "Output file set to \"%s\".", oval );
+    if( GET_FLAG('h') )
+        DEBUG( "Printing human-readable addresses." );
+    if( GET_FLAG('V') )
+        DEBUG( "Printing raw instructions next to disassembly." );
+    if( GET_FLAG('g') )
+        DEBUG( "Colors disabled." );
+    
+    /* Filename count... */
+    if( g_list_length(filenames) < 1 )
+    {
+        ERROR( "Please provide at least one filename as an argument." );
+        show_usage( argc, argv );
+        return EXIT_FAILURE;
+    }
     
     /* Take action! */
-    switch( opmode )
+    switch( settings.opmode )
     {
         case OP_LIST_RELOCATIONS:
         {
-           for( s = filenames; s; s = s->next )
-               list_relocations( s->data );
+          MESG( "Listing overlay relocations." );
+          
+          for( s = filenames; s; s = s->next )
+              list_relocations( s->data );
         }
         break;
         
         case OP_LIST_SECTIONS:
         {
-           for( s = filenames; s; s = s->next )
-               list_sections( s->data );
+          MESG( "Listing overlay section details." );
+          
+          for( s = filenames; s; s = s->next )
+              list_sections( s->data );
         }
         break;
         
         case OP_CONVERT:
         {
+          MESG( "Converting ELF file to overlay." );
+           
+          /* Too many filenames? */
+          if( g_list_length(filenames) > 1 )
+          {
+              ERROR( "ELF -> OVL conversion only takes one file argument." );
+              return EXIT_FAILURE;
+          }
+           
           /* First filename only! */
           convert_elf( filenames->data );
         }
@@ -446,15 +450,19 @@ main ( int argc, char ** argv )
         
         case OP_DISASSEMBLE:
         {
-           for( s = filenames; s; s = s->next )
-               disassemble( s->data, 0 );
+          MESG( "Disassembling the .text section in overlay file(s)." );
+          
+          for( s = filenames; s; s = s->next )
+              disassemble( s->data, 0 );
         }
         break;
         
         case OP_DISASSEMBLE_ALL:
         {
-           for( s = filenames; s; s = s->next )
-               disassemble( s->data, 1 );
+          MESG( "Disassembling every section in overlay file(s)." );
+          
+          for( s = filenames; s; s = s->next )
+              disassemble( s->data, 1 );
         }
         break;
         

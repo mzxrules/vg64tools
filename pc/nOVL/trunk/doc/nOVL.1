@@ -44,6 +44,10 @@ Disassemble every section of the overlay. Options \fB\-A\fR and \fB\-v\fR modify
 Set the base address (entry point) of the overlay file. In dissasembly & listing modes, this address is added to addresses in the overlay file. In the conversion mode, this is the address to translate the binary to.
 
 .TP 
+\fB\-g\fR
+Disable ANSI colors codes in status messages.
+
+.TP 
 \fB\-h\fR
 Display (where applicable) human readable values as opposed to just numbers. For example, 
 "49152" would become "48k".
@@ -53,7 +57,15 @@ Display (where applicable) human readable values as opposed to just numbers. For
 Sets the output overlay file when converting from an ELF file.
 
 .TP 
+\fB\-s\fR
+Silent mode. Do not output anything.
+
+.TP 
 \fB\-v\fR
+Adjust verbosity of output. It goes from: messages, debug, debug 2 (relocations -- can get hefty). The default is to just display notices.
+
+.TP 
+\fB\-V\fR
 During disassembly, display also the raw instruction next to the address and the disassembly.
 
 

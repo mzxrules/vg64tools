@@ -26,59 +26,78 @@
 #include "novl.h"
 #include "mesg.h"
 
-#ifdef NOVL_NO_COLORS
- char *
- mesg_strip_control_characters ( char * str )
- {
-     char * src, * tgt, * new;
-     int c;
+
+/*
+    MESSAGE VERBOSITY LEVELS:
+     - notice: always shown
+     - message: shown with -v
+     - debug: shown with -vv
+     - debug2: shown with -vvv
      
-     src = str;
-     tgt = (new = malloc( strlen(str) ));
-     
-     while( (c = *src) )
-     {
-         /* ANSI escape sequence? */
-         if( c == ANSI_START[0] )
-         {
-             /* Yes, skip all characters in sequence */
-             while( (*(src++) != 'm') );
-             continue;
-         }
-         
-         /* Regular characters */
-         *(tgt++) = c;
-         
-         src++;
-     }
-     
-     *tgt = '\0';
-     
-     return new;
- }
-#endif
+    Verbosity of -1 indicates silent mode.
+*/
+
+
+
+char *
+mesg_strip_control_characters ( char * str )
+{
+    char * src, * tgt, * new;
+    int c;
+    
+    src = str;
+    tgt = (new = malloc( strlen(str) ));
+    
+    while( (c = *src) )
+    {
+        /* ANSI escape sequence? */
+        if( c == ANSI_START[0] )
+        {
+            /* Yes, skip all characters in sequence */
+            while( (*(src++) != 'm') );
+            continue;
+        }
+        
+        /* Regular characters */
+        *(tgt++) = c;
+        
+        src++;
+    }
+    
+    *tgt = '\0';
+    
+    return new;
+}
 
 
 int
-mk_mesg_f ( char * symbol, char * fmt, va_list ap )
+mk_mesg_f ( int v, char * symbol, char * fmt, va_list ap )
 {
     char * final, * new_format;
     int length;
-    #ifdef NOVL_NO_COLORS
-     char * stripped;
-    #endif
+    char * stripped;
+    
+    /* Verbosity within range? */
+    if( v > settings.verbosity )
+    {
+        /* Nope */
+        return 0;
+    }
     
     new_format = g_strdup_printf( "%s %s\n", symbol, fmt );
     final = g_strdup_vprintf( new_format, ap );
     length = strlen( final );
     
-    #ifdef NOVL_NO_COLORS
-     stripped = mesg_strip_control_characters( final );
-     fprintf( stderr, "%s", stripped );
-     free( stripped );
-    #else
-     fprintf( stderr, "%s", final );
-    #endif
+    if( settings.no_colors )
+    {
+        stripped = mesg_strip_control_characters( final );
+        fprintf( stderr, "%s", stripped );
+        free( stripped );
+    }
+    else
+    {
+        fprintf( stderr, "%s", final );
+    }
     
     g_free( new_format );
     g_free( final );
@@ -86,14 +105,36 @@ mk_mesg_f ( char * symbol, char * fmt, va_list ap )
     return length;
 }
 
+
 int
-mk_mesg ( char * symbol, char * fmt, ... )
+mk_mesg ( int v, char * symbol, char * fmt, ... )
+{
+    va_list ap;
+    int len;
+    
+    /* Verbosity within range? */
+    if( v > settings.verbosity )
+    {
+        /* Nope */
+        return 0;
+    }
+    
+    va_start( ap, fmt );
+    len = mk_mesg_f( v, symbol, fmt, ap );
+    va_end( ap );
+    
+    return len;
+}
+
+
+int
+NOTICE ( char * fmt, ... )
 {
     va_list ap;
     int len;
     
     va_start( ap, fmt );
-    len = mk_mesg_f( symbol, fmt, ap );
+    len = mk_mesg_f( NOVL_VERBOSE_NOTICE, "[" ANSI_SET_FG_BLUE "-" ANSI_RESET_DEFAULT "]", fmt, ap );
     va_end( ap );
     
     return len;
@@ -107,7 +148,7 @@ MESG ( char * fmt, ... )
     int len;
     
     va_start( ap, fmt );
-    len = mk_mesg_f( "[" ANSI_SET_FG_BLUE "-" ANSI_RESET_DEFAULT "]", fmt, ap );
+    len = mk_mesg_f( NOVL_VERBOSE_MESSAGE, "[" ANSI_SET_FG_BLUE "-" ANSI_RESET_DEFAULT "]", fmt, ap );
     va_end( ap );
     
     return len;
@@ -121,38 +162,37 @@ ERROR ( char * fmt, ... )
     int len;
     
     va_start( ap, fmt );
-    len = mk_mesg_f( "[" ANSI_SET_FG_RED "!" ANSI_RESET_DEFAULT "]", fmt, ap );
+    len = mk_mesg_f( NOVL_VERBOSE_NOTICE, "[" ANSI_SET_FG_RED "!" ANSI_RESET_DEFAULT "]", fmt, ap );
     va_end( ap );
     
     return len;
 }
 
 
-#ifdef NOVL_DEBUG
- int
- DEBUG ( char * fmt, ... )
- {
+int
+DEBUG ( char * fmt, ... )
+{
     va_list ap;
     int len;
     
     va_start( ap, fmt );
-    len = mk_mesg_f( "[" ANSI_SET_FG_GREEN "@" ANSI_RESET_DEFAULT "]", fmt, ap );
+    len = mk_mesg_f( NOVL_VERBOSE_DEBUG, "[" ANSI_SET_FG_GREEN "@" ANSI_RESET_DEFAULT "]", fmt, ap );
     va_end( ap );
     
     return len;
- }
+}
 
 
- int
- DEBUG_R ( char * fmt, ... )
- {
+int
+DEBUG_R ( char * fmt, ... )
+{
     va_list ap;
     int len;
     
     va_start( ap, fmt );
-    len = mk_mesg_f( "[" ANSI_SET_FG_CYAN "*" ANSI_RESET_DEFAULT "]", fmt, ap );
+    len = mk_mesg_f( NOVL_VERBOSE_DEBUG2, "[" ANSI_SET_FG_CYAN "*" ANSI_RESET_DEFAULT "]", fmt, ap );
     va_end( ap );
     
     return len;
- }
-#endif
+}
+

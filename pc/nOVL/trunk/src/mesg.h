@@ -24,18 +24,20 @@
 #include "novl.h"
 #include "ansi.h"
 
-extern int mk_mesg_f ( char *, char *, va_list );
-extern int mk_mesg ( char *, char *, ... );
+/* Verbosity values */
+#define NOVL_VERBOSE_NONE      -1
+#define NOVL_VERBOSE_NOTICE     0
+#define NOVL_VERBOSE_MESSAGE    1
+#define NOVL_VERBOSE_DEBUG      2
+#define NOVL_VERBOSE_DEBUG2     3
+
+extern int mk_mesg_f ( int, char *, char *, va_list );
+extern int mk_mesg ( int, char *, char *, ... );
+extern int NOTICE ( char *, ... );
 extern int MESG ( char *, ... );
 extern int ERROR ( char *, ... );
-
- #ifdef NOVL_DEBUG
-  extern int DEBUG ( char *, ... );
-  extern int DEBUG_R ( char *, ... );
- #else
-  #define DEBUG(...)
-  #define DEBUG_R(...)
- #endif /* NOVL_DEBUG */
+extern int DEBUG ( char *, ... );
+extern int DEBUG_R ( char *, ... );
 
 #endif /* __NOVL_MESG_H__ */
 
