@@ -1,4 +1,4 @@
-.TH "nOVL" "1" "v1.0.1" "Marshall B. Rogers" "N64 development tools"
+.TH "nOVL" "1" "2009-07-07" "Marshall B. Rogers" "N64 development tools"
 .SH "NAME"
 .LP 
 \fBnOVL\fR \-\- Interact with Nintendo\*R overlay files
@@ -82,6 +82,35 @@ $ nOVL -d -A 0x80800000 binary.ovl
 Converting an ELF file to an overlay file that runs at 0x80800000:
 .br
 $ nOVL -c -A 0x80800000 -o output.ovl program.elf
+
+
+.SH "OVERLAY FILES"
+.LP
+The overlay files themselves are just bare binaries with relocation information intact. They have no information regarding their entry point - that is predetermined. They are split up much like modern ELF binaries, with their sections being:
+.br
+\fB\ .text\fR Machine code
+.br
+\fB\ .data\fR Initialized r/w data
+.br
+\fB\ .rodata\fR Initialized read-only data (strings, for example)
+.br
+\fB\ .bss\fR The section where variables initialized to zero are placed
+
+.LP
+After the section data comes the overlay header, which is comprised of all of the section sizes (4-bytes each), and a count (also 4-bytes) of how many relocations follow. The last word in the overlay file points (backwards from the end) to the start of the header.
+
+.LP
+The relocation values are comprised of the following:
+.br
+\fB\ 1)\fR ID of section (1 = .text)
+.br
+\fB\ 2)\fR relocation type (see elf.h)
+.br
+\fB\ 3)\fR section relative address to data
+
+.LP
+Every section in the overlay file, as well as the file itself must be aligned to 16-bytes.
+
 
 .SH "AUTHORS"
 .LP 
