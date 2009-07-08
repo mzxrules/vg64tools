@@ -36,7 +36,7 @@ void En_Bird_f2 ( void * _a0, void * _a1 )
     AVAL(a0,u32,408) = 0;
     AVAL(a0,u32,416) = 0;
     AVAL(a0,u32,420) = 0;
-    AVAL(a0,u32,424) = 0x3F000000; /* Animation speed */
+    AVAL(a0,float,424) = 0.5f; /* Animation speed */
     AVAL(a0,u32,428) = 0x3F000000;
     AVAL(a0,u32,432) = 0x42200000;
     

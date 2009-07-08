@@ -3,11 +3,11 @@
         .text
         
         
-#if 0        
+        
         /*
         *# Original address: 0x809c1bb0
         */
-        
+#if 0
         .set            noreorder
         .global         En_Bird_f1
         .ent            En_Bird_f1
@@ -19,8 +19,8 @@ En_Bird_f1:
         
         .end            En_Bird_f1
         .set            reorder
-        
 #endif
+
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
@@ -104,11 +104,12 @@ En_Bird_f2:
         /*
         *# Original address: 0x809c1ca0
         */
+
 #if 0
         .set            noreorder
         .global         En_Bird_f3
         .ent            En_Bird_f3
-
+        
 En_Bird_f3:
         
         sw              a0,0($sp)
@@ -117,15 +118,15 @@ En_Bird_f3:
         
         .end            En_Bird_f3
         .set            reorder
+#endif
         
-#endif        
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
         /*
         *# Original address: 0x809c1cac
         */
-#if 1
+#if 0
         .set            noreorder
         .set            noat
         .global         En_Bird_f4
@@ -140,7 +141,8 @@ En_Bird_f4:
         sw              a1,52($sp)
         jal             0x800a2000
         addiu           a0,a0,108
-        lw              t6,48($sp)
+         
+        lw              t6,48($sp)  #a0
         mtc1            v0,$f4
         lui             $at,0x3f80
         lh              t7,412(t6)
@@ -158,10 +160,11 @@ $Lf4_01:
 $Lf4_02:
         jal             0x80077d90
         swc1            $f2,44($sp)
+        
         lw              v1,48($sp)
-        lwc1            $f0,40($sp)
+        lwc1            $f0,40($sp) #v2
         mtc1            $zero,$f12
-        lwc1            $f2,44($sp)
+        lwc1            $f2,44($sp) #v
         sw              v0,408(v1)
         lui             a1,0x600
         mfc1            a2,$f0
@@ -172,9 +175,11 @@ $Lf4_02:
         swc1            $f12,24($sp)
         jal             0x800a51a0
         swc1            $f2,16($sp)
+        
         la              a1,En_Bird_f5
         jal             En_Bird_f1
         lw              a0,48($sp)
+        
         lw              $ra,36($sp)
         addiu           $sp,$sp,48
         jr              $ra
@@ -230,7 +235,7 @@ $Lf5_01:
         addiu           a0,s0,332
         lw              t7,408(s0)
         move            a0,s0
-        addiu           t8#if 0,t7,-1
+        addiu           t8,t7,-1
         bgtz            t8,$Lf5_02
         sw              t8,408(s0)
         jal             En_Bird_f6
