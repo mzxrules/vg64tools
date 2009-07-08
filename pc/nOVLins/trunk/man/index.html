@@ -1,0 +1,47 @@
+<html>
+ <head>
+  <title>nOVLins 1.0 readme</title>
+ </head>
+ <body>
+  <center>
+   <h1>nOVLins</h1>
+   by spinout
+  </center>
+  <b>What it is</b><br>
+  nOVLins is a small tool for inserting Nintendo overlay files to Zelda 64 / Animal Forest. At current, however, it only works with OoT 1.0 (Decompressed) and OoT MQ Debug, but support for other versions can be easily added by editing the source.<br><br>
+  <b>Usage:</b><br>
+  <pre>python nOVLins.py [options] [OVL file] [ROM file]</pre>
+  <b>Options</b><br>
+  <i><font size = 2>Note: all given integer values are read as hex when they have a '0x' prefix before them, otherwise they are read as decimal</font></i>
+  <table border = 1>
+   <tr>
+    <td><b>Option</b></td>
+    <td><b>Descripion</b></td>
+   </tr>
+   <tr>
+    <td><center>-a</center></td>
+    <td>Specifies actor number. Helpful when actor number is not first halfword in data section of overlay. Usage:<pre>-a ACTORNUMBER</pre></td>
+   </tr>
+   <tr>
+    <td><center>-d</center></td>
+    <td>Specifies the offset of the data section relative to the start of the overlay file. Usage of this is generally not needed, but if my program cannot find it, the n64 surely cannot! Usage:<pre>-d OFFSET</pre></td>
+   </tr>
+   <tr>
+    <td><center>-e</center></td>
+    <td>Specifies endianess, either little or big. Default is big. Usage:<pre>-e big OR -e little</pre></td>
+   </tr>
+   <tr>
+    <td><center>-o</center></td>
+    <td>Specifies physical offset of overlay file within ROM, which by default is that of the previous actor that had the same number. Usage:<pre>-o PHYSICALOFF</pre></td>
+   </tr>
+   <tr>
+    <td><center>-v</center></td>
+    <td>Specifies version. As stated above, support is limited to OoT 1.0 Decompressed and OoT MQ Debug. Usage:<pre>-v 1.0 OR -v debug</pre></td>
+   </tr>
+   <tr>
+    <td><center>-va</center></td>
+    <td>Specifies virtual offset of overlay file, which by default is that of the previous actor that had the same number. Usage:<pre>-va VIRTUALOFF</pre></td>
+   </tr>
+  </table>
+ </body>
+</html>
