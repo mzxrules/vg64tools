@@ -292,7 +292,7 @@ En_Bird_f6:
         /*
         *# Original address: 0x809c1e40
         */
-
+#if 0
         .set            noreorder
         .set            noat
         .global         En_Bird_f7
@@ -381,7 +381,7 @@ $Lf7_04:
         .set            at
         .set            noreorder
         
-
+#endif
     /* #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~# */
         
         
