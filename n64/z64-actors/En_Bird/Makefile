@@ -3,7 +3,7 @@ FINAL = ovl_En_Bird
 ADDRESS = 0x809C1BB0
 
 PARTS = header.o $(PROGRAM).o \
-	bfunc-1.o bfunc-2.o bfunc-3.o bfunc-4.o bfunc-6.o bfunc-8.o bfunc-9.o
+	bfunc-1.o bfunc-2.o bfunc-3.o bfunc-4.o bfunc-5.o bfunc-6.o bfunc-7.o bfunc-8.o bfunc-9.o
 
 CC   = mips-gcc
 LD   = mips-ld
