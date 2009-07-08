@@ -1,6 +1,9 @@
 #ifndef __Z_EN_BIRD_H__
 #define __Z_EN_BIRD_H__
 
+#include "mips.h"
+#include "actor.h"
+
 extern void En_Bird_f1 ( void *, void * );
 extern void En_Bird_f2 ( void *, void * );
 extern void En_Bird_f3 ( void *, void * );
@@ -29,7 +32,7 @@ extern void func_800A51A0(
 	u32
 ); /* FIXME: Dunno which args are floats and which are not temporairy hack will treat them all as u32s*/
 extern f32  func_80100290( f32 );
-extern void func_80078310( struct z64_actor_t *, f32, u32, f32, f32 );
+extern void func_80078310( struct z64_actor_t *, float, float, float, float );
 extern void func_800A49FC( struct z64_actor_t * );
 extern u32  func_80078068( u32, u32);
 extern void func_80077B58( u32, u32, u16 );
