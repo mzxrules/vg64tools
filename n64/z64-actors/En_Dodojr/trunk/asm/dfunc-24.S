@@ -26,8 +26,8 @@ En_Dodojr_f24:
         sll     t8,t7,0x10
         sra     t9,t8,0x10
         addiu   t0,t9,-8
-        slti    at,t0,4
-        beqzl   at,0x809f76fc
+        slti    $at,t0,4
+        beqzl   $at,$Lf24_01
         move    a0,a2
         lw      v0,480(a0)
         lh      t1,504(v0)
@@ -39,21 +39,26 @@ En_Dodojr_f24:
         lw      t4,488(a0)
         sw      t4,40(t3)
         lw      t5,492(a0)
-        b       0x809f772c
+        b       $Lf24_02		#
         sw      t5,44(t3)
         move    a0,a2
+$Lf24_01:
         jal     0x8002f828
         sw      a2,24(sp)
         lw      a2,24(sp)
         jal     0x8002d570
         lw      a0,480(a2)
         lw      a2,24(sp)
-        lui     t7,0x809f
+	
+        #lui     t7,0x809f		# 0x809F773C
+        #addiu   t7,t7,30524		# En_Dodojr_f25
+	la	t7,En_Dodojr_f25
+	
         li      t6,24
-        addiu   t7,t7,30524
         sh      t6,514(a2)
         sh      zero,508(a2)
         sw      t7,400(a2)
+$Lf24_02:
         lw      ra,20(sp)
         addiu   sp,sp,24
         jr      ra

@@ -21,19 +21,22 @@ En_Dodojr_f34:
         lh      v0,514(a0)
         move    s0,a0
         move    a1,zero
-        bnez    v0,0x809f7c10
+        bnez    v0,$Lf34_01
         addiu   t6,v0,-1
-        b       0x809f7c18
+        b       $Lf34_02
         move    v1,zero
+$Lf34_01:
         sh      t6,514(s0)
         lh      v1,514(s0)
-        bnez    v1,0x809f7c34
+$Lf34_02:
+        bnez    v1,$Lf34_03
         lw      a0,36(sp)
         addiu   a2,s0,36
         jal     0x8001f940
         li      a3,64
         jal     0x8002d570
         move    a0,s0
+$Lf34_03:
         lw      ra,28(sp)
         lw      s0,24(sp)
         addiu   sp,sp,32

@@ -48,13 +48,13 @@ Lf6_01:
         lw      t0,44(a0)
         sw      t9,500(a0)
         sw      t0,504(a0)
-        jal     0x809f6510
+        jal     En_Dodojr_f4
         lw      a1,28(sp)
         lw      a0,24(sp)
         li      t1,4
-        lui     at,0x4120
+        lui     $at,0x4120
         lh      v0,508(a0)
-        mtc1    at,$f8
+        mtc1    $at,$f8
         subu    t2,t1,v0
         mtc1    t2,$f10
         addiu   t3,v0,-1

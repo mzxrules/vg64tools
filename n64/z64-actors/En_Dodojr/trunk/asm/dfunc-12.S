@@ -15,8 +15,8 @@
 En_Dodojr_f12:        
 
         addiu   sp,sp,-48
-        lui     at,0x4140
-        mtc1    at,$f4
+        lui     $at,0x4140
+        mtc1    $at,$f4
         mtc1    zero,$f6
         sw      s0,40(sp)
         move    s0,a0
@@ -35,12 +35,17 @@ En_Dodojr_f12:
         jal     0x8002f828
         li      a1,14374
         mtc1    zero,$f0
-        lui     at,0x809f
+        
+	.set		at
+        #lui     $at,0x809f		# 0x809F7F88
+        #lwc1    $f8,32648($at)		# rodata+24
+	lwc1	$f8,(En_Dodojr_rodata+24)
+	.set		noat
+        
+        swc1    $f8,108(s0)
         swc1    $f0,104(s0)
         swc1    $f0,92(s0)
         swc1    $f0,100(s0)
-        lwc1    $f8,32648(at)
-        swc1    $f8,108(s0)
         lw      ra,44(sp)
         lw      s0,40(sp)
         addiu   sp,sp,48

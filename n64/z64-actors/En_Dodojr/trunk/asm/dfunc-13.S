@@ -14,8 +14,10 @@
 
 En_Dodojr_f13:        
 
-        lui     t6,0x809f
-        addiu   t6,t6,32552
+        lui     t6,0x809f		# 0x809F7F28
+        addiu   t6,t6,32552		# .data+152
+	la	t6,(En_Dodojr_data+152)
+        
         lw      t8,0(t6)
         addiu   sp,sp,-48
         addiu   a2,sp,32
@@ -44,13 +46,13 @@ Lf13_01:
         b       Lf13_06
         lw      v0,292(v0)
         lh      t2,0(v0)
-Lf13_02
+Lf13_02:
         beql    a1,t2,Lf13_03
         lwc1    $f4,36(v0)
         b       Lf13_06
         lw      v0,292(v0)
         lwc1    $f4,36(v0)
-Lf13_03
+Lf13_03:
         lwc1    $f6,36(a0)
         lwc1    $f0,32(sp)
         lwc1    $f8,40(v0)
@@ -91,7 +93,7 @@ Lf13_05:
         sw      t4,8(a2)
         lw      v0,292(v0)
 Lf13_06:
-        bnezl   v0, Lf13_00
+        bnezl   v0,Lf13_00
         lh      t9,28(v0)
         move    v0,v1
 Lf13_07:

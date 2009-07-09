@@ -41,31 +41,34 @@ En_Dodojr_f1:
         sw      a1,52(sp)
         jal     0x8005c364
         lw      a0,68(sp)
-        lui     a3,0x809f
+        #lui     a3,0x809f
         lw      a1,52(sp)
-        addiu   a3,a3,32432 /* 0x7EBO, A3 = 0x809F7EB0 = within .data section */
+        #addiu   a3,a3,32432 /* 0x7EBO, A3 = 0x809F7EB0 = within .data section */
+        la      a3, (En_Dodojr_data + 0x20)
         lw      a0,68(sp)
         jal     0x8005c4ac
         move    a2,s0
         jal     0x8005b200
         li      a0,4
-        lui     a2,0x809f
-        addiu   a2,a2,32476 /* 0x7EDC, A2 = 0x809F7EDC = within .data section */
+        #lui     a2,0x809f
+        #addiu   a2,a2,32476 /* 0x7EDC, A2 = 0x809F7EDC = within .data section */
+        la      a3, (En_Dodojr_data + 0x4C)
         addiu   a0,s0,152
         jal     0x80061efc
         move    a1,v0
         lw      t0,4(s0)
-        li      at,-2
+        li      $at,-2
         li      t9,14
         lui     a1,0x3ca3
-        and     t1,t0,at
+        and     t1,t0,$at
         sb      t9,279(s0)
         sw      t1,4(s0)
         ori     a1,a1,0xd70a
         jal     0x8002d62c
         move    a0,s0
-        lui     t2,0x809f
-        addiu   t2,t2,29612 /* 0x73AC, t2 = 0x809F73AC = En_Dodojr_f21 */
+        #lui     t2,0x809f
+        #addiu   t2,t2,29612 /* 0x73AC, t2 = 0x809F73AC = En_Dodojr_f21 */
+        la      t2, En_Dodojr_f21
         sw      t2,400(s0)
         lw      ra,44(sp)
         lw      s0,40(sp)

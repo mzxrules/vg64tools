@@ -21,10 +21,10 @@ En_Dodojr_f7:
         jal     0x800a2000
         addiu   a0,a0,2144
         mtc1    v0,$f4
-        lui     at,0xc120
+        lui     $at,0xc120
         lw      v1,40(sp)
         cvt.s.w $f6,$f4
-        mtc1    at,$f8
+        mtc1    $at,$f8
         lui     a1,0x600
         lui     a2,0x3fe6
         li      t6,1
@@ -38,12 +38,18 @@ En_Dodojr_f7:
         swc1    $f8,24(sp)
         lw      v1,40(sp)
         mtc1    zero,$f10
-        lui     at,0x809f
+        #lui     $at,0x809f
         swc1    $f10,96(v1)
-        lwc1    $f16,32624(at)
-        lui     at,0x809f
+        #lwc1    $f16,32624($at)
+        .set at
+        lwc1    $f16, (En_Dodojr_rodata + 0)
+        .set noat
+        #lui     $at,0x809f
         swc1    $f16,104(v1)
-        lwc1    $f18,32628(at)
+        #lwc1    $f18,32628($at)
+        .set at
+        lwc1    $f18, (En_Dodojr_rodata + 4)
+        .set noat
         swc1    $f18,108(v1)
         lw      ra,36(sp)
         addiu   sp,sp,40

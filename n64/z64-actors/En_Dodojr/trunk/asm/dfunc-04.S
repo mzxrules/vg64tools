@@ -15,7 +15,7 @@
 En_Dodojr_f4:        
 
         addiu   sp,sp,-168
-        lui     t6,0x809f
+        #lui     t6,0x809f
         sw      ra,108(sp)
         sw      s8,104(sp)
         sw      s7,100(sp)
@@ -29,23 +29,27 @@ En_Dodojr_f4:
         sdc1    $f24,64(sp)
         sdc1    $f22,56(sp)
         sdc1    $f20,48(sp)
-        addiu   t6,t6,32488 /* 0x7EE8, t6 = 0x809F7EE8 = within .data section */
+        #addiu   t6,t6,32488 /* 0x7EE8, t6 = 0x809F7EE8 = within .data section */
+        la      t6, (En_Dodojr_data + 0x58)
         lw      t8,0(t6)
         addiu   s5,sp,164
-        lui     t9,0x809f
-        addiu   t9,t9,32492 /* 0x7EEC, t9 = 0x809F7EEC = within .data section */
+        #lui     t9,0x809f
+        #addiu   t9,t9,32492 /* 0x7EEC, t9 = 0x809F7EEC = within .data section */
+        la      t9, (En_Dodojr_data + 0x5C)
         sw      t8,0(s5)
         lw      t1,0(t9)
         addiu   s6,sp,160
-        lui     t2,0x809f
-        addiu   t2,t2,32496 /* 0x7EF0, t2 = 0x809F7EF0 = within .data section */
+        #lui     t2,0x809f
+        #addiu   t2,t2,32496 /* 0x7EF0, t2 = 0x809F7EF0 = within .data section */
+        la      t2, (En_Dodojr_data + 0x60)
         sw      t1,0(s6)
         lw      t4,0(t2)
         addiu   s7,sp,148
-        lui     t5,0x809f
+        #lui     t5,0x809f
         sw      t4,0(s7)
         lw      t3,4(t2)
-        addiu   t5,t5,32508 /* 0x7EFC, t5 = 0x809F7EFC = within .data section */
+        #addiu   t5,t5,32508 /* 0x7EFC, t5 = 0x809F7EFC = within .data section */
+        la      t5, (En_Dodojr_data + 0x6C)
         addiu   s8,sp,136
         sw      t3,4(s7)
         lw      t4,8(t2)
@@ -60,10 +64,10 @@ En_Dodojr_f4:
         sw      t7,8(s8)
         jal     0x800fd9ac
         sw      a2,176(sp)
-        lui     at,0x3f00
-        mtc1    at,$f20
-        lui     at,0x4780
-        mtc1    at,$f6
+        lui     $at,0x3f00
+        mtc1    $at,$f20
+        lui     $at,0x4780
+        mtc1    $at,$f6
         sub.s   $f4,$f0,$f20
         lw      a2,176(sp)
         lwc1    $f16,500(s2)
@@ -82,19 +86,19 @@ En_Dodojr_f4:
         nop
         break   0x7
 Lf4_00:
-        li      at,-1
-        bne     a2,at,Lf4_01
-        lui     at,0x8000
-        bne     t9,at,Lf4_01
+        li      $at,-1
+        bne     a2,$at,Lf4_01
+        lui     $at,0x8000
+        bne     t9,$at,Lf4_01
         nop
         break   0x6
 Lf4_01
-        lui     at,0x41b0
-        mtc1    at,$f24
-        lui     at,0x4080
+        lui     $at,0x41b0
+        mtc1    $at,$f24
+        lui     $at,0x4080
         mflo    s3
         sll     s3,s3,0x10
-        mtc1    at,$f22
+        mtc1    $at,$f22
         sra     s3,s3,0x10
 Lf4_02:
         jal     0x800fd9ac
