@@ -92,6 +92,7 @@ extern void func_800A15C8 (  );
 #define sp      $29
 #define ra      $31
 #define zero    $0
+#define s8	$30
 
 #endif /* __LANGUAGE_C__ */
 

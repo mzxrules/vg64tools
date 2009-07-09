@@ -92,7 +92,7 @@ Lf4_00:
         bne     t9,$at,Lf4_01
         nop
         break   0x6
-Lf4_01
+Lf4_01:
         lui     $at,0x41b0
         mtc1    $at,$f24
         lui     $at,0x4080

@@ -95,9 +95,9 @@ CC   = mips-gcc
 LD   = mips-ld
 NOVL = nOVL
 
-ASFLAGS   = -I ../../z_snippets
-CFLAGS    = -G 0 -Os --std=gnu99 -mtune=vr4300 -I ../../z_snippets
-LDFLAGS   = -L ../../gnu-toolchain -T z64-ovl.ld --emit-relocs
+ASFLAGS   = -I ../../../z_snippets
+CFLAGS    = -G 0 -Os --std=gnu99 -mtune=vr4300 -I ../../../z_snippets
+LDFLAGS   = -L ../../../gnu-toolchain -T z64-ovl.ld --emit-relocs
 NOVLFLAGS = -vv -c -A $(ADDRESS) -o $(FINAL).ovl
 
 default: $(PROGRAM).ovl
