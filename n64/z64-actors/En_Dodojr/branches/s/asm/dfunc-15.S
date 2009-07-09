@@ -15,9 +15,12 @@
 En_Dodojr_f15:        
 
         addiu   sp,sp,-128
-        lui     t7,0x809f
         sw      s0,32(sp)
-        addiu   t7,t7,32564
+	
+        lui     t7,0x809f		# 0x809F7F34
+        addiu   t7,t7,32564		# .data + 164
+	la	t7,(En_Dodojr_data+164)
+	
         move    s0,a0
         sw      ra,36(sp)
         sw      a1,132(sp)
@@ -61,7 +64,7 @@ Lf15_02:
         lw      t5,40(v1)
         sw      t5,4(t4)
         lw      t0,44(v1)
-        b       0xLf15_04
+        b       Lf15_04
         sw      t0,8(t4)
 Lf15_03:
         lw      t8,36(a2)
