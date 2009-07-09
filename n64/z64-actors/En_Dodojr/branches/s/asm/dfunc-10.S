@@ -34,9 +34,14 @@ En_Dodojr_f10:
         addiu   a0,v1,332
         jal     0x800a51a0
         swc1    $f8,24(sp)
-        lui     $at,0x809f
+	
+	.set		at
+        #lui     $at,0x809f		# 0x809F7F80
+        #lwc1    $f10,32640($at)	# rodata+16
+	lwc1	$f10,(En_Dodojr_rodata+16)
+	.set		noat
+	
         lw      v1,40(sp)
-        lwc1    $f10,32640($at)
         lui     $at,0x4120
         mtc1    $at,$f16
         li      t6,3
