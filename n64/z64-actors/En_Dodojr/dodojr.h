@@ -89,8 +89,9 @@ extern void func_800A15C8 (  );
 
 #include <mips.h>
 
-#define sp $29
-#define ra $31
+#define sp      $29
+#define ra      $31
+#define zero    $0
 
 #endif /* __LANGUAGE_C__ */
 
