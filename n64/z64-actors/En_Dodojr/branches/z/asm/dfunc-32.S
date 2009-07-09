@@ -30,18 +30,20 @@ En_Dodojr_f32:
         lh      t7,180(s0)
         move    a0,s0
         sh      t7,48(s0)
-        jal     0x809f68b0
+        jal     En_Dodojr_f6
         lw      a1,44(sp)
-        beqz    v0,0x809f7b28
+        beqz    v0,$Lf32_01
         li      t8,60
         sh      t8,514(s0)
-        jal     0x809f6ac4
+        jal     En_Dodojr_f9
         move    a0,s0
-        lui     t0,0x809f
         li      t9,7
-        addiu   t0,t0,31548
+        #lui     t0,0x809f		# 0x809F7B3C
+        #addiu   t0,t0,31548		# En_Dodojr_f33
+	la	t0,En_Dodojr_f33
         sh      t9,508(s0)
         sw      t0,400(s0)
+$Lf32_01:
         lw      ra,36(sp)
         lw      s0,32(sp)
         addiu   sp,sp,40
