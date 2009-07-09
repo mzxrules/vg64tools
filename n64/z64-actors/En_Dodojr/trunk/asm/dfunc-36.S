@@ -21,11 +21,14 @@ En_Dodojr_f36:
         sw      a1,44(sp)
         jal     0x800a49fc
         addiu   a0,a0,332
+	
         jal     0x8002d8e0
         move    a0,s0
+	
         move    a0,s0
         jal     En_Dodojr_f19
         lw      a1,44(sp)
+	
         lw      v0,400(s0)
         #lui     t6,0x809f		# 0x809F73AC
         #addiu   t6,t6,29612		# En_Dodojr_f21
@@ -53,12 +56,15 @@ En_Dodojr_f36:
 $Lf36_01:
         jalr    v0
         lw      a1,44(sp)
+	
         move    a0,s0
         jal     0x8002d5b8
         lui     a1,0x4120
+	
         move    a0,s0
         jal     En_Dodojr_f20
         lw      a1,44(sp)
+	
         lw      ra,36(sp)
         lw      s0,32(sp)
         addiu   sp,sp,40
