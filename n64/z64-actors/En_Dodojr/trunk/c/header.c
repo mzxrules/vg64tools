@@ -1,7 +1,6 @@
 #include <mips.h>
-#include <stdio.h>
 #include <actor.h>
-#include "bird.h"
+#include "../dodojr.h"
 
 /*
  809F7E90 | 002F0500 00000005 001F0000 000002C0
