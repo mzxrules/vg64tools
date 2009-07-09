@@ -19,8 +19,9 @@ En_Dodojr_f37:
         sw      a0,48(sp)
         sw      a2,56(sp)
         sw      a3,60(sp)
-        lui     t7,0x809f		# 0x809F7F64
-        addiu   t7,t7,32612		# 
+        #lui     t7,0x809f		# 0x809F7F64
+        #addiu   t7,t7,32612		# 
+	la	t7,En_Dodojr_data + 212
         lw      t9,0(t7)
         addiu   t6,sp,32
         lw      t8,4(t7)
