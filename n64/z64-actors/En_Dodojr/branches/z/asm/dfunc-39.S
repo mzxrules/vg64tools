@@ -24,7 +24,7 @@ En_Dodojr_f39:
         #addiu   t6,t6,29612     	# En_Dodojr_f21
 	la	t6,En_Dodojr_f21
 	
-        beq     t6,v0,$Lf32_01
+        beq     t6,v0,$Lf39_01
         move    s0,a0
 	
         #lui     t7,0x809f		# 0x809F7BE4
@@ -51,7 +51,7 @@ En_Dodojr_f39:
         sw      t9,16(sp)
         jal     0x800a15c8
         lw      a0,44(sp)
-$Lf32_01:
+$Lf39_01:
         lw      ra,36(sp)
 $Lf32_21:
         lw      s0,32(sp)
