@@ -26,8 +26,11 @@ En_Dodojr_f18:
         jal     En_Dodojr_f8
         sw      t7,4(a0)
         lw      a0,24(sp)
-        lui     t8,0x809f
-        addiu   t8,t8,31416
+        
+        #lui     t8,0x809f          # 0x809F7AB8
+        #addiu   t8,t8,31416        # En_Dodojr_f32
+        la      t8,En_Dodojr_f32
+        
         sw      t8,400(a0)
         lw      ra,20(sp)
         addiu   sp,sp,24
