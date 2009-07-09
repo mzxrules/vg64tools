@@ -21,16 +21,20 @@ En_Dodojr_f28:
         jal     0x8002d868
         sw      a1,44(sp)
         move    a0,s0
-        jal     0x809f68b0
+        jal     En_Dodojr_f6
         lw      a1,44(sp)
-        beqzl   v0,0x809f78b0
+        beqzl   v0,$Lf28_01
         li      t7,10
-        jal     0x809f6ac4
+        jal     En_Dodojr_f9
         move    a0,s0
-        lui     t6,0x809f
-        addiu   t6,t6,30956
+	
+        #lui     t6,0x809f		# 0x809F78EC
+        #addiu   t6,t6,30956		# En_Dodojr_f29
+	la	t6,En_Dodojr_f29
+	
         sw      t6,400(s0)
         li      t7,10
+$Lf28_01:
         sw      t7,16(sp)
         addiu   a0,s0,182
         move    a1,zero
