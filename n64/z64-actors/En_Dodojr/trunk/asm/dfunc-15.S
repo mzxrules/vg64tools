@@ -19,7 +19,7 @@ En_Dodojr_f15:
 	
         #lui     t7,0x809f		# 0x809F7F34
         #addiu   t7,t7,32564		# .data + 164
-	la	t7,(En_Dodojr_data+164)
+	la	t7,(__data_start+164)
 	
         move    s0,a0
         sw      ra,36(sp)

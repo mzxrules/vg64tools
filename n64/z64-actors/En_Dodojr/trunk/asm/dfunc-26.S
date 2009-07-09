@@ -34,7 +34,7 @@ $Lf26_01:
 	.set		at
         #lui     $at,0x809f		# 0x809F7F90
         #lwc1    $f18,32656($at)	#
-	lwc1	$f18,(En_Dodojr_rodata + 20)
+	lwc1	$f18,(__rodata_start + 20)
 	.set		noat
 	
         div.s   $f16,$f6,$f10

@@ -39,7 +39,7 @@ En_Dodojr_f12:
 	.set		at
         #lui     $at,0x809f		# 0x809F7F88
         #lwc1    $f8,32648($at)		# rodata+24
-	lwc1	$f8,(En_Dodojr_rodata+24)
+	lwc1	$f8,(__rodata_start+24)
 	.set		noat
         
         swc1    $f8,108(s0)

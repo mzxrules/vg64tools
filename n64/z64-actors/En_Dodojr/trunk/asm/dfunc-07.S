@@ -42,13 +42,13 @@ En_Dodojr_f7:
         swc1    $f10,96(v1)
         #lwc1    $f16,32624($at)
         .set at
-        lwc1    $f16, (En_Dodojr_rodata + 0)
+        lwc1    $f16, (__rodata_start + 0)
         .set noat
         #lui     $at,0x809f
         swc1    $f16,104(v1)
         #lwc1    $f18,32628($at)
         .set at
-        lwc1    $f18, (En_Dodojr_rodata + 4)
+        lwc1    $f18, (__rodata_start + 4)
         .set noat
         swc1    $f18,108(v1)
         lw      ra,36(sp)

@@ -26,7 +26,7 @@ En_Dodojr_f11:
 	.set		at
         #lui     $at,0x809f		# 0x809F7F84
         #lwc1    $f6,32644($at)		# rodata + 20
-	lwc1	$f6,(En_Dodojr_rodata+20)
+	lwc1	$f6,(__rodata_start+20)
 	.set		noat
 	
 	

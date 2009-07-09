@@ -16,7 +16,7 @@ En_Dodojr_f13:
 
         #lui     t6,0x809f		# 0x809F7F28
         #addiu   t6,t6,32552		# .data+152
-	la	t6,(En_Dodojr_data+152)
+	la	t6,(__data_start+152)
         
         lw      t8,0(t6)
         addiu   sp,sp,-48

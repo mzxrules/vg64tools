@@ -44,7 +44,7 @@ En_Dodojr_f8:
         swc1    $f0,100(s0)
         #lwc1    $f10,32632($at)
         .set at
-        lwc1    $f10, (En_Dodojr_rodata + 8)
+        lwc1    $f10, (__rodata_start + 8)
         .set noat
         lui     $at,0x4120
         bnez    t7, Lf8_00

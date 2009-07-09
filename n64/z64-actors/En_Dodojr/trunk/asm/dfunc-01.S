@@ -44,7 +44,7 @@ En_Dodojr_f1:
         #lui     a3,0x809f
         lw      a1,52(sp)
         #addiu   a3,a3,32432 /* 0x7EBO, A3 = 0x809F7EB0 = within .data section */
-        la      a3, (En_Dodojr_data + 0x20)
+        la      a3,(__data_start + 32)
         lw      a0,68(sp)
         jal     0x8005c4ac
         move    a2,s0
@@ -52,7 +52,7 @@ En_Dodojr_f1:
         li      a0,4
         #lui     a2,0x809f
         #addiu   a2,a2,32476 /* 0x7EDC, A2 = 0x809F7EDC = within .data section */
-        la      a3, (En_Dodojr_data + 0x4C)
+        la      a3, (__data_start + 0x4C)
         addiu   a0,s0,152
         jal     0x80061efc
         move    a1,v0

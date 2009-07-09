@@ -30,18 +30,18 @@ En_Dodojr_f4:
         sdc1    $f22,56(sp)
         sdc1    $f20,48(sp)
         #addiu   t6,t6,32488 /* 0x7EE8, t6 = 0x809F7EE8 = within .data section */
-        la      t6, (En_Dodojr_data + 0x58)
+        la      t6, (__data_start + 0x58)
         lw      t8,0(t6)
         addiu   s5,sp,164
         #lui     t9,0x809f
         #addiu   t9,t9,32492 /* 0x7EEC, t9 = 0x809F7EEC = within .data section */
-        la      t9, (En_Dodojr_data + 0x5C)
+        la      t9, (__data_start + 0x5C)
         sw      t8,0(s5)
         lw      t1,0(t9)
         addiu   s6,sp,160
         #lui     t2,0x809f
         #addiu   t2,t2,32496 /* 0x7EF0, t2 = 0x809F7EF0 = within .data section */
-        la      t2, (En_Dodojr_data + 0x60)
+        la      t2, (__data_start + 0x60)
         sw      t1,0(s6)
         lw      t4,0(t2)
         addiu   s7,sp,148
@@ -49,7 +49,7 @@ En_Dodojr_f4:
         sw      t4,0(s7)
         lw      t3,4(t2)
         #addiu   t5,t5,32508 /* 0x7EFC, t5 = 0x809F7EFC = within .data section */
-        la      t5, (En_Dodojr_data + 0x6C)
+        la      t5, (__data_start + 0x6C)
         addiu   s8,sp,136
         sw      t3,4(s7)
         lw      t4,8(t2)
