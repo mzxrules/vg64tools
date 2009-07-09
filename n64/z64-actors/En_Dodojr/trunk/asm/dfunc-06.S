@@ -30,7 +30,7 @@ En_Dodojr_f6:
 Lf6_00:
         bnezl   t6,Lf6_01
         lhu     t7,136(a0)
-        b       0x809f6984
+        b       Lf6_03
         move    v0,zero
         lhu     t7,136(a0)
 Lf6_01:
