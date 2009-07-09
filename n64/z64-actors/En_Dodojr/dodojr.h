@@ -1,8 +1,10 @@
 #ifndef __Z_EN_DODOJR_H__
 #define __Z_EN_DODOJR_H__
 
-#include "mips.h"
-#include "actor.h"
+#ifdef __LANGUAGE_C__
+
+#include <mips.h>
+#include <actor.h>
 
 extern void En_Dodojr_f1 ( void *, void * );	/* 809f63c0 */
 extern void En_Dodojr_f2 ( void *, void * );	/* 809f64a8 */
@@ -83,4 +85,14 @@ extern void func_800D1AF4 (  );
 extern void func_80093D18 (  );
 extern void func_800A15C8 (  );
 
+#else
+
+#include <mips.h>
+
+#define sp $29
+#define ra $31
+
+#endif /* __LANGUAGE_C__ */
+
 #endif /* __Z_EN_DODOJR_H__ */
+
