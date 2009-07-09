@@ -312,14 +312,14 @@ En_Dodojr_f5:
         addiu	sp,sp,-96
         lui	t6,0x809f
         lui	t7,0x809f
-        lw	t6,32520(t6)
-        lw	t7,32524(t7)
+        lw	t6,32520(t6) /* 0x7F08, t6 = 0x809F7F08 = within .data section */
+        lw	t7,32524(t7) /* 0x7F0C, t7 = 0x809F7F0C = within .data section */
         lui	t9,0x809f
         sw	ra,44(sp)
         sw	a0,96(sp)
         sw	a1,100(sp)
         sw	a2,104(sp)
-        addiu	t9,t9,32528
+        addiu	t9,t9,32528 /* 0x7F10, t9 = 0x809F7F10 = within .data section */
         sw	t6,92(sp)
         sw	t7,88(sp)
         lw	t1,0(t9)
@@ -328,7 +328,7 @@ En_Dodojr_f5:
         sw	t1,0(t8)
         lw	t1,8(t9)
         lui	t3,0x809f
-        addiu	t3,t3,32540
+        addiu	t3,t3,32540 /* 0x7F1C, t3 = 0x809F7F1C = within .data section */
         sw	t0,4(t8)
         sw	t1,8(t8)
         lw	t5,0(t3)
@@ -431,19 +431,21 @@ En_Dodojr_f6:
         nop
         c.le.s	$f6,$f4
         nop
-        bc1fl	0x809f68e4
+        bc1fl	Lf6_00
         lh	t6,508(a0)
-        b	0x809f6984
+        b	Lf6_03
         move	v0,zero
         lh	t6,508(a0)
-        bnezl	t6,0x809f68f8
+Lf6_00:
+        bnezl	t6,Lf6_01
         lhu	t7,136(a0)
         b	0x809f6984
         move	v0,zero
         lhu	t7,136(a0)
+Lf6_01:
         li	a1,14459
         andi	t8,t7,0x1
-        beqzl	t8,0x809f6984
+        beqzl	t8,Lf6_03
         move	v0,zero
         jal	0x8002f828
         sw	a0,24(sp)
@@ -469,13 +471,15 @@ En_Dodojr_f6:
         cvt.s.w	$f16,$f10
         lh	t4,508(a0)
         div.s	$f18,$f8,$f16
-        bnez	t4,0x809f6980
+        bnez	t4,Lf6_02
         swc1	$f18,96(a0)
         mtc1	zero,$f4
         li	v0,1
-        b	0x809f6984
+        b	Lf6_03
         swc1	$f4,96(a0)
+Lf6_02:
         move	v0,zero
+Lf6_03:
         lw	ra,20(sp)
         addiu	sp,sp,24
         jr	ra
@@ -581,12 +585,13 @@ En_Dodojr_f8:
         swc1	$f0,100(s0)
         lwc1	$f10,32632(at)
         lui	at,0x4120
-        bnez	t7,0x809f6ab0
+        bnez	t7,Lf8_00
         swc1	$f10,108(s0)
         mtc1	at,$f16
         li	t8,3
         sh	t8,508(s0)
         swc1	$f16,96(s0)
+Lf8_00:
         lw	ra,44(sp)
         lw	s0,40(sp)
         addiu	sp,sp,48
@@ -816,25 +821,29 @@ En_Dodojr_f13:
         lw	v0,7244(a1)
         sw	zero,480(a0)
         li	a1,16
-        beqzl	v0,0x809f6dc8
+        beqzl	v0,Lf13_07
         move	v0,v1
         lh	t9,28(v0)
-        bnez	t9,0x809f6d08
+Lf13_00:
+        bnez	t9, Lf13_01
         nop
         lw	t0,280(v0)
-        bnez	t0,0x809f6d08
+        bnez	t0, Lf13_01
         nop
         lw	t1,304(v0)
-        bnezl	t1,0x809f6d14
+        bnezl	t1,Lf13_02
         lh	t2,0(v0)
-        b	0x809f6dbc
+Lf13_01:
+        b	Lf13_06
         lw	v0,292(v0)
         lh	t2,0(v0)
-        beql	a1,t2,0x809f6d28
+Lf13_02
+        beql	a1,t2,Lf13_03
         lwc1	$f4,36(v0)
-        b	0x809f6dbc
+        b	Lf13_06
         lw	v0,292(v0)
         lwc1	$f4,36(v0)
+Lf13_03
         lwc1	$f6,36(a0)
         lwc1	$f0,32(sp)
         lwc1	$f8,40(v0)
@@ -847,23 +856,25 @@ En_Dodojr_f13:
         c.le.s	$f0,$f16
         lwc1	$f0,36(sp)
         sub.s	$f12,$f8,$f10
-        bc1t	0x809f6d90
+        bc1t	Lf13_04
         sub.s	$f14,$f18,$f4
         abs.s	$f2,$f12
         abs.s	$f0,$f0
         c.le.s	$f0,$f2
         lwc1	$f0,40(sp)
-        bc1t	0x809f6d90
+        bc1t	Lf13_04
         nop
         abs.s	$f2,$f14
         abs.s	$f0,$f0
         c.le.s	$f0,$f2
         nop
-        bc1fl	0x809f6d9c
+        bc1fl	Lf13_05
         sw	v0,480(a0)
-        b	0x809f6dbc
+Lf13_04:
+        b	Lf13_06
         lw	v0,292(v0)
         sw	v0,480(a0)
+Lf13_05:
         lw	t4,36(v0)
         li	v1,1
         sw	t4,0(a2)
@@ -872,9 +883,11 @@ En_Dodojr_f13:
         lw	t4,44(v0)
         sw	t4,8(a2)
         lw	v0,292(v0)
-        bnezl	v0,0x809f6ce8
+Lf13_06:
+        bnezl	v0, Lf13_00
         lh	t9,28(v0)
         move	v0,v1
+Lf13_07:
         jr	ra
         addiu	sp,sp,48
         .end            En_Dodojr_f13
