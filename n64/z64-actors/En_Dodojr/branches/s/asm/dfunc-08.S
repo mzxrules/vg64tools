@@ -38,11 +38,14 @@ En_Dodojr_f8:
         swc1    $f8,24(sp)
         mtc1    zero,$f0
         lh      t7,508(s0)
-        lui     $at,0x809f
+        #lui     $at,0x809f
         swc1    $f0,104(s0)
         swc1    $f0,92(s0)
         swc1    $f0,100(s0)
-        lwc1    $f10,32632($at)
+        #lwc1    $f10,32632($at)
+        .set at
+        lwc1    $f10, (En_Dodojr_rodata + 8)
+        .set noat
         lui     $at,0x4120
         bnez    t7, Lf8_00
         swc1    $f10,108(s0)
