@@ -71,8 +71,8 @@ En_Dodojr_f21:
         lw      t4,44(s0)
         lwc1    $f16,128(s0)
 	
-        lui     t5,0x809f		# 0x809F74C4
-        addiu   t5,t5,29892		# En_Dodojr_f22
+        #lui     t5,0x809f		# 0x809F74C4
+        #addiu   t5,t5,29892		# En_Dodojr_f22
 	la	t5,En_Dodojr_f22
 	
         ori     t9,t8,0x1
