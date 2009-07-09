@@ -105,7 +105,7 @@ default: $(PROGRAM).ovl
 
 $(PROGRAM).ovl: $(PROGRAM).elf
 	$(NOVL) $(NOVLFLAGS) $(PROGRAM).elf
-	nOVLins -a 0x2F -o 0x03FF0000 $(FINAL).ovl $(TGT_ROM)
+	nOVLins -a 0x2F $(FINAL).ovl $(TGT_ROM)
 
 $(PROGRAM).elf: $(PARTS)
 	$(LD) -o $(PROGRAM).elf $(PARTS) $(LDFLAGS)

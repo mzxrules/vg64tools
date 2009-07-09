@@ -34,7 +34,6 @@ $Lf29_02:
         beqz    t7,$Lf29_05
         lui     $at,0x3fc0
         lui     $at,0x3fc0
-$Lf29_05:
         mtc1    $at,$f0
         lwc1    $f4,36(a0)
         lwc1    $f8,44(a0)
@@ -43,6 +42,7 @@ $Lf29_05:
         swc1    $f6,36(a0)
         b       $Lf29_04
         swc1    $f10,44(a0)
+$Lf29_05:
         mtc1    $at,$f0
         lwc1    $f16,36(a0)
         lwc1    $f4,44(a0)

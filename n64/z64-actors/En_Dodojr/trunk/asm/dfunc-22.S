@@ -48,17 +48,18 @@ En_Dodojr_f22:
         lui     t8,0x8003
         addiu   t8,t8,-18964
         c.eq.s  $f0,$f4
-        bc1fl   $Lf22_01
-        lw      ra,36(sp)
-        lh      t9,180(s0)
-        sw      t8,192(s0)
-        sh      t9,48(s0)
         
 	.set		at
 	#lui     $at,0x809f		# 0x809F7F8C
         #lwc1    $f6,32652($at)		# rodata+28
 	lwc1	$f6,(__rodata_start+28)
 	.set		noat
+	
+        bc1fl   $Lf22_01
+        lw      ra,36(sp)
+        lh      t9,180(s0)
+        sw      t8,192(s0)
+        sh      t9,48(s0)
 	
         #lui     t0,0x809f		# 0x809F758C
         #addiu   t0,t0,30092		# En_Dodojr_f23

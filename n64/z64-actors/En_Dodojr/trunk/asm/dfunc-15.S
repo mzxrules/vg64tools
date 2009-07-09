@@ -42,12 +42,12 @@ Lf15_00:
         beqz    v1,Lf15_01
         lw      a2,7236(t1)
         lw      t2,304(v1)
-        beqzl   t2,Lf15_02
+        beqzl   t2,Lf15_02  #Right
         lw      a1,132(sp)
-        beqz    v1,Lf15_02
+        beqz    v1,Lf15_02_
         nop
         lw      t3,280(v1)
-        beqz    t3,Lf15_02
+        beqz    t3,Lf15_02_
         nop
 Lf15_01:
         lw      a1,132(sp)
@@ -56,6 +56,7 @@ Lf15_02:
         sw      a2,72(sp)
         lw      a2,72(sp)
         lw      v1,480(s0)
+Lf15_02_:
         beqz    v1,Lf15_03
         addiu   a0,s0,36
         lw      t0,36(v1)
