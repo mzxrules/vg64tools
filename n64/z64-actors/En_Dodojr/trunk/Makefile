@@ -8,7 +8,6 @@ HEADER = c/header.o
 DATA = asm/data.o asm/rodata.o
 
 SRC_ASM	=		\
-        asm/dfunc-02.o	\
         asm/dfunc-03.o	\
         asm/dfunc-04.o	\
         asm/dfunc-05.o	\
@@ -47,10 +46,11 @@ SRC_ASM	=		\
         asm/dfunc-38.o	\
         asm/dfunc-39.o
 #       asm/dfunc-01.o	\
+#       asm/dfunc-02.o	\
 
 SRC_C =			\
         c/dfunc-01.o	\
-#       c/dfunc-02.o	\
+        c/dfunc-02.o	\
 #       c/dfunc-03.o	\
 #       c/dfunc-04.o	\
 #       c/dfunc-05.o	\
