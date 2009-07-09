@@ -49,7 +49,7 @@ Lf15_00:
 Lf15_01:
         lw      a1,132(sp)
 Lf15_02:
-        jal     0x809f6ca4
+        jal     En_Dodojr_f13
         sw      a2,72(sp)
         lw      a2,72(sp)
         lw      v1,480(s0)

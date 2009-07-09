@@ -59,7 +59,7 @@ Lf19_01:
         addiu   t6,t6,-18964
         sw      t6,192(s0)
 Lf19_02:
-        jal     0x809f709c
+        jal     En_Dodojr_f18
         move    a0,s0
 Lf19_03:
         b       Lf19_10
@@ -124,7 +124,7 @@ Lf19_08:
         li      a2,200
         jal     0x8003426c
         move    a3,zero
-        jal     0x809f6a20
+        jal     En_Dodojr_f8
         move    a0,s0
         lw      t8,40(sp)
         sw      t8,400(s0)

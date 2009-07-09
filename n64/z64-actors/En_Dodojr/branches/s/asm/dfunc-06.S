@@ -48,7 +48,7 @@ Lf6_01:
         lw      t0,44(a0)
         sw      t9,500(a0)
         sw      t0,504(a0)
-        jal     0x809f6510
+        jal     En_Dodojr_f4
         lw      a1,28(sp)
         lw      a0,24(sp)
         li      t1,4

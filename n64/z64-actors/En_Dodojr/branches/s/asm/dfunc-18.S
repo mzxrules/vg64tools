@@ -23,7 +23,7 @@ En_Dodojr_f18:
         li      $at,-2
         lw      t6,4(a0)
         and     t7,t6,$at
-        jal     0x809f6a20
+        jal     En_Dodojr_f8
         sw      t7,4(a0)
         lw      a0,24(sp)
         lui     t8,0x809f
