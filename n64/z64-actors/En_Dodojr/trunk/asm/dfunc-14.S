@@ -18,17 +18,17 @@ En_Dodojr_f14:
         sw      ra,20(sp)
         lw      v0,480(a0)
         move    a2,a0
-        bnezl   v0, Lf4_00
+        bnezl   v0, Lf14_00
         lw      t6,280(v0)
-        b       Lf4_03
+        b       Lf14_03
         move    v0,zero
         lw      t6,280(v0)
 Lf14_00:
         addiu   a0,a2,36
         addiu   a1,v0,36
-        beqz    t6, Lf4_01
+        beqz    t6, Lf14_01
         nop
-        b       Lf4_03
+        b       Lf14_03
         move    v0,zero
 Lf14_01:
         jal     0x80077f90
@@ -38,9 +38,9 @@ Lf14_01:
         lw      a2,24(sp)
         c.lt.s  $f4,$f0
         nop
-        bc1fl   Lf4_02
+        bc1fl   Lf14_02
         lw      t7,480(a2)
-        b       Lf4_03
+        b       Lf14_03
         move    v0,zero
         lw      t7,480(a2)
 Lf14_02:
