@@ -3,6 +3,8 @@ FINAL   = ovl_$(PROGRAM)
 ADDRESS = 0x809F63C0
 TGT_ROM = ZELOOTMA.Z64
 
+HEADER = c/header.o
+
 SRC_ASM	=		\
 	asm/data.o	\
 	asm/rodata.o	\
@@ -47,7 +49,6 @@ SRC_ASM	=		\
         asm/dfunc-39.o
 
 SRC_C =			\
-	c/header.o	\
 #       c/dfunc-01.o	\
 #       c/dfunc-02.o	\
 #       c/dfunc-03.o	\
@@ -88,7 +89,7 @@ SRC_C =			\
 #       c/dfunc-38.o	\
 #       c/dfunc-39.o
 
-PARTS = $(SRC_ASM) $(SRC_C)
+PARTS = $(HEADER) $(SRC_ASM) $(SRC_C)
 
 
 CC   = mips-gcc
