@@ -22,22 +22,37 @@ En_Dodojr_f20:
         jal     0x800626dc
         sw      a0,40(sp)
         lw      a3,40(sp)
-        lui     t6,0x809f
-        addiu   t6,t6,29612
+	
+        #lui     t6,0x809f		# 0x809F73AC
+        #addiu   t6,t6,29612		# En_Dodojr_f21
+	la	t6,En_Dodojr_f21
+	
         lw      v0,400(a3)
-        lui     t7,0x809f
-        addiu   t7,t7,31716
+	
+        #lui     t7,0x809f		# 0x809F7BE4
+        #addiu   t7,t7,31716		# En_Dodojr_f34
+	la	t7,En_Dodojr_f34
+	
         beql    t6,v0,Lf20_05
         lw      ra,20(sp)
         beq     t7,v0,Lf20_04
-        lui     v1,0x809f
-        addiu   v1,v1,29892
+	
+        #lui     v1,0x809f		# 0x809F74C4
+        #addiu   v1,v1,29892		# En_Dodojr_f22
+	la	v1,En_Dodojr_f22
+	
         beq     v1,v0,Lf20_00
-        lui     t8,0x809f
-        addiu   t8,t8,30092
+	
+        #lui     t8,0x809f		# 0x809F758C
+        #addiu   t8,t8,30092		# En_Dodojr_f23
+	la	t8,En_Dodojr_f23
+	
         beq     t8,v0,Lf20_00
-        lui     t9,0x809f
-        addiu   t9,t9,31132
+	
+        #lui     t9,0x809f		# 0x809F799C
+        #addiu   t9,t9,31132		# En_Dodojr_f30
+	la	t9,En_Dodojr_f30
+	
         bnel    t9,v0,Lf20_01
         lw      a0,44(sp)
 Lf20_00:
@@ -58,17 +73,29 @@ Lf20_01:
         ori     $at,$at,0x1e60
         beq     v1,v0,Lf20_02
         addu    a1,a0,$at
-        lui     t0,0x809f
-        addiu   t0,t0,30092
+	
+        #lui     t0,0x809f		# 0x809F758C
+        #addiu   t0,t0,30092		# En_Dodojr_f23
+	la	t0,En_Dodojr_f23
+	
         beq     t0,v0,Lf20_02
-        lui     t1,0x809f
-        addiu   t1,t1,30828
+	
+        #lui     t1,0x809f		# 0x809F786C
+        #addiu   t1,t1,30828		# En_Dodojr_f28
+	la	t1,En_Dodojr_f28
+	
         beq     t1,v0,Lf20_02
-        lui     t2,0x809f
-        addiu   t2,t2,30956
+	
+        #lui     t2,0x809f		# 0x809F78EC
+        #addiu   t2,t2,30956		# En_Dodojr_f29
+	la	t2,En_Dodojr_f29
+	
         beq     t2,v0,Lf20_02
-        lui     t3,0x809f
-        addiu   t3,t3,31132
+	
+        #lui     t3,0x809f		# 0x809F799C
+        #addiu   t3,t3,31132		# En_Dodojr_f30
+	la	t3,En_Dodojr_f30
+	
         bne     t3,v0,Lf20_03
         nop
 Lf20_02:
