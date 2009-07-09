@@ -8,7 +8,6 @@ HEADER = c/header.o
 DATA = asm/data.o asm/rodata.o
 
 SRC_ASM	=		\
-        asm/dfunc-01.o	\
         asm/dfunc-02.o	\
         asm/dfunc-03.o	\
         asm/dfunc-04.o	\
@@ -47,9 +46,10 @@ SRC_ASM	=		\
         asm/dfunc-37.o	\
         asm/dfunc-38.o	\
         asm/dfunc-39.o
+#       asm/dfunc-01.o	\
 
 SRC_C =			\
-#       c/dfunc-01.o	\
+        c/dfunc-01.o	\
 #       c/dfunc-02.o	\
 #       c/dfunc-03.o	\
 #       c/dfunc-04.o	\
@@ -89,7 +89,7 @@ SRC_C =			\
 #       c/dfunc-38.o	\
 #       c/dfunc-39.o
 
-PARTS = $(HEADER) $(DATA) $(SRC_ASM) $(SRC_C)
+PARTS = $(HEADER) $(DATA) $(SRC_C) $(SRC_ASM) 
 
 
 CC   = mips-gcc
@@ -105,7 +105,7 @@ default: $(PROGRAM).ovl
 
 $(PROGRAM).ovl: $(PROGRAM).elf
 	$(NOVL) $(NOVLFLAGS) $(PROGRAM).elf
-	nOVLins -a 0x2F $(FINAL).ovl $(TGT_ROM)
+	nOVLins -a 0x2F -o 0x03FF0000 $(FINAL).ovl $(TGT_ROM)
 
 $(PROGRAM).elf: $(PARTS)
 	$(LD) -o $(PROGRAM).elf $(PARTS) $(LDFLAGS)

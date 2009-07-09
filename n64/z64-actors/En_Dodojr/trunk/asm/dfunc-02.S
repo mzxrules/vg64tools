@@ -24,6 +24,7 @@ En_Dodojr_f2:
         addiu   sp,sp,24
         jr      ra
         nop
+        
         .end            En_Dodojr_f2
         .set            at
         .set            reorder

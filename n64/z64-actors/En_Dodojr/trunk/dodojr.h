@@ -46,13 +46,13 @@ extern void En_Dodojr_f37 ( void *, void * );	/* 809f7d50 */
 extern void En_Dodojr_f38 ( void *, void * );	/* 809f7dfc */
 extern void En_Dodojr_f39 ( void *, void * );	/* 809f7e10 */
 
-extern void func_8002B1E0 (  );
-extern void func_800A457C (  );
-extern void func_8005C364 (  );
-extern void func_8005C4AC (  );
-extern void func_8005B200 (  );
-extern void func_80061EFC (  );
-extern void func_8002D62C (  );
+extern void func_8002B1E0 ( void *, int, int, float );
+extern void func_800A457C ( void *, void *, u32, u32, void *, void *, int );
+extern void func_8005C364 ( void *, void * );
+extern void func_8005C4AC ( void *, void *, void *, void * );
+extern int  func_8005B200 ( int );
+extern void func_80061EFC ( void *, int, void * );
+extern void func_8002D62C ( void *, float );
 extern void func_8005C3AC (  );
 extern void func_8002F828 (  );
 extern void func_8003426C (  );
@@ -84,6 +84,8 @@ extern void func_800D0A8C (  );
 extern void func_800D1AF4 (  );
 extern void func_80093D18 (  );
 extern void func_800A15C8 (  );
+
+extern u8 __data_start[];
 
 #else
 
