@@ -19,9 +19,9 @@ En_Dodojr_f30:
         sw      s0,24(sp)
         sw      a1,36(sp)
         lw      t6,4(a0)
-        lui     at,0x100
+        lui     $at,0x100
         move    s0,a0
-        or      t7,t6,at
+        or      t7,t6,$at
         jal     0x8002d868
         sw      t7,4(a0)
         move    a0,s0

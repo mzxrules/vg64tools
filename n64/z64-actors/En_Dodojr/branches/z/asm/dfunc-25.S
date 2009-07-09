@@ -29,9 +29,9 @@ En_Dodojr_f25:
         jal     0x809f64d0
         sw      a0,24(sp)
         lw      a0,24(sp)
-        li      at,-2
+        li      $at,-2
         lw      t7,4(a0)
-        and     t8,t7,at
+        and     t8,t7,$at
         jal     0x809f6a20
         sw      t8,4(a0)
         lw      a0,24(sp)

@@ -26,13 +26,13 @@ En_Dodojr_f29:
         lh      v0,510(a0)
         move    v1,v0
         beqz    v1,0x809f7974
-        slti    at,v0,30
-        beqz    at,0x809f798c
+        slti    $at,v0,30
+        beqz    $at,0x809f798c
         andi    t7,v0,0x1
         beqz    t7,0x809f7954
-        lui     at,0x3fc0
-        lui     at,0x3fc0
-        mtc1    at,$f0
+        lui     $at,0x3fc0
+        lui     $at,0x3fc0
+        mtc1    $at,$f0
         lwc1    $f4,36(a0)
         lwc1    $f8,44(a0)
         add.s   $f6,$f4,$f0
@@ -40,7 +40,7 @@ En_Dodojr_f29:
         swc1    $f6,36(a0)
         b       0x809f798c
         swc1    $f10,44(a0)
-        mtc1    at,$f0
+        mtc1    $at,$f0
         lwc1    $f16,36(a0)
         lwc1    $f4,44(a0)
         sub.s   $f18,$f16,$f0

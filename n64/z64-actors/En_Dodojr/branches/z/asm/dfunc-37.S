@@ -26,15 +26,15 @@ En_Dodojr_f37:
         lw      t8,4(t7)
         sw      t9,0(t6)
         lw      t9,8(t7)
-        li      at,1
+        li      $at,1
         sw      t8,4(t6)
-        bne     a1,at,0x809f7dcc
+        bne     a1,$at,0x809f7dcc
         sw      t9,8(t6)
         lw      t0,68(sp)
-        lui     at,0x3f80
-        mtc1    at,$f2
-        lui     at,0x3f00
-        mtc1    at,$f4
+        lui     $at,0x3f80
+        mtc1    $at,$f2
+        lui     $at,0x3f00
+        mtc1    $at,$f4
         lwc1    $f0,520(t0)
         sw      a1,52(sp)
         li      a3,1
@@ -45,8 +45,8 @@ En_Dodojr_f37:
         jal     0x800d0a8c
         nop
         lw      a1,52(sp)
-        li      at,4
-        bnel    a1,at,0x809f7dec
+        li      $at,4
+        bnel    a1,$at,0x809f7dec
         lw      ra,20(sp)
         lw      a1,68(sp)
         addiu   a0,sp,32

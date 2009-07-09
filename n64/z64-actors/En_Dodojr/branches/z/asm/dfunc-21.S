@@ -22,8 +22,8 @@ En_Dodojr_f21:
         sw      a1,52(sp)
         jal     0x800a2000
         addiu   a0,a0,2144
-        lui     at,0x43a0
-        mtc1    at,$f8
+        lui     $at,0x43a0
+        mtc1    $at,$f8
         lwc1    $f6,144(s0)
         mtc1    v0,$f4
         lw      t6,52(sp)
@@ -34,8 +34,8 @@ En_Dodojr_f21:
         lw      ra,44(sp)
         lwc1    $f10,40(s0)
         lwc1    $f16,40(v1)
-        lui     at,0x4220
-        mtc1    at,$f18
+        lui     $at,0x4220
+        mtc1    $at,$f18
         sub.s   $f0,$f10,$f16
         lui     a1,0x600
         lui     a2,0x3fe6
@@ -46,8 +46,8 @@ En_Dodojr_f21:
         li      a3,0
         bc1t    0x809f74b0
         li      t7,1
-        lui     at,0xc120
-        mtc1    at,$f4
+        lui     $at,0xc120
+        mtc1    $at,$f4
         swc1    $f2,16(sp)
         sw      t7,20(sp)
         jal     0x800a51a0
@@ -55,8 +55,8 @@ En_Dodojr_f21:
         move    a0,s0
         jal     0x8002f828
         li      a1,14372
-        lui     at,0x4270
-        mtc1    at,$f8
+        lui     $at,0x4270
+        mtc1    $at,$f8
         lwc1    $f6,40(s0)
         lh      t0,48(s0)
         lw      t4,36(s0)

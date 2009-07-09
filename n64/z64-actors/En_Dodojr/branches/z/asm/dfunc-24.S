@@ -26,8 +26,8 @@ En_Dodojr_f24:
         sll     t8,t7,0x10
         sra     t9,t8,0x10
         addiu   t0,t9,-8
-        slti    at,t0,4
-        beqzl   at,0x809f76fc
+        slti    $at,t0,4
+        beqzl   $at,0x809f76fc
         move    a0,a2
         lw      v0,480(a0)
         lh      t1,504(v0)

@@ -20,17 +20,17 @@ En_Dodojr_f26:
         sw      a1,36(sp)
         lbu     t6,276(a0)
         move    s0,a0
-        lui     at,0x4f80
+        lui     $at,0x4f80
         mtc1    t6,$f4
         bgez    t6,0x809f77e0
         cvt.s.w $f6,$f4
-        mtc1    at,$f8
+        mtc1    $at,$f8
         nop
         add.s   $f6,$f6,$f8
-        lui     at,0x4100
-        mtc1    at,$f10
-        lui     at,0x809f
-        lwc1    $f18,32656(at)
+        lui     $at,0x4100
+        mtc1    $at,$f10
+        lui     $at,0x809f
+        lwc1    $f18,32656($at)
         div.s   $f16,$f6,$f10
         move    a0,s0
         mul.s   $f4,$f18,$f16

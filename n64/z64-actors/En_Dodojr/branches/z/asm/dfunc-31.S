@@ -38,11 +38,11 @@ En_Dodojr_f31:
         beqz    v1,0x809f7a8c
         subu    t9,t8,v0
         mtc1    t9,$f4
-        lui     at,0x41f0
-        mtc1    at,$f8
+        lui     t,0x41f0
+        mtc1    t,$f8
         cvt.s.w $f6,$f4
-        lui     at,0x4270
-        mtc1    at,$f16
+        lui     t,0x4270
+        mtc1    t,$f16
         lwc1    $f10,12(s0)
         div.s   $f0,$f6,$f8
         mul.s   $f18,$f16,$f0

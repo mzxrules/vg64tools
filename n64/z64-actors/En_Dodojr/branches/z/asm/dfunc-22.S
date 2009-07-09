@@ -27,11 +27,11 @@ En_Dodojr_f22:
         jal     0x8007869c
         li      a3,1000
         lh      t7,180(s0)
-        lui     at,0x4680
-        mtc1    at,$f6
+        lui     $at,0x4680
+        mtc1    $at,$f6
         mtc1    t7,$f4
-        lui     at,0x4270
-        mtc1    at,$f10
+        lui     $at,0x4270
+        mtc1    $at,$f10
         cvt.s.w $f0,$f4
         lwc1    $f8,12(s0)
         move    a0,s0
@@ -48,14 +48,14 @@ En_Dodojr_f22:
         lui     t8,0x8003
         addiu   t8,t8,-18964
         c.eq.s  $f0,$f4
-        lui     at,0x809f
+        lui     $at,0x809f
         bc1fl   0x809f757c
         lw      ra,36(sp)
         lh      t9,180(s0)
         sw      t8,192(s0)
         lui     t0,0x809f
         sh      t9,48(s0)
-        lwc1    $f6,32652(at)
+        lwc1    $f6,32652($at)
         addiu   t0,t0,30092
         sw      t0,400(s0)
         swc1    $f6,104(s0)
