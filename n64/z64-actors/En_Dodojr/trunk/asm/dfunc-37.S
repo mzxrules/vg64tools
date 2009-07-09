@@ -15,13 +15,15 @@
 En_Dodojr_f37:        
 
         addiu   sp,sp,-48
+	lui	t7,%hi(__data_start+212)
         sw      ra,20(sp)
         sw      a0,48(sp)
         sw      a2,56(sp)
         sw      a3,60(sp)
         #lui     t7,0x809f		# 0x809F7F64
         #addiu   t7,t7,32612		# 
-	la	t7,__data_start + 212
+	#la	t7,__data_start + 212
+	addiu	t7,%lo(__data_start+212)
         lw      t9,0(t7)
         addiu   t6,sp,32
         lw      t8,4(t7)

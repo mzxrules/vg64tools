@@ -36,15 +36,18 @@ En_Dodojr_f12:
         li      a1,14374
         mtc1    zero,$f0
         
-	.set		at
+	#.set		at
         #lui     $at,0x809f		# 0x809F7F88
         #lwc1    $f8,32648($at)		# rodata+24
-	lwc1	$f8,(__rodata_start+24)
-	.set		noat
+	#lwc1	$f8,(__rodata_start+24)
+	#.set		noat
         
+	lui	$at,%hi(__rodata_start+24)
+	
         swc1    $f8,108(s0)
         swc1    $f0,104(s0)
         swc1    $f0,92(s0)
+	lwc1	$f8,(%lo(__rodata_start+24))($at)
         swc1    $f0,100(s0)
         lw      ra,44(sp)
         lw      s0,40(sp)

@@ -15,19 +15,28 @@
 En_Dodojr_f5:        
 
         addiu   sp,sp,-96
-        .set at
+        #.set at
         #lui     t6,0x809f
         #lui     t7,0x809f
-        lw      t6,(__data_start + 0x78) /* 0x7F08, t6 = 0x809F7F08 = within .data section */
-        lw      t7,(__data_start + 0x7C) /* 0x7F0C, t7 = 0x809F7F0C = within .data section */
-        .set noat
+        #lw      t6,(__data_start + 0x78) /* 0x7F08, t6 = 0x809F7F08 = within .data section */
+        #lw      t7,(__data_start + 0x7C) /* 0x7F0C, t7 = 0x809F7F0C = within .data section */
+        #.set noat
+	
+	lui	t6,%hi(__data_start+0x78)
+	lui	t7,%hi(__data_start+0x7C)
+	lw	t6,(%lo(__data_start+0x78))(t6)
+	lw	t7,(%lo(__data_start+0x7C))(t7)
+	
         #lui     t9,0x809f
+	lui	t9,%hi(__data_start+0x80)
+	
         sw      ra,44(sp)
         sw      a0,96(sp)
         sw      a1,100(sp)
         sw      a2,104(sp)
         #addiu   t9,t9,32528 /* 0x7F10, t9 = 0x809F7F10 = within .data section */
-        la      t9,(__data_start + 0x80)
+	addiu	t9,%lo(__data_start+0x80)
+        #la      t9,(__data_start + 0x80)
         sw      t6,92(sp)
         sw      t7,88(sp)
         lw      t1,0(t9)

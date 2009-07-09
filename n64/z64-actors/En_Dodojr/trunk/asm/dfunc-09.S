@@ -36,14 +36,17 @@ En_Dodojr_f9:
         lw      v0,40(sp)
         mtc1    zero,$f8
         
-	.set		at
+	#.set		at
         #lui     $at,0x809f		# 0x809F7F7C
         #lwc1    $f10,32636($at)	# rodata+12
-        lwc1	$f10,(__rodata_start+12)
-	.set		noat
-	
-        swc1    $f10,108(v0)
+        #lwc1	$f10,(__rodata_start+12)
+	#.set		noat
+        
+	lui	$at,%hi(__rodata_start+12)
         swc1    $f8,96(v0)
+        lwc1    $f10,(%lo(__rodata_start+12))($at)
+        swc1    $f10,108(v0)
+	
         lw      ra,36(sp)
         addiu   sp,sp,40
         jr      ra

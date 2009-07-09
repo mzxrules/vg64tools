@@ -16,6 +16,7 @@ En_Dodojr_f4:
 
         addiu   sp,sp,-168
         #lui     t6,0x809f
+	lui	t6,%hi(__data_start + 0x58)
         sw      ra,108(sp)
         sw      s8,104(sp)
         sw      s7,100(sp)
@@ -30,7 +31,8 @@ En_Dodojr_f4:
         sdc1    $f22,56(sp)
         sdc1    $f20,48(sp)
         #addiu   t6,t6,32488 /* 0x7EE8, t6 = 0x809F7EE8 = within .data section */
-        la      t6, (__data_start + 0x58)
+	addiu	t6,%lo(__data_start + 0x58)
+        #la     t6, (__data_start + 0x58)
         lw      t8,0(t6)
         addiu   s5,sp,164
         #lui     t9,0x809f

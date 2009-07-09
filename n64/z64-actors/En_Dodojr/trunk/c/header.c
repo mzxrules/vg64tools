@@ -19,7 +19,7 @@ MK_AHEAD
 	
 	En_Dodojr_f1,
 	En_Dodojr_f2,
-	En_Dodojr_f32,
+	En_Dodojr_f36,
 	En_Dodojr_f39
 );
 

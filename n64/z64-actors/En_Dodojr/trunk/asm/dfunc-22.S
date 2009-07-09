@@ -49,17 +49,24 @@ En_Dodojr_f22:
         addiu   t8,t8,-18964
         c.eq.s  $f0,$f4
         
-	.set		at
+	#.set		at
 	#lui     $at,0x809f		# 0x809F7F8C
         #lwc1    $f6,32652($at)		# rodata+28
-	lwc1	$f6,(__rodata_start+28)
-	.set		noat
+	#lwc1	$f6,(__rodata_start+28)
+	#.set		noat
+	#
+	# OK, I'm just going to recreate what the game did originally.
+	#
+	
+	lui	$at,%hi(__rodata_start+28)
 	
         bc1fl   $Lf22_01
         lw      ra,36(sp)
         lh      t9,180(s0)
         sw      t8,192(s0)
         sh      t9,48(s0)
+	
+	lwc1	$f6,(%lo(__rodata_start+28))($at)
 	
         #lui     t0,0x809f		# 0x809F758C
         #addiu   t0,t0,30092		# En_Dodojr_f23

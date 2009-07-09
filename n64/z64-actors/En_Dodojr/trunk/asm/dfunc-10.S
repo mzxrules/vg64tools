@@ -35,13 +35,16 @@ En_Dodojr_f10:
         jal     0x800a51a0
         swc1    $f8,24(sp)
 	
-	.set		at
+	#.set		at
         #lui     $at,0x809f		# 0x809F7F80
         #lwc1    $f10,32640($at)	# rodata+16
-	lwc1	$f10,(__rodata_start+16)
-	.set		noat
+	#lwc1	$f10,(__rodata_start+16)
+	#.set		noat
 	
+	lui	$at,%hi(__rodata_start+16)
         lw      v1,40(sp)
+	lwc1	$f10,(%lo(__rodata_start+16))($at)
+	
         lui     $at,0x4120
         mtc1    $at,$f16
         li      t6,3
