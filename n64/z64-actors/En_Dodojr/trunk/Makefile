@@ -43,15 +43,16 @@ SRC_ASM	=		\
         asm/dfunc-35.o	\
         asm/dfunc-37.o	\
         asm/dfunc-38.o	\
-        asm/dfunc-39.o
 #       asm/dfunc-01.o	\
 #       asm/dfunc-02.o	\
 #       asm/dfunc-36.o	\
+#       asm/dfunc-39.o
 
 SRC_C =			\
         c/dfunc-01.o	\
         c/dfunc-02.o	\
         c/dfunc-36.o	\
+        c/dfunc-39.o	\
 #       c/dfunc-03.o	\
 #       c/dfunc-04.o	\
 #       c/dfunc-05.o	\
@@ -86,8 +87,7 @@ SRC_C =			\
 #       c/dfunc-34.o	\
 #       c/dfunc-35.o	\
 #       c/dfunc-37.o	\
-#       c/dfunc-38.o	\
-#       c/dfunc-39.o
+#       c/dfunc-38.o	
 
 PARTS = $(HEADER) $(DATA) $(SRC_C) $(SRC_ASM) 
 

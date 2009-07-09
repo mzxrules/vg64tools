@@ -82,8 +82,8 @@ extern void func_8002E4B4 ( void *, void *, float, float, float, int );
 extern void func_8002D5B8 ( void *, float );
 extern void func_800D0A8C (  );
 extern void func_800D1AF4 (  );
-extern void func_80093D18 (  );
-extern void func_800A15C8 (  );
+extern void func_80093D18 ( void * );
+extern void func_800A15C8 ( void *, u32, u32, void *, void *, void * );
 
 extern u8 __data_start[];
 
