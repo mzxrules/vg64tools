@@ -18,27 +18,33 @@ En_Dodojr_f25:
         sw      ra,20(sp)
         sw      a1,28(sp)
         lh      v0,514(a0)
-        bnez    v0,0x809f775c
+        bnez    v0,$Lf25_01
         addiu   t6,v0,-1
-        b       0x809f7764
+        b       $Lf25_02
         move    v1,zero
+$Lf25_01:
         sh      t6,514(a0)
         lh      v1,514(a0)
-        bnezl   v1,0x809f77a0
+$Lf25_02:
+        bnezl   v1,$Lf25_03
         lw      ra,20(sp)
-        jal     0x809f64d0
+        jal     En_Dodojr_f3
         sw      a0,24(sp)
         lw      a0,24(sp)
         li      $at,-2
         lw      t7,4(a0)
         and     t8,t7,$at
-        jal     0x809f6a20
+        jal     En_Dodojr_f8
         sw      t8,4(a0)
         lw      a0,24(sp)
-        lui     t9,0x809f
-        addiu   t9,t9,30636
+	
+        #lui     t9,0x809f		# 0x809F77AC
+        #addiu   t9,t9,30636		# En_Dodojr_f26
+	la	t9,En_Dodojr_f26
+	
         sw      t9,400(a0)
         lw      ra,20(sp)
+$Lf25_03:
         addiu   sp,sp,24
         jr      ra
         nop
