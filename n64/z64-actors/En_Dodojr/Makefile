@@ -1,6 +1,7 @@
 PROGRAM = En_Dodojr
 FINAL   = ovl_$(PROGRAM)
-ADDRESS = 0x809C1BB0
+ADDRESS = 0x809F63C0
+TGT_ROM = ZELOOTMA.Z64
 
 SRC_ASM	=		\
 	asm/data.o	\
@@ -103,7 +104,7 @@ default: $(PROGRAM).ovl
 
 $(PROGRAM).ovl: $(PROGRAM).elf
 	$(NOVL) $(NOVLFLAGS) $(PROGRAM).elf
-	nOVLins -a 114 -o 0x03FF0000 ovl_En_Bird.ovl /home/zzt32/MEDIA/N64/ROMs/ZOO3.V64
+	nOVLins -a 114 -o 0x03FF0000 $(FINAL).ovl $(TGT_ROM)
 
 $(PROGRAM).elf: $(PARTS)
 	$(LD) -o $(PROGRAM).elf $(PARTS) $(LDFLAGS)
