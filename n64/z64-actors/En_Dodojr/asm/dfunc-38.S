@@ -2,7 +2,7 @@
 #include "../dodojr.h"
 
         .text
-	
+        
         /*
         *# Original address: 0x809f7dfc
         */
@@ -14,12 +14,12 @@
 
 En_Dodojr_f38:        
 
-        sw	a0,0(sp)
-        sw	a1,4(sp)
-        sw	a2,8(sp)
-        jr	ra
-        sw	a3,12(sp)
-	
+        sw      a0,0(sp)
+        sw      a1,4(sp)
+        sw      a2,8(sp)
+        jr      ra
+        sw      a3,12(sp)
+        
         .end            En_Dodojr_f38
         .set            at
         .set            reorder

@@ -14,17 +14,17 @@
 
 En_Dodojr_f16:        
 
-        lui	at,0x4220
-        mtc1	at,$f4
-        lwc1	$f6,144(a0)
-        li	v0,1
-        c.lt.s	$f4,$f6
+        lui     at,0x4220
+        mtc1    at,$f4
+        lwc1    $f6,144(a0)
+        li      v0,1
+        c.lt.s  $f4,$f6
         nop
-        bc1f	0x809f7094
+        bc1f    0x809f7094
         nop
-        jr	ra
-        move	v0,zero
-	
+        jr      ra
+        move    v0,zero
+        
         .end            En_Dodojr_f16
         .set            at
         .set            reorder

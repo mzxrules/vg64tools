@@ -14,15 +14,15 @@
 
 En_Dodojr_f27:        
 
-        addiu	sp,sp,-24
-        sw	ra,20(sp)
-        jal	0x809f7b3c
+        addiu   sp,sp,-24
+        sw      ra,20(sp)
+        jal     0x809f7b3c
         nop
-        lw	ra,20(sp)
-        addiu	sp,sp,24
-        jr	ra
+        lw      ra,20(sp)
+        addiu   sp,sp,24
+        jr      ra
         nop
-	
+        
         .end            En_Dodojr_f27
         .set            at
         .set            reorder

@@ -14,9 +14,9 @@
 
 En_Dodojr_f17:        
 
-        jr	ra
+        jr      ra
         nop
-	
+        
         .end            En_Dodojr_f17
         .set            at
         .set            reorder
