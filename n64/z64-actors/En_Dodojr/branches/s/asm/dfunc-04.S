@@ -60,10 +60,10 @@ En_Dodojr_f4:
         sw      t7,8(s8)
         jal     0x800fd9ac
         sw      a2,176(sp)
-        lui     at,0x3f00
-        mtc1    at,$f20
-        lui     at,0x4780
-        mtc1    at,$f6
+        lui     $at,0x3f00
+        mtc1    $at,$f20
+        lui     $at,0x4780
+        mtc1    $at,$f6
         sub.s   $f4,$f0,$f20
         lw      a2,176(sp)
         lwc1    $f16,500(s2)
@@ -82,19 +82,19 @@ En_Dodojr_f4:
         nop
         break   0x7
 Lf4_00:
-        li      at,-1
-        bne     a2,at,Lf4_01
-        lui     at,0x8000
-        bne     t9,at,Lf4_01
+        li      $at,-1
+        bne     a2,$at,Lf4_01
+        lui     $at,0x8000
+        bne     t9,$at,Lf4_01
         nop
         break   0x6
 Lf4_01
-        lui     at,0x41b0
-        mtc1    at,$f24
-        lui     at,0x4080
+        lui     $at,0x41b0
+        mtc1    $at,$f24
+        lui     $at,0x4080
         mflo    s3
         sll     s3,s3,0x10
-        mtc1    at,$f22
+        mtc1    $at,$f22
         sra     s3,s3,0x10
 Lf4_02:
         jal     0x800fd9ac

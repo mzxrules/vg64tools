@@ -23,9 +23,9 @@ En_Dodojr_f8:
         addiu   a0,a0,1184
         mtc1    v0,$f4
         mtc1    zero,$f0
-        lui     at,0xc120
+        lui     $at,0xc120
         cvt.s.w $f6,$f4
-        mtc1    at,$f8
+        mtc1    $at,$f8
         lui     a1,0x600
         li      t6,2
         mfc1    a3,$f0
@@ -38,15 +38,15 @@ En_Dodojr_f8:
         swc1    $f8,24(sp)
         mtc1    zero,$f0
         lh      t7,508(s0)
-        lui     at,0x809f
+        lui     $at,0x809f
         swc1    $f0,104(s0)
         swc1    $f0,92(s0)
         swc1    $f0,100(s0)
-        lwc1    $f10,32632(at)
-        lui     at,0x4120
-        bnez    t7,Lf8_00
+        lwc1    $f10,32632($at)
+        lui     $at,0x4120
+        bnez    t7, Lf8_00
         swc1    $f10,108(s0)
-        mtc1    at,$f16
+        mtc1    $at,$f16
         li      t8,3
         sh      t8,508(s0)
         swc1    $f16,96(s0)

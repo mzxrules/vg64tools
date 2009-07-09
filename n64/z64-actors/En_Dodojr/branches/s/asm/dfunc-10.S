@@ -21,10 +21,10 @@ En_Dodojr_f10:
         jal     0x800a2000
         addiu   a0,a0,1828
         mtc1    v0,$f4
-        lui     at,0xc120
+        lui     $at,0xc120
         lw      v1,40(sp)
         cvt.s.w $f6,$f4
-        mtc1    at,$f8
+        mtc1    $at,$f8
         lui     a1,0x600
         addiu   a1,a1,1828
         lui     a2,0x3f80
@@ -34,11 +34,11 @@ En_Dodojr_f10:
         addiu   a0,v1,332
         jal     0x800a51a0
         swc1    $f8,24(sp)
-        lui     at,0x809f
+        lui     $at,0x809f
         lw      v1,40(sp)
-        lwc1    $f10,32640(at)
-        lui     at,0x4120
-        mtc1    at,$f16
+        lwc1    $f10,32640($at)
+        lui     $at,0x4120
+        mtc1    $at,$f16
         li      t6,3
         sh      t6,508(v1)
         swc1    $f10,108(v1)

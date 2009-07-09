@@ -55,10 +55,10 @@ En_Dodojr_f1:
         jal     0x80061efc
         move    a1,v0
         lw      t0,4(s0)
-        li      at,-2
+        li      $at,-2
         li      t9,14
         lui     a1,0x3ca3
-        and     t1,t0,at
+        and     t1,t0,$at
         sb      t9,279(s0)
         sw      t1,4(s0)
         ori     a1,a1,0xd70a

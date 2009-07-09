@@ -23,6 +23,7 @@ En_Dodojr_f15:
         sw      a1,132(sp)
         addiu   t0,t7,48
         addiu   t6,sp,80
+Lf15_00:
         lw      t9,0(t7)
         addiu   t7,t7,12
         addiu   t6,t6,12
@@ -30,27 +31,29 @@ En_Dodojr_f15:
         lw      t8,-8(t7)
         sw      t8,-8(t6)
         lw      t9,-4(t7)
-        bne     t7,t0,0x809f6e78
+        bne     t7,t0,Lf15_00
         sw      t9,-4(t6)
         lw      v1,480(s0)
         lw      t1,132(sp)
         move    a0,s0
-        beqz    v1,0x809f6ed0
+        beqz    v1,Lf15_01
         lw      a2,7236(t1)
         lw      t2,304(v1)
-        beqzl   t2,0x809f6ed4
+        beqzl   t2,Lf15_02
         lw      a1,132(sp)
-        beqz    v1,0x809f6ee4
+        beqz    v1,Lf15_02
         nop
         lw      t3,280(v1)
-        beqz    t3,0x809f6ee4
+        beqz    t3,Lf15_02
         nop
+Lf15_01:
         lw      a1,132(sp)
+Lf15_02:
         jal     0x809f6ca4
         sw      a2,72(sp)
         lw      a2,72(sp)
         lw      v1,480(s0)
-        beqz    v1,0x809f6f0c
+        beqz    v1,Lf15_03
         addiu   a0,s0,36
         lw      t0,36(v1)
         addiu   t4,sp,60
@@ -58,8 +61,9 @@ En_Dodojr_f15:
         lw      t5,40(v1)
         sw      t5,4(t4)
         lw      t0,44(v1)
-        b       0x809f6f28
+        b       0xLf15_04
         sw      t0,8(t4)
+Lf15_03:
         lw      t8,36(a2)
         addiu   t7,sp,60
         sw      t8,0(t7)
@@ -67,16 +71,17 @@ En_Dodojr_f15:
         sw      t6,4(t7)
         lw      t8,44(a2)
         sw      t8,8(t7)
+Lf15_04:
         addiu   a1,sp,60
         jal     0x80077f90
         sw      a0,44(sp)
-        lui     at,0x42a0
-        mtc1    at,$f4
-        li      at,30
+        lui     $at,0x42a0
+        mtc1    $at,$f4
+        li      $at,30
         addiu   t5,sp,80
         c.lt.s  $f4,$f0
         nop
-        bc1fl   0x809f7028
+        bc1fl   Lf15_07
         lw      a0,44(sp)
         lw      t9,132(sp)
         lwc1    $f6,8(s0)
@@ -84,39 +89,41 @@ En_Dodojr_f15:
         lw      t1,156(t9)
         lwc1    $f16,16(s0)
         add.s   $f10,$f6,$f8
-        divu    zero,t1,at
+        divu    zero,t1,$at
         mflo    t2
         mtc1    t2,$f4
         add.s   $f18,$f10,$f16
-        bgez    t2,0x809f6f94
+        bgez    t2,Lf15_05
         cvt.s.w $f6,$f4
-        lui     at,0x4f80
-        mtc1    at,$f8
+        lui     $at,0x4f80
+        mtc1    $at,$f8
         nop
         add.s   $f6,$f6,$f8
+Lf15_05:
         add.s   $f10,$f18,$f6
-        li      at,12
+        li      $at,12
         trunc.w.s       $f16,$f10
         mfc1    v0,$f16
         nop
         sll     v0,v0,0x10
         sra     v0,v0,0x10
-        div     zero,v0,at
+        div     zero,v0,$at
         mfhi    v0
         sll     v0,v0,0x10
         sra     v0,v0,0x10
-        bgezl   v0,0x809f6fd8
+        bgezl   v0,Lf15_06
         sll     t4,v0,0x2
         negu    v0,v0
         sll     v0,v0,0x10
         sra     v0,v0,0x10
         sll     t4,v0,0x2
+Lf15_06:
         addu    v1,t4,t5
         lwc1    $f12,0(v1)
         jal     0x80100290
         sw      v1,40(sp)
-        lui     at,0x42a0
-        mtc1    at,$f8
+        lui     $at,0x42a0
+        mtc1    $at,$f8
         lwc1    $f4,60(sp)
         lw      v1,40(sp)
         mul.s   $f18,$f8,$f0
@@ -124,13 +131,14 @@ En_Dodojr_f15:
         swc1    $f6,60(sp)
         jal     0x80104610
         lwc1    $f12,0(v1)
-        lui     at,0x42a0
-        mtc1    at,$f16
+        lui     $at,0x42a0
+        mtc1    $at,$f16
         lwc1    $f10,68(sp)
         mul.s   $f8,$f16,$f0
         add.s   $f4,$f10,$f8
         swc1    $f4,68(sp)
         lw      a0,44(sp)
+Lf15_07:
         jal     0x80078068
         addiu   a1,sp,60
         sll     a1,v0,0x10

@@ -44,10 +44,10 @@ En_Dodojr_f5:
         sw      t4,4(t2)
         jal     0x800fd9ac
         sw      t5,8(t2)
-        lui     at,0x3f00
-        mtc1    at,$f4
-        lui     at,0x4780
-        mtc1    at,$f8
+        lui     $at,0x3f00
+        mtc1    $at,$f4
+        lui     $at,0x4780
+        mtc1    $at,$f8
         sub.s   $f6,$f0,$f4
         lw      t8,96(sp)
         mul.s   $f10,$f6,$f8
@@ -58,25 +58,25 @@ En_Dodojr_f5:
         lwc1    $f18,128(t8)
         jal     0x800fd9ac
         swc1    $f18,56(sp)
-        lui     at,0x3f00
-        mtc1    at,$f4
-        lui     at,0x4000
-        mtc1    at,$f8
+        lui     $at,0x3f00
+        mtc1    $at,$f4
+        lui     $at,0x4000
+        mtc1    $at,$f8
         sub.s   $f6,$f0,$f4
         mul.s   $f10,$f6,$f8
         jal     0x800fd9ac
         swc1    $f10,64(sp)
-        lui     at,0x3f00
-        mtc1    at,$f16
-        lui     at,0x4000
-        mtc1    at,$f4
+        lui     $at,0x3f00
+        mtc1    $at,$f16
+        lui     $at,0x4000
+        mtc1    $at,$f4
         sub.s   $f18,$f0,$f16
         lh      a0,50(sp)
         mul.s   $f6,$f18,$f4
         jal     0x80077870
         swc1    $f6,72(sp)
-        lui     at,0x4130
-        mtc1    at,$f8
+        lui     $at,0x4130
+        mtc1    $at,$f8
         lw      t9,104(sp)
         lh      a0,50(sp)
         mul.s   $f10,$f0,$f8
@@ -84,8 +84,8 @@ En_Dodojr_f5:
         add.s   $f18,$f10,$f16
         jal     0x80077834
         swc1    $f18,52(sp)
-        lui     at,0x4130
-        mtc1    at,$f4
+        lui     $at,0x4130
+        mtc1    $at,$f4
         lw      t0,104(sp)
         addiu   t1,sp,92
         mul.s   $f6,$f0,$f4
