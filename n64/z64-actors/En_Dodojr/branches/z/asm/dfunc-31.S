@@ -28,32 +28,36 @@ En_Dodojr_f31:
         li      a3,1000
         lh      v0,514(s0)
         li      t8,30
-        bnez    v0,0x809f7a48
+        bnez    v0,$Lf31_01
         addiu   t7,v0,-1
-        b       0x809f7a54
+        b       $Lf31_02
         move    v1,zero
+$Lf31_01:
         sh      t7,514(s0)
         lh      v0,514(s0)
         move    v1,v0
-        beqz    v1,0x809f7a8c
+$Lf31_02:
+        beqz    v1,$Lf31_03
         subu    t9,t8,v0
         mtc1    t9,$f4
-        lui     t,0x41f0
-        mtc1    t,$f8
+        lui     $at,0x41f0
+        mtc1    $at,$f8
         cvt.s.w $f6,$f4
-        lui     t,0x4270
-        mtc1    t,$f16
+        lui     $at,0x4270
+        mtc1    $at,$f16
         lwc1    $f10,12(s0)
         div.s   $f0,$f6,$f8
         mul.s   $f18,$f16,$f0
         sub.s   $f4,$f10,$f18
-        b       0x809f7a94
+        b       $Lf31_04
         swc1    $f4,40(s0)
+$Lf31_03:
         jal     0x8002d570
         move    a0,s0
+$Lf31_04:
         move    a0,s0
         lw      a1,44(sp)
-        jal     0x809f6510
+        jal     En_Dodojr_f4
         li      a2,3
         lw      ra,36(sp)
         lw      s0,32(sp)
