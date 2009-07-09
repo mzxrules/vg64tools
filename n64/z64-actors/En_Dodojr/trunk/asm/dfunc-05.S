@@ -37,7 +37,7 @@ En_Dodojr_f5:
         lw      t1,8(t9)
         #lui     t3,0x809f
         #addiu   t3,t3,32540 /* 0x7F1C, t3 = 0x809F7F1C = within .data section */
-        la      t9,(__data_start + 0x8C)
+        la      t3,(__data_start + 0x8C)
         sw      t0,4(t8)
         sw      t1,8(t8)
         lw      t5,0(t3)

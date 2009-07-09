@@ -5,9 +5,9 @@ TGT_ROM = ZELOOTMA.Z64
 
 HEADER = c/header.o
 
+DATA = asm/data.o asm/rodata.o
+
 SRC_ASM	=		\
-	asm/data.o	\
-	asm/rodata.o	\
         asm/dfunc-01.o	\
         asm/dfunc-02.o	\
         asm/dfunc-03.o	\
@@ -89,7 +89,7 @@ SRC_C =			\
 #       c/dfunc-38.o	\
 #       c/dfunc-39.o
 
-PARTS = $(HEADER) $(SRC_ASM) $(SRC_C)
+PARTS = $(HEADER) $(DATA) $(SRC_ASM) $(SRC_C)
 
 
 CC   = mips-gcc

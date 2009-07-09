@@ -52,7 +52,7 @@ En_Dodojr_f1:
         li      a0,4
         #lui     a2,0x809f
         #addiu   a2,a2,32476 /* 0x7EDC, A2 = 0x809F7EDC = within .data section */
-        la      a3, (__data_start + 0x4C)
+        la      a2, (__data_start + 0x4C)
         addiu   a0,s0,152
         jal     0x80061efc
         move    a1,v0
