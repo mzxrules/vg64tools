@@ -16,7 +16,7 @@ En_Dodojr_f27:
 
         addiu   sp,sp,-24
         sw      ra,20(sp)
-        jal     0x809f7b3c
+        jal     En_Dodojr_f33
         nop
         lw      ra,20(sp)
         addiu   sp,sp,24
