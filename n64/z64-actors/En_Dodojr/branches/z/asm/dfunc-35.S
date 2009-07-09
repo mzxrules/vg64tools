@@ -18,17 +18,20 @@ En_Dodojr_f35:
         sw      ra,20(sp)
         sw      a1,28(sp)
         lh      v0,512(a0)
-        bnez    v0,0x809f7c68
+        bnez    v0,$Lf35_01
         addiu   t6,v0,-1
-        b       0x809f7c70
+        b       $Lf35_02
         move    v1,zero
+$Lf35_01:
         sh      t6,512(a0)
         lh      v1,512(a0)
-        bnezl   v1,0x809f7c84
+$Lf35_02:
+        bnezl   v1,$Lf35_03
         lw      ra,20(sp)
-        jal     0x809f709c
+        jal     En_Dodojr_f18
         nop
         lw      ra,20(sp)
+$Lf35_03:
         addiu   sp,sp,24
         jr      ra
         nop
