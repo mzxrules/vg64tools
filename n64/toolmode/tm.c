@@ -422,7 +422,7 @@ void EditMode(void * a0)
                 u32 *ActNameOff = (void*)(0x801162B8 + ((*SMAL)[*currAct].ActorNo << 5));
                 SetTextString(
     				a0,
-    				"Act %02i: %04hX / %s\nX: %i\nY: %i\nZ: %i\nXR: %i\xb0\nYR: %i\xb0\nZR: %i\xb0\nV: %04hX\n",
+    				"Act %02i: %04hX / %s\nX: %i\nY: %i\nZ: %i\nXR: %i\xa1\xeb\nYR: %i\xa1\xeb\nZR: %i\xa1\xeb\nV: %04hX\n",
                                 *currAct,
     				(*SMAL)[*currAct].ActorNo,
 	    			*ActNameOff,
@@ -456,7 +456,7 @@ void EditMode(void * a0)
             if (AP != 0)
             {
                 *camera = AP;
-                if (*actorStatus = SA_NONE)
+                if (*actorStatus == SA_NONE)
                 {
                     *actorStatus = SA_POS;
                 }
@@ -476,7 +476,7 @@ void EditMode(void * a0)
 			*MapObjList[*currObj]
             );
         }
-        SetTextString( a0, "\n\nInc amount: %i (%i\xb0)", *inc, *inc/182);
+        SetTextString( a0, "\n\nInc amount: %i (%i\xa1\xeb)", *inc, *inc/182);
     }
 
     else if (input->pad == BUTTON_START)
