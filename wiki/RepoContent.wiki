@@ -1,0 +1,36 @@
+#summary Overview of content in our repository.
+
+= Introduction =
+
+Our repository contains both tools for N64 games and code the games themselves can use.
+
+
+
+
+= Code for games =
+Hacks and toolchains for changing how games work.
+
+==GNU Toolchain==
+Scripts used to set up the MIPS-GCC toolchain used to compile hacks for N64 games.
+
+==toolmode==
+Hack for the Debugger's version of OoT Master Quest that allows the user to make changes in-game and save those changes to the gamesave, so they appear the next time the user goes to the area the made the changes in.<br>
+Preview:<br><br>
+http://spinout182.com/ToolMode2.png<br>
+==z64-actors==
+Actors from the Debugger's build of OoT Master Quest that are or are being re-written in C.
+===En_Bird===
+Beta bird. Successfully re-written in C, though the animation plays a bit fast. A branch of it flies in a broken circle.
+===En_Dodojr===
+Baby dodongo. Very little progress thus far, only a few functions successfully work in C.
+==z64actor==
+Not to be confused with z64-actors, this is a hack for the 1.0 version of OoT that can spawn actors on demand.
+==z64vr==
+A hack for the Debugger's version of OoT Master Quest that replaces all vowels in in-game dialog to "o"s.<br>
+Preview<br><br>
+http://spinout182.com/vowolroplocmont.png
+
+etc
+
+= Tools for games =
+Tools for reading and or editing the contents of games.
