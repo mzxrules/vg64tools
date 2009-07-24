@@ -11,7 +11,7 @@ Our repository contains both tools for N64 games and code the games themselves c
 Hacks and toolchains for changing how games work.
 
 ==GNU Toolchain==
-Scripts used to set up the MIPS-GCC toolchain used to compile hacks for N64 games.
+Scripts used to set up the MIPS-GCC toolchain used to compile C hacks for N64 games.
 
 ==toolmode==
 Hack for the Debugger's version of OoT Master Quest that allows the user to make changes in-game and save those changes to the gamesave, so they appear the next time the user goes to the area the made the changes in.<br>
