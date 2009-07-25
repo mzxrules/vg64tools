@@ -2,7 +2,7 @@
 
 from struct import pack, unpack
 from sys import argv
-from os import path
+from os import path, system
 from z64lib import *
 
 #When editing scene maximums, the two are located below:
@@ -144,6 +144,9 @@ mm_to_oot_acts = {
     0x018E : 0x00B5,    #Flying rubble
     0x01DA : 0x0090,    #Gibodo (Use oot var -2 )
     0x0235 : 0x0090,    #Gibodos (Use oot var -2)
+    0x00ED : 0x01B0,    #Stalchild
+    0x02A5 : 0x01B0,    #Stalchild
+    0x0191 : 0x0115,    #Skullkid
 #Zeth's:
     0x006C : 0x00DD,    #Like Like
     0x00bd : 0x0167,    #Kakariko Roof Guy
@@ -266,7 +269,9 @@ mm_to_oot_objs = {
     0x0130 : 0x0167,    #Gerudo walkers
     0x00A1 : 0x00C9,    #Gorons
     0x0141 : 0x0183,    #Wolfos
-    0x0006 : 0x0008     #Guay
+    0x0006 : 0x0008,    #Guay
+    0x0142 : 0x0184,    #Stalchildren
+    0x0192 : 0x010A     #Skullkid
 }
 
 def fix_doors(inFile, outFile, OutFileOff, InFileOff, NoDoors, DestGame="OoT", loud = False):
@@ -284,7 +289,7 @@ def fix_doors(inFile, outFile, OutFileOff, InFileOff, NoDoors, DestGame="OoT", l
             try:
                 door[4] = mm_to_oot_acts[door[4]]
                 if (door[4] == 0x23):
-                    door[-1] = 0x3F
+                    door[-1] = 0x13F
                 fixed+=1
             except:
                 if loud:
@@ -352,29 +357,41 @@ def fix_actors(inFile, outFile, OutFileOff, InFileOff, NoActors, DestGame="OoT",
 def fix_objects(inFile, outFile, OutFileOff, InFileOff, NoObjects, DestGame="OoT", loud = False):
     oldPos = inFile.tell()
     outFile.seek(OutFileOff)
-    fixed = 0.0
+    print "%08X" % (OutFileOff)
+    inFile.seek(InFileOff)
+    fixed = 0
     total = 0.0
+    objs = []
+    objs_ = unpack( ">" + "H" * NoObjects, inFile.read( NoObjects * 2 ) )
+    objs[:] = objs_[:]
+    wobjs = []
     
-    for i in range(InFileOff, (NoObjects * 2) + InFileOff, 2):
-        inFile.seek(i)
-        obj = unpack(">H",inFile.read(2))[0]
+    for i in range(NoObjects):
+        obj = objs[i]
         if DestGame == "OoT":
             try:
                 obj = mm_to_oot_objs[obj]
                 fixed+=1
+                wobjs.append(obj)
+                
             except:
-                obj = 0xE
+                pass
+            print "%04X->%04X" % ( obj, objs[i] )
+            objs[i] = 0xE
         elif DestGame == "MM":
             try:
                 obj = oot_to_mm_objs[obj]
                 fixed+=1
+                wobjs.append(obj)
             except:
-                obj = 0xC
-        else:
-            return -1
-        outFile.write(pack(">H", obj))
+                pass
+            objs[i] = 0xC
         total+=1
-    if loud and total and fixed:
+    for i in range( fixed ):
+        outFile.write(pack( ">H", wobjs[i] ))
+    for i in range( NoObjects - fixed ):
+        outFile.write(pack( ">H", objs[i+fixed] ))
+    if loud and total:
         print "Matched %.2f%% of objects with OoT parallels." % ( 100 * ( fixed / total ) )
     inFile.seek(oldPos)
     return 0
@@ -390,11 +407,10 @@ def fix_map(inFile, outFile, outFileOff, InFileOff, loud = False, DestGame="OoT"
         if (ID == 0xB):
             NoObjects, LocalOff = unpack(">BxxL",inFile.read(7))
             LocalOff = LocalOff & 0xFFFFFF
+            fix_objects(inFile, outFile, outFileOff+LocalOff, InFileOff+LocalOff, NoObjects, DestGame, loud)
             if NoObjects > 0xF:
-                NoObjects = 0xF
                 outFile.seek(outFileOff+(fpos-InFileOff)+1)
                 outFile.write(pack(">B",0xF))
-            fix_objects(inFile, outFile, outFileOff+LocalOff, InFileOff+LocalOff, NoObjects, DestGame, loud)
         elif (ID == 1 or ID == 0):
             NoActors, LocalOff = unpack(">BxxL",inFile.read(7))
             LocalOff = LocalOff & 0xFFFFFF
