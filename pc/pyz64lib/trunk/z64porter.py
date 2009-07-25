@@ -357,7 +357,6 @@ def fix_actors(inFile, outFile, OutFileOff, InFileOff, NoActors, DestGame="OoT",
 def fix_objects(inFile, outFile, OutFileOff, InFileOff, NoObjects, DestGame="OoT", loud = False):
     oldPos = inFile.tell()
     outFile.seek(OutFileOff)
-    print "%08X" % (OutFileOff)
     inFile.seek(InFileOff)
     fixed = 0
     total = 0.0
@@ -376,7 +375,6 @@ def fix_objects(inFile, outFile, OutFileOff, InFileOff, NoObjects, DestGame="OoT
                 
             except:
                 pass
-            print "%04X->%04X" % ( obj, objs[i] )
             objs[i] = 0xE
         elif DestGame == "MM":
             try:
