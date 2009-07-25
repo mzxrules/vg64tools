@@ -147,6 +147,33 @@ mm_to_oot_acts = {
     0x00ED : 0x01B0,    #Stalchild
     0x02A5 : 0x01B0,    #Stalchild
     0x0191 : 0x0115,    #Skullkid
+    0x00E4 : 0x019E,    #Beehive
+    0x00E5 : 0x01A0,    #Crate
+    0x00E9 : 0x01AC,    #Honey and darling
+    0x0105 : 0x0054,    #Armos
+    0x0110 : 0x008D,    #Firewall
+    0x028D : 0x01A8,    #Cracked wall
+    0x0298 : 0x01A9,    #cracked wall
+    0x0255 : 0x00CF,    #cracked wall
+    0x0258 : 0x015B,    #cracked wall
+    0x00F3 : 0x01C6,    #Cow
+    0x0220 : 0x00E7,    #Cremia/Child malon
+    0x01A4 : 0x01C5,    #Malon/Romani           oot var FFFF
+    0x021F : 0x01C5,    #Malon/Romani(guess)    oot var FFFF
+    0x02AF : 0x0112,    #invisible collectibles
+    0x0066 : 0x00C7,    #Withered Deku Baba
+    0x011F : 0x01C7,    #Iceicles
+    0x012D : 0x0055,    #Bio deku baba
+    0x01BD : 0x011A,    #Deku salesman
+    0x0274 : 0x011A,    #Deku salesman
+    0x026E : 0x0142,    #Gaurd
+    0x01EE : 0x019B,    #racing dog
+    0x01F1 : 0x0021,    #Labratory fish
+    0x01F3 : 0x000D,    #Poe
+    0x0208 : 0x006D,    #Big poe
+    0x01CA : 0x0085,    #Dampe
+    0x008F : 0x0121,    #Freezard
+    0x0216 : 0x001C,    #leever
 #Zeth's:
     0x006C : 0x00DD,    #Like Like
     0x00bd : 0x0167,    #Kakariko Roof Guy
@@ -271,17 +298,38 @@ mm_to_oot_objs = {
     0x0141 : 0x0183,    #Wolfos
     0x0006 : 0x0008,    #Guay
     0x0142 : 0x0184,    #Stalchildren
-    0x0192 : 0x010A     #Skullkid
+    0x0192 : 0x010A,    #Skullkid
+    0x01B9 : 0x0002,    #beehive
+    0x0133 : 0x0170,    #Crate
+    0x0140 : 0x0182,    #Honey and darling
+    0x0030 : 0x0038,    #Armos
+    0x0153 : 0x002C,    #Firewall
+    0x0267 : 0x0074,    #Cracked wall
+    0x0234 : 0x00B1,    #Cracked wall
+    0x0203 : 0x002C,    #cracked wall
+    0x01E0 : 0x00F1,    #cracked wall
+    0x0146 : 0x018B,    #Cow
+    0x00A7 : 0x00E0,    #Cremia
+    0x00B7 : 0x00D0,    #Malon/Romani
+    0x0031 : 0x0039,    #Withered Deku Baba
+    0x0157 : 0x006B,    #Icicles
+    0x015E : 0x0039,    #Bio deku baba
+    0x01E5 : 0x0168,    #Deku salesman
+    0x01B6 : 0x0097,    #Gaurd
+    0x01C3 : 0x0009,    #Poe
+    0x01F1 : 0x006D,    #Big poe
+    0x01AF : 0x0089,    #Dampe
+    0x00E4 : 0x0114,    #Freezard
+    0x0201 : 0x0017     #leever
 }
 
-def fix_doors(inFile, outFile, OutFileOff, InFileOff, NoDoors, DestGame="OoT", loud = False):
+def fix_doors(inFile, outFile, OutFileOff, inFileOff, NoDoors, DestGame="OoT", loud = False):
     oldPos = inFile.tell()
     outFile.seek(OutFileOff)
     door = []
-    fixed = 0.0
-    total = 0.0
+    fixed = 0
     
-    for i in range(InFileOff, (NoDoors * 16) + InFileOff, 16):
+    for i in range(inFileOff, (NoDoors * 16) + inFileOff, 16):
         inFile.seek(i)
         door_ = unpack(">BBBBHhhhhH",inFile.read(16))
         door[:] = door_[:]
@@ -295,6 +343,7 @@ def fix_doors(inFile, outFile, OutFileOff, InFileOff, NoDoors, DestGame="OoT", l
                 if loud:
                     print "Unmapped door: %04X" % ( door[4] )
                 door[4] = 0x0009
+                door[-1] = 0
         elif DestGame == "MM":
             try:
                 door[4] = oot_to_mm_acts[door[4]]
@@ -306,23 +355,25 @@ def fix_doors(inFile, outFile, OutFileOff, InFileOff, NoDoors, DestGame="OoT", l
         outFile.write(pack(">BBBBHhhhhH", door[0], door[1], door[2],
                                door[3], door[4], door[5], door[6], door[7],
                                door[8], door[9] ))
-        total+=1
-    if loud and total and fixed:
-        print "Matched %.2f%% of doors with OoT parallels." % ( 100 * ( fixed / total ) )
+    if loud:
+        if NoDoors:
+            print "Matched %.2f%% of doors with OoT parallels." % ( 100 * ( fixed / float( NoDoors ) ) )
+        else:
+            print "No objects to match!"
     inFile.seek(oldPos)
     return 0
 
-def fix_actors(inFile, outFile, OutFileOff, InFileOff, NoActors, DestGame="OoT", loud = False):
+def fix_actors(inFile, outFile, OutFileOff, inFileOff, NoActors, DestGame="OoT", loud = False):
     oldPos = inFile.tell()
     outFile.seek(OutFileOff)
     actor = []
-    fixed = 0.0
-    total = 0.0
+    fixed = 0
     
-    for i in range(InFileOff, (NoActors * 16) + InFileOff, 16):
+    for i in range(inFileOff, (NoActors * 16) + inFileOff, 16):
         inFile.seek(i)
         actor_ = unpack(">HhhhhhhH",inFile.read(16))
         actor[:] = actor_[:]
+        actor[0] = actor[0] & 0xFFF
         if DestGame == "OoT":
             try:
                 actor[0] = mm_to_oot_acts[actor[0]]
@@ -335,9 +386,19 @@ def fix_actors(inFile, outFile, OutFileOff, InFileOff, NoActors, DestGame="OoT",
                     actor[7] = 1
                 elif actor_[0] == 0x235 or actor_[0] == 0x1DA:
                     actor[7] = 0xFFFE
+                elif actor[0] == 0x1B0:
+                    actor[7] = 0
+                elif actor[0] == 0x1C6:
+                    actor[7] = 0
+                elif actor[0] == 0x1C5:
+                    actor[7] = 0xFFFF
+                elif actor[0] == 0x05D:
+                    actor[7] = actor[7] & 7
                 fixed+=1
             except:
+                #print "%08X %04X"%(i, actor[0])
                 actor[0] = 0x0008
+                actor[7] = actor[7]&0xF
         elif DestGame == "MM":
             try:
                 actor[0] = oot_to_mm_acts[actor[0]]
@@ -348,18 +409,19 @@ def fix_actors(inFile, outFile, OutFileOff, InFileOff, NoActors, DestGame="OoT",
             return -1
         outFile.write(pack(">HhhhhhhH",actor[0], actor[1], actor[2],
                                actor[3], actor[4], actor[5], actor[6], actor[7]))
-        total+=1
-    if loud and total and fixed:
-        print "Matched %.2f%% of actors with OoT parallels." % ( 100 * ( fixed / total ) )
+    if loud:
+        if NoActors:
+            print "Matched %.2f%% of actors with OoT parallels." % ( 100 * ( fixed / float( NoActors ) ) )
+        else:
+            print "No actors to match!"
     inFile.seek(oldPos)
     return 0
 
-def fix_objects(inFile, outFile, OutFileOff, InFileOff, NoObjects, DestGame="OoT", loud = False):
+def fix_objects(inFile, outFile, OutFileOff, inFileOff, NoObjects, DestGame="OoT", loud = False):
     oldPos = inFile.tell()
     outFile.seek(OutFileOff)
-    inFile.seek(InFileOff)
+    inFile.seek(inFileOff)
     fixed = 0
-    total = 0.0
     objs = []
     objs_ = unpack( ">" + "H" * NoObjects, inFile.read( NoObjects * 2 ) )
     objs[:] = objs_[:]
@@ -369,68 +431,83 @@ def fix_objects(inFile, outFile, OutFileOff, InFileOff, NoObjects, DestGame="OoT
         obj = objs[i]
         if DestGame == "OoT":
             try:
-                obj = mm_to_oot_objs[obj]
+                wobjs.append( mm_to_oot_objs[obj] )
                 fixed+=1
-                wobjs.append(obj)
-                
             except:
                 pass
-            objs[i] = 0xE
         elif DestGame == "MM":
             try:
-                obj = oot_to_mm_objs[obj]
+                wobjs.append( mm_to_oot_objs[obj] )
                 fixed+=1
-                wobjs.append(obj)
             except:
                 pass
-            objs[i] = 0xC
-        total+=1
     for i in range( fixed ):
         outFile.write(pack( ">H", wobjs[i] ))
     for i in range( NoObjects - fixed ):
-        outFile.write(pack( ">H", objs[i+fixed] ))
-    if loud and total:
-        print "Matched %.2f%% of objects with OoT parallels." % ( 100 * ( fixed / total ) )
+        outFile.write(pack( ">H", 0 ))
+    if loud:
+        if NoObjects:
+            print "Matched %.2f%% of objects with OoT parallels." % ( 100 * ( fixed / float( NoObjects ) ) )
+        else:
+            print "No objects to match!"
     inFile.seek(oldPos)
-    return 0
+    return fixed
 
-def fix_map(inFile, outFile, outFileOff, InFileOff, loud = False, DestGame="OoT", IsScene = False):
+def fix_map(inFile, outFile, outFileOff, inFileOff, loud = False, DestGame="OoT", IsScene = False, safe = False):
     oldPos = inFile.tell()
     outFile.seek(outFileOff)
-    fpos = InFileOff
+    fpos = inFileOff
     
     while (1):
         inFile.seek(fpos)
         ID = unpack(">B",inFile.read(1))[0]
         if (ID == 0xB):
-            NoObjects, LocalOff = unpack(">BxxL",inFile.read(7))
-            LocalOff = LocalOff & 0xFFFFFF
-            fix_objects(inFile, outFile, outFileOff+LocalOff, InFileOff+LocalOff, NoObjects, DestGame, loud)
-            if NoObjects > 0xF:
-                outFile.seek(outFileOff+(fpos-InFileOff)+1)
-                outFile.write(pack(">B",0xF))
+            if safe:
+                outFile.seek(outFileOff+(fpos-inFileOff)+1)
+                outFile.write(pack(">B",0))
+            else:
+                NoObjects, LocalOff = unpack(">BxxL",inFile.read(7))
+                LocalOff = LocalOff & 0xFFFFFF
+                NoObjects = fix_objects(inFile, outFile, outFileOff+LocalOff, inFileOff+LocalOff, NoObjects, DestGame, loud)
+                outFile.seek(outFileOff+(fpos-inFileOff)+1)
+                if NoObjects > 0xF:
+                    outFile.write(pack(">B",0xF))
+                else:
+                    outFile.write(pack(">B",NoObjects))
         elif (ID == 1 or ID == 0):
-            NoActors, LocalOff = unpack(">BxxL",inFile.read(7))
-            LocalOff = LocalOff & 0xFFFFFF
-            fix_actors(inFile, outFile, outFileOff+LocalOff, InFileOff+LocalOff, NoActors, DestGame, loud)
+            if safe and ID == 1:
+                outFile.seek(outFileOff+(fpos-inFileOff)+1)
+                outFile.write(pack(">B",0))
+            else:
+                NoActors, LocalOff = unpack(">BxxL",inFile.read(7))
+                LocalOff = LocalOff & 0xFFFFFF
+                fix_actors(inFile, outFile, outFileOff+LocalOff, inFileOff+LocalOff, NoActors, DestGame, loud)
         elif (ID == 0xE):
-            NoDoors, LocalOff = unpack(">BxxL",inFile.read(7))
-            LocalOff = LocalOff & 0xFFFFFF
-            fix_doors(inFile, outFile, outFileOff+LocalOff, InFileOff+LocalOff, NoDoors, DestGame, loud)
+            if safe:
+                outFile.seek(outFileOff+(fpos-inFileOff)+1)
+                outFile.write(pack(">B",0))
+            else:
+                NoDoors, LocalOff = unpack(">BxxL",inFile.read(7))
+                LocalOff = LocalOff & 0xFFFFFF
+                fix_doors(inFile, outFile, outFileOff+LocalOff, inFileOff+LocalOff, NoDoors, DestGame, loud)
         elif (IsScene == True and ID == 0x4):
             IsScene = unpack(">BxxL",inFile.read(7))
             IsScene = [IsScene[0],IsScene[1]]
             IsScene[1] = IsScene[1] & 0xFFFFFF
         elif (ID == 0x18 or ID == 0x12): #bai bai multiple object sets :)
-            outFile.seek(outFileOff+(fpos-InFileOff))
+            outFile.seek(outFileOff+(fpos-inFileOff))
             outFile.write(pack(">Q",0x0100000000000000))
         elif (ID == 0x11):
             enabled = unpack("xxxxxB",inFile.read(6))[0]&1
-            outFile.seek(outFileOff+(fpos-InFileOff))
+            outFile.seek(outFileOff+(fpos-inFileOff))
             if not enabled:
                 outFile.write(pack(">Q",0x1100000001000000))
             else:
                 outFile.write(pack(">Q",0x1100000000000100))
+        elif ( ID == 3 ):
+            offset = unpack(">xxxL",inFile.read(7))[0]
+            outFile.seek( outFileOff + ( offset & 0xFFFFFF ) + 0x20)
+            outFile.write( pack( ">L", 0 ) )
         elif (ID == 0x14):
             break
         fpos += 8
@@ -497,8 +574,10 @@ def checkArgs():
     if ( len(argv) > 5 ):
         cnt = 5
         while ( cnt < len(argv) ):
-            if ( ( argv[cnt] == "-q" ) | ( argv[cnt] == "-s" ) ):
+            if ( argv[cnt] == "-q" ):
                 ret = ret & 0xFFFFFFFE
+            if ( argv[cnt] == "-s" ):   #safe mode
+                ret = ret | 0x100000000
             elif ( argv[cnt] == "-o" ):
                 ret = ret | ( _int(argv[cnt+1]) & 0xFFFFFFF0 )
                 cnt += 1
@@ -531,6 +610,7 @@ If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10.
         outFile = open( argv[1], "r+b" )
         inFile.seek(MM_SCENE_TABLE + argv[4] * 16)
         OldSceneOffs = unpack( ">LL", inFile.read(8) )
+        safe = bool( status & 0x100000000 )
         if ( status > 15 ):
             SceneStart = status & 0xFFFFFFF0
         else:
@@ -544,7 +624,7 @@ If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10.
         outFile.write( inFile.read( OldSceneOffs[1] - OldSceneOffs[0] ) )
         if ( status & 1):
             print "Fixing scene file"
-        Map_Infos = fix_map(inFile, outFile, SceneStart, OldSceneOffs[0], status & 1 ,"OoT", True )
+        Map_Infos = fix_map(inFile, outFile, SceneStart, OldSceneOffs[0], status & 1 ,"OoT", True , safe)
         if ( status & 1):
             print ("Old offsets: %08X - %08X\nNew offsets: %08X - %08X"
                    % ( OldSceneOffs[0], OldSceneOffs[1], SceneStart, SceneEnd ) )
@@ -559,7 +639,7 @@ If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10.
             inFile.seek(oldMapOffs[0])
             outFile.write( inFile.read( oldMapOffs[1] - oldMapOffs[0] ) )
             MapEnd = outFile.tell()
-            fix_map( inFile, outFile, MapStart, oldMapOffs[0], status & 1, "OoT", False )
+            fix_map( inFile, outFile, MapStart, oldMapOffs[0], status & 1, "OoT", False, safe )
             outFile.seek( SceneStart + ptr_offset )
             outFile.write( pack( ">LL" , MapStart, MapEnd ) )
             if ( status & 1 ):
