@@ -19,7 +19,8 @@ ActorTypes = {
     14 : "type 14",
     15 : "type 15" }
 
-
+def mkMapActor(endianess, num = 0, x = 0, y = 0, z = 0, xr = 0, yr = 0, zr = 0, var = 0):
+    return pack("%sHhhhhhhH"% (endianess, num, x, y, x, xr, yr, zr, v))
 def GenActorEntryFmt(endianess):
     """Returns FMT strings to be used with struct to unpack actor file pointers"""
     return "%sLLLLxxxxLLxxxx"	% endianess
@@ -39,7 +40,7 @@ def GenActorInfoFmt(endianess):
     """Returns FMT strings to be used with struct to unpack actor info (actor number, type, object)"""
     return "%sHBxxxxxH"		% endianess
 def GenActorFileFmt(endianess,textlen,datalen,rodatalen,bsslen, no_rels):
-    """Returns a FMT string to be used with struct to unpack a actor's part's"""
+    """Returns a FMT string to be used with struct to unpack a actor's parts"""
     return "%s%is%is%is%is%is"	% (endianess, textlen, datalen, rodatalen,
                                    bsslen, no_rels*4)
 
@@ -51,7 +52,7 @@ def FindFileTable(RomFile,endianess):
     RomFile.seek(0)
     for i in range(0,0x20000,16):
         DD=RomFile.read(16)
-        if len(DD.split("@srd"))==2:
+        if len(DD.split("@srd")) == 2:
             CurrentOffset = RomFile.tell()
             RomFile.seek(RomFile.tell() - 16)
             BuildInfo = CleanBuildInfo(RomFile.read(0x30))
@@ -59,8 +60,8 @@ def FindFileTable(RomFile,endianess):
     for i in range(0,0x80,16):
         CurrentOffset+=16
         RomFile.seek(CurrentOffset)
-        DoubleWord = RomFile.read(8)
-        if unpack("%sQ" % endianess ,DoubleWord)[0] == 0x0000000000001060:
+        DoubleWord = unpack( "%sQ" % endianess, RomFile.read(8) )[0]
+        if DoubleWord == 0x0000000000001060:
             FileTableOffset = CurrentOffset
             break
     return FileTableOffset, BuildInfo
@@ -90,7 +91,7 @@ def FindNameTable(RomFile,endianess):
 def FindCode(RomFile,endianess):
     """Returns code's offsets if found, else None"""
     ret=None
-    FileTableOff=FindFileTable(RomFile,endianess)
+    FileTableOff=FindFileTable(RomFile,endianess)[0]
     for i in range(0, 0x300, 16):
         RomFile.seek(FileTableOff+i)
         vst,ve,pst,pe=unpack(">LLLL",RomFile.read(16))
