@@ -453,7 +453,7 @@ def fix_objects(inFile, outFile, OutFileOff, inFileOff, NoObjects, DestGame="OoT
     inFile.seek(oldPos)
     return fixed
 
-def fix_map(inFile, outFile, outFileOff, inFileOff, loud = False, DestGame="OoT", IsScene = False, safe = False):
+def fix_map(inFile, outFile, outFileOff, inFileOff, loud = False, DestGame="OoT", IsScene = False, safe = False, Music = False ):
     oldPos = inFile.tell()
     outFile.seek(outFileOff)
     fpos = inFileOff
@@ -508,6 +508,9 @@ def fix_map(inFile, outFile, outFileOff, inFileOff, loud = False, DestGame="OoT"
             offset = unpack(">xxxL",inFile.read(7))[0]
             outFile.seek( outFileOff + ( offset & 0xFFFFFF ) + 0x20)
             outFile.write( pack( ">L", 0 ) )
+        elif ( ID == 0x15 and Music ):
+            outFile.seek(outFileOff+(fpos-inFileOff)+7)
+            outFile.write( pack( ">B", Music ) )
         elif (ID == 0x14):
             break
         fpos += 8
@@ -575,12 +578,15 @@ def checkArgs():
         cnt = 5
         while ( cnt < len(argv) ):
             if ( argv[cnt] == "-q" ):
-                ret = ret & 0xFFFFFFFE
+                ret = ret & 0xFFFFFFFFFFFE
             if ( argv[cnt] == "-s" ):   #safe mode
                 ret = ret | 0x100000000
             elif ( argv[cnt] == "-o" ):
-                ret = ret | ( _int(argv[cnt+1]) & 0xFFFFFFF0 )
                 cnt += 1
+                ret = ret | ( _int(argv[cnt]) & 0xFFFFFFF0 )
+            elif ( argv[cnt] == "-m" ):
+                cnt += 1
+                ret = ret | ( _int(argv[cnt]) << 33 )
             cnt += 1
     return ret
 
@@ -588,21 +594,20 @@ def main():
     while (1):  #So I can use break
         status = checkArgs()
         if ( status < 0 ):
+            usage = "python %s <rom to port to> <rom port from> <scene to port over> <scene to port>" % ( argv[0] )
             if ( status == -1 ):
-                print "ArgumentError: Not enough arguments. Usage:"
+                raise IOError, "Not enough arguments. Usage:%s" % usage
             elif ( status == -2 ):
-                print "IOError: Cannot open specified ROMs. Usage:"
+                raise IOError, "Cannot open specified ROMs. Usage:%s" % usage
             elif ( status == -3 ):
-                print "ValueError: Cannot convert scene numbers to integers. Usage:"
+                print ValueError, "Cannot convert scene numbers to integers. Usage:%s" % usage
             elif ( status == -4 ):
-                print (
-"OverflowError: Scene numbers specified are too great.\n\
-If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10. Usage:" )
-            print "python %s <rom to port to> <rom port from> <scene to port over> <scene to port>" % ( argv[0] )
+                raise OverflowError, "Scene numbers specified are too great.\n\
+If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10. Usage:%s" % usage
             break
         try:
             BAD_MM_SCENES.index( argv[4] )
-            print "Error: Chosen scene is a invalid Majora's Mask scene"
+            raise ValueError, "Chosen scene is a invalid Majora's Mask scene"
             break
         except:
             pass
@@ -611,6 +616,9 @@ If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10.
         inFile.seek(MM_SCENE_TABLE + argv[4] * 16)
         OldSceneOffs = unpack( ">LL", inFile.read(8) )
         safe = bool( status & 0x100000000 )
+        Music = status >> 33
+        if ( not bool( Music ) ):
+            Music = False
         if ( status > 15 ):
             SceneStart = status & 0xFFFFFFF0
         else:
@@ -624,7 +632,7 @@ If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10.
         outFile.write( inFile.read( OldSceneOffs[1] - OldSceneOffs[0] ) )
         if ( status & 1):
             print "Fixing scene file"
-        Map_Infos = fix_map(inFile, outFile, SceneStart, OldSceneOffs[0], status & 1 ,"OoT", True , safe)
+        Map_Infos = fix_map(inFile, outFile, SceneStart, OldSceneOffs[0], status & 1 ,"OoT", True , safe, Music)
         if ( status & 1):
             print ("Old offsets: %08X - %08X\nNew offsets: %08X - %08X"
                    % ( OldSceneOffs[0], OldSceneOffs[1], SceneStart, SceneEnd ) )
