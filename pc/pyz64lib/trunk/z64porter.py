@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from struct import pack, unpack
-from sys import argv
+from sys import argv as argv__
 from os import path, system
 from z64lib import *
 
@@ -555,44 +555,46 @@ def FindEndOfFiles(File):
             End = Entry
     return End
     
-def checkArgs():
-    if ( len(argv) < 5 ):
-        return -1
+def checkArgs(argv_):
+    if ( len(argv_) < 5 ):
+        return [-1, argv_]
     
-    if ( (not path.exists(argv[1])) | (not path.exists(argv[2])) ):
-        return -2
+    if ( (not path.exists(argv_[1])) | (not path.exists(argv_[2])) ):
+        return [-2, argv_]
     
     try:
-        argv[3] = _int(argv[3])
-        argv[4] = _int(argv[4])
+        argv_[3] = _int(argv_[3])
+        argv_[4] = _int(argv_[4])
         
     except ValueError:
-        return -3
+        return [-3, argv_]
     
-    if ( ( argv[3] > MAX_OOT_SCENE ) | ( argv[4] > MAX_MM_SCENE ) ):
-        return -4
+    if ( ( argv_[3] > MAX_OOT_SCENE ) | ( argv_[4] > MAX_MM_SCENE ) ):
+        return [-4, argv_]
     
     ret = 1
     
-    if ( len(argv) > 5 ):
+    if ( len(argv_) > 5 ):
         cnt = 5
-        while ( cnt < len(argv) ):
-            if ( argv[cnt] == "-q" ):
+        while ( cnt < len(argv_) ):
+            if ( argv_[cnt] == "-q" ):
                 ret = ret & 0xFFFFFFFFFFFE
-            if ( argv[cnt] == "-s" ):   #safe mode
+            if ( argv_[cnt] == "-s" ):   #safe mode
                 ret = ret | 0x100000000
-            elif ( argv[cnt] == "-o" ):
+            elif ( argv_[cnt] == "-o" ):
                 cnt += 1
-                ret = ret | ( _int(argv[cnt]) & 0xFFFFFFF0 )
-            elif ( argv[cnt] == "-m" ):
+                ret = ret | ( _int(argv_[cnt]) & 0xFFFFFFF0 )
+            elif ( argv_[cnt] == "-m" ):
                 cnt += 1
-                ret = ret | ( _int(argv[cnt]) << 33 )
+                ret = ret | ( _int(argv_[cnt]) << 33 )
             cnt += 1
-    return ret
+    return [ret, argv_]
 
-def main():
+def main(argv_):
     while (1):  #So I can use break
-        status = checkArgs()
+        ret     = checkArgs(argv_)
+        status  = ret[ 0 ]
+        argv    = ret[ 1 ]
         if ( status < 0 ):
             usage = "python %s <rom to port to> <rom port from> <scene to port over> <scene to port>" % ( argv[0] )
             if ( status == -1 ):
@@ -665,4 +667,4 @@ If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10.
         break
     
 if __name__ == "__main__":
-    main()
+    main(argv__)

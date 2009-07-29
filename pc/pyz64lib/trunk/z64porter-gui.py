@@ -4,8 +4,9 @@
 from tkFileDialog import askopenfilename
 from tkSimpleDialog import askstring
 from tkMessageBox import askyesno, showerror, showinfo
-from os import getcwd, path, system
-from sys import executable
+from os import getcwd, path#, system
+#from sys import executable
+from z64porter import main as port_scene
 
 def main():
     try:
@@ -15,25 +16,29 @@ def main():
     except:
         idir = getcwd()
     f=open("z64porter.cfg","w")
-    argv_ = ""
-    argv_ = askopenfilename(title="OoT Debug ROM",filetypes=[('N64 ROM files','*.z64')],initialdir = idir)
-    idir = path.split(argv_)[0]
+    argv_ = ["z64porter.py"]
+    argv_.append( askopenfilename(title="OoT Debug ROM",filetypes=[('N64 ROM files','*.z64')],initialdir = idir) )
+    idir = path.split(argv_[1])[0]
     f.write(idir)
     f.close()
-    argv_ += " %s" % (askopenfilename(title="Decompressed MM ROM",filetypes=[('N64 ROM files','*.z64')],initialdir = idir))
-    argv_ += " %s" % (askstring(title = "OoT scene", prompt = "Scene to replace in OoT (use 0x if hex):" ))
-    argv_ += " %s" % (askstring(title = "MM scene", prompt = "Scene to port from MM (use 0x if hex):" ))
+    argv_.append( askopenfilename(title="Decompressed MM ROM",filetypes=[('N64 ROM files','*.z64')],initialdir = idir) )
+    argv_ .append( askstring(title = "OoT scene", prompt = "Scene to replace in OoT (use 0x if hex):" ))
+    argv_ .append( askstring(title = "MM scene", prompt = "Scene to port from MM (use 0x if hex):" ))
     if (askyesno(title = "Address", message = "Insert at your own address?" )):
-        argv_ += " -o 0x%s" % (askstring(title = "Address", prompt = "Address (hex) to insert port at:" ))
+        argv_.append( "-o" )
+        argv_.append( "0x%s" % (askstring(title = "Address", prompt = "Address (hex) to insert port at:" )))
     if (askyesno(title = "Safe mode", message = "Port in safe mode?" )):
-        argv_ += " -s"
+        argv_.append( "-s" )
     if (askyesno(title = "Music", message = "Use your own music value?" )):
-        argv_ += " -m %s" % (askstring(title = "Music", prompt = "Music value (use 0x if hex):" ))
-    result = system("%s z64porter.py %s -q" % ( executable, argv_ ) )
-    if ( result ):
-        showerror(title="Uhoh!", message="Failure :(\nExit status %i" % result )
-    else:
+        argv_.append( "-m" )
+        argv_.append(askstring(title = "Music", prompt = "Music value (use 0x if hex):" ))
+    argv_.append("-q")
+    #result = system("%s z64porter.py %s -q" % ( executable, argv_ ) )
+    try:
+        port_scene( argv_ )
         showinfo(title="Success", message="Scene ported successfully")
+    except:
+        showerror(title="Uhoh!", message="Failure :(" )
 
 if __name__ == "__main__":
     main()
