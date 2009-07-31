@@ -394,9 +394,10 @@ def fix_actors(inFile, outFile, OutFileOff, inFileOff, NoActors, DestGame="OoT",
                     actor[7] = 0xFFFF
                 elif actor[0] == 0x05D:
                     actor[7] = actor[7] & 7
+                elif actor[0] == 0:
+                    actor[7] = 0xFFF
                 fixed+=1
             except:
-                #print "%08X %04X"%(i, actor[0])
                 actor[0] = 0x0008
                 actor[7] = actor[7]&0xF
         elif DestGame == "MM":
@@ -549,10 +550,22 @@ def FindEndOfFiles(File):
         if (Entry > End):
             End = Entry
     for i in range( codeOff + 0x10CBB0, codeOff + 0x10CBB0 + MAX_OOT_SCENE * 0x14, 0x14 ):
-        File.seek(i+4)
-        Entry = unpack( ">L", File.read(4) )[0]
-        if (Entry > End):
+        File.seek(i)
+        Entry = unpack( ">LL", File.read(8) )
+        if (Entry[1] > End):
             End = Entry
+        File.seek(Entry[0])
+        command = -1
+        while (command != 4):
+            command,ent,off = unpack(">BBxxL",File.read(8))
+            if ( command == 0x14 ):
+                break
+        off=(off & 0xFFFFFF) + Entry[0]
+        File.seek(off)
+        for i in range(ent):
+            st,en = unpack(">LL", File.read(8) )
+            if (en > End):
+                End = en
     return End
     
 def checkArgs(argv_):
@@ -592,6 +605,7 @@ def checkArgs(argv_):
 
 def main(argv_):
     while (1):  #So I can use break
+        print argv_
         ret     = checkArgs(argv_)
         status  = ret[ 0 ]
         argv    = ret[ 1 ]
@@ -665,6 +679,6 @@ If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10.
         inFile.close()
         outFile.close()
         break
-    
+    return SceneStart, MapEnd
 if __name__ == "__main__":
     main(argv__)
