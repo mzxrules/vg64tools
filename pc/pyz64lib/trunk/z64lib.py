@@ -141,3 +141,44 @@ def ScanForHierarchies(File, endianess, FileBank):
 def ScanForAnimations(File, endianess, FileBank):
     """Finds  animations within a zelda 64 resource file"""
     return []
+
+def FindEndOfFiles(File):
+    """Finds the end offset within a ROM that is safe to write to"""
+    End = 0
+    FPos = FindFileTable( File ,">" )[0]+4
+    Entry = -1
+    while (Entry != 0):
+        File.seek(FPos)
+        Entry = unpack( ">L", File.read(4) )[0]
+        if (Entry > End):
+            End = Entry
+        FPos+=16
+    codeOff = FindCode( File,">" )[0]
+    for i in range( codeOff + 0xF9440, codeOff + 0xFB5E0, 0x20 ):
+        File.seek(i+4)
+        Entry = unpack( ">L", File.read(4) )[0]
+        if (Entry > End):
+            End = Entry
+    for i in range( codeOff + 0x10A6D0, codeOff + 0x10B360, 0x8 ):
+        File.seek(i+4)
+        Entry = unpack( ">L", File.read(4) )[0]
+        if (Entry > End):
+            End = Entry
+    for i in range( codeOff + 0x10CBB0, codeOff + 0x10CBB0 + MAX_OOT_SCENE * 0x14, 0x14 ):
+        File.seek(i)
+        Entry = unpack( ">LL", File.read(8) )
+        if (Entry[1] > End):
+            End = Entry
+        File.seek(Entry[0])
+        command = -1
+        while (command != 4):
+            command,ent,off = unpack(">BBxxL",File.read(8))
+            if ( command == 0x14 ):
+                break
+        off=(off & 0xFFFFFF) + Entry[0]
+        File.seek(off)
+        for i in range(ent):
+            st,en = unpack(">LL", File.read(8) )
+            if (en > End):
+                End = en
+    return End

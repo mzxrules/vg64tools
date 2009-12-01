@@ -6,15 +6,15 @@ from os import path, system
 from z64lib import *
 
 #When editing scene maximums, the two are located below:
-MAX_MM_SCENE    = 102
+MAX_MM_SCENE    = 106
 MAX_OOT_SCENE   = 109
 # Scene max values ^---HERE
 
 MM_SCENE_FMT    = ">LLLL"
 OOT_SCENE_FMT   = ">LLLLL"
-MM_SCENE_TABLE  = 0xC5A280
+MM_SCENE_TABLE  = 0xC5A250
 OOT_SCENE_TABLE = 0xBA0BB0
-BAD_MM_SCENES   = [ 4, 5, 48, 39 ]
+BAD_MM_SCENES   = [ 2, 7, 8, 51, 42 ]
 
 oot_to_mm_acts = {
 #   OoT    : MM
@@ -334,6 +334,7 @@ def fix_doors(inFile, outFile, OutFileOff, inFileOff, NoDoors, DestGame="OoT", l
         door_ = unpack(">BBBBHhhhhH",inFile.read(16))
         door[:] = door_[:]
         if DestGame == "OoT":
+            door[9] = int(door[9]*1.42222222222)
             try:
                 door[4] = mm_to_oot_acts[door[4]]
                 if (door[4] == 0x23):
@@ -345,6 +346,7 @@ def fix_doors(inFile, outFile, OutFileOff, inFileOff, NoDoors, DestGame="OoT", l
                 door[4] = 0x0009
                 door[-1] = 0
         elif DestGame == "MM":
+            door[9] = int(door[9]*0.703125)
             try:
                 door[4] = oot_to_mm_acts[door[4]]
                 fixed+=1
@@ -375,6 +377,8 @@ def fix_actors(inFile, outFile, OutFileOff, inFileOff, NoActors, DestGame="OoT",
         actor[:] = actor_[:]
         actor[0] = actor[0] & 0xFFF
         if DestGame == "OoT":
+            for i in range(4,7,1):
+                actor[i] *= 1.42222222222
             try:
                 actor[0] = mm_to_oot_acts[actor[0]]
                 #Set variables for certain actors:
@@ -401,6 +405,8 @@ def fix_actors(inFile, outFile, OutFileOff, inFileOff, NoActors, DestGame="OoT",
                 actor[0] = 0x0008
                 actor[7] = actor[7]&0xF
         elif DestGame == "MM":
+            for i in range(3,6,1):
+                actor[i] *= 0.703125
             try:
                 actor[0] = oot_to_mm_acts[actor[0]]
                 fixed+=1
@@ -453,6 +459,8 @@ def fix_objects(inFile, outFile, OutFileOff, inFileOff, NoObjects, DestGame="OoT
             print "No objects to match!"
     inFile.seek(oldPos)
     return fixed
+    
+    #
 
 def fix_map(inFile, outFile, outFileOff, inFileOff, loud = False, DestGame="OoT", IsScene = False, safe = False, Music = False ):
     oldPos = inFile.tell()
@@ -527,46 +535,7 @@ def _int(string):
     else:
         return int(string)
 
-def FindEndOfFiles(File):
-    """Finds the end offset within a ROM that is safe to write to"""
-    End = 0
-    FPos = FindFileTable( File ,">" )[0]+4
-    Entry = -1
-    while (Entry != 0):
-        File.seek(FPos)
-        Entry = unpack( ">L", File.read(4) )[0]
-        if (Entry > End):
-            End = Entry
-        FPos+=16
-    codeOff = FindCode( File,">" )[0]
-    for i in range( codeOff + 0xF9440, codeOff + 0xFB5E0, 0x20 ):
-        File.seek(i+4)
-        Entry = unpack( ">L", File.read(4) )[0]
-        if (Entry > End):
-            End = Entry
-    for i in range( codeOff + 0x10A6D0, codeOff + 0x10B360, 0x8 ):
-        File.seek(i+4)
-        Entry = unpack( ">L", File.read(4) )[0]
-        if (Entry > End):
-            End = Entry
-    for i in range( codeOff + 0x10CBB0, codeOff + 0x10CBB0 + MAX_OOT_SCENE * 0x14, 0x14 ):
-        File.seek(i)
-        Entry = unpack( ">LL", File.read(8) )
-        if (Entry[1] > End):
-            End = Entry
-        File.seek(Entry[0])
-        command = -1
-        while (command != 4):
-            command,ent,off = unpack(">BBxxL",File.read(8))
-            if ( command == 0x14 ):
-                break
-        off=(off & 0xFFFFFF) + Entry[0]
-        File.seek(off)
-        for i in range(ent):
-            st,en = unpack(">LL", File.read(8) )
-            if (en > End):
-                End = en
-    return End
+
     
 def checkArgs(argv_):
     if ( len(argv_) < 5 ):
@@ -578,7 +547,6 @@ def checkArgs(argv_):
     try:
         argv_[3] = _int(argv_[3])
         argv_[4] = _int(argv_[4])
-        
     except ValueError:
         return [-3, argv_]
     
@@ -604,81 +572,76 @@ def checkArgs(argv_):
     return [ret, argv_]
 
 def main(argv_):
-    while (1):  #So I can use break
-        print argv_
-        ret     = checkArgs(argv_)
-        status  = ret[ 0 ]
-        argv    = ret[ 1 ]
-        if ( status < 0 ):
-            usage = "python %s <rom to port to> <rom port from> <scene to port over> <scene to port>" % ( argv[0] )
-            if ( status == -1 ):
-                raise IOError, "Not enough arguments. Usage:%s" % usage
-            elif ( status == -2 ):
-                raise IOError, "Cannot open specified ROMs. Usage:%s" % usage
-            elif ( status == -3 ):
-                print ValueError, "Cannot convert scene numbers to integers. Usage:%s" % usage
-            elif ( status == -4 ):
-                raise OverflowError, "Scene numbers specified are too great.\n\
-If your ROM can handle bigger scene numbers, edit this script on lines 9 and 10. Usage:%s" % usage
-            break
-        try:
-            BAD_MM_SCENES.index( argv[4] )
-            raise ValueError, "Chosen scene is a invalid Majora's Mask scene"
-            break
-        except:
-            pass
-        inFile  = open( argv[2], "rb" )
-        outFile = open( argv[1], "r+b" )
-        inFile.seek(MM_SCENE_TABLE + argv[4] * 16)
-        OldSceneOffs = unpack( ">LL", inFile.read(8) )
-        safe = bool( status & 0x100000000 )
-        Music = status >> 33
-        if ( not bool( Music ) ):
-            Music = False
-        if ( status > 15 ):
-            SceneStart = status & 0xFFFFFFF0
-        else:
-            SceneStart = FindEndOfFiles(outFile)
+    ret     = checkArgs(argv_)
+    status  = ret[ 0 ]
+    argv    = ret[ 1 ]
+    if ( status < 0 ):
+        usage = "python %s <rom to port to> <rom port from> <scene to port over> <scene to port> [options]" % ( argv[0] )
+        if ( status == -1 ):
+            raise IOError( "Not enough arguments. Usage:\n%s" % usage)
+        elif ( status == -2 ):
+            raise IOError( "Cannot open specified ROMs. Usage:\n%s" % usage)
+        elif ( status == -3 ):
+            print ValueError( "Cannot convert scene numbers to integers. Usage:\n%s" % usage)
+        elif ( status == -4 ):
+            raise OverflowError( "Scene numbers specified are too great.\nIf your ROM can handle bigger scene numbers, edit this script on lines 9 and 10. Usage:\n%s" % usage)
+    try:
+        BAD_MM_SCENES.index( argv[4] )
+        raise ValueError("Chosen scene is a invalid Majora's Mask scene")
+    except:
+        pass
+    inFile  = open( argv[2], "rb" )
+    outFile = open( argv[1], "r+b" )
+    inFile.seek(MM_SCENE_TABLE + argv[4] * 16)
+    OldSceneOffs = unpack( ">LL", inFile.read(8) )
+    safe = bool( status & 0x100000000 )
+    Music = status >> 33
+    if ( not bool( Music ) ):
+        Music = False
+    if ( status > 15 ):
+        SceneStart = status & 0xFFFFFFF0
+    else:
+        SceneStart = FindEndOfFiles(outFile)
+    if ( status & 1 ):
+        print ("Porting scene %i from ROM %s to scene %i of ROM %s at offset 0x%08X"
+               % ( argv[4], argv[2], argv[3], argv[1], SceneStart ))
+    SceneEnd = SceneStart + ( OldSceneOffs[1] - OldSceneOffs[0] )
+    outFile.seek(SceneStart)
+    inFile.seek(OldSceneOffs[0])
+    outFile.write( inFile.read( OldSceneOffs[1] - OldSceneOffs[0] ) )
+    if ( status & 1):
+        print "Fixing scene file"
+    Map_Infos = fix_map(inFile, outFile, SceneStart, OldSceneOffs[0], status & 1 ,"OoT", True , safe, Music)
+    if ( status & 1):
+        print ("Old offsets: %08X - %08X\nNew offsets: %08X - %08X"
+               % ( OldSceneOffs[0], OldSceneOffs[1], SceneStart, SceneEnd ) )
+    MapStart = (SceneEnd & 0xFFFFFFF0) + 0x10
+    count = 0
+    for ptr_offset in range(Map_Infos[1], Map_Infos[1] + Map_Infos[0] * 8, 8):
         if ( status & 1 ):
-            print ("Porting scene %i from ROM %s to scene %i of ROM %s at offset 0x%08X"
-                   % ( argv[4], argv[2], argv[3], argv[1], SceneStart ))
-        SceneEnd = SceneStart + ( OldSceneOffs[1] - OldSceneOffs[0] )
-        outFile.seek(SceneStart)
-        inFile.seek(OldSceneOffs[0])
-        outFile.write( inFile.read( OldSceneOffs[1] - OldSceneOffs[0] ) )
-        if ( status & 1):
-            print "Fixing scene file"
-        Map_Infos = fix_map(inFile, outFile, SceneStart, OldSceneOffs[0], status & 1 ,"OoT", True , safe, Music)
-        if ( status & 1):
-            print ("Old offsets: %08X - %08X\nNew offsets: %08X - %08X"
-                   % ( OldSceneOffs[0], OldSceneOffs[1], SceneStart, SceneEnd ) )
-        MapStart = (SceneEnd & 0xFFFFFFF0) + 0x10
-        count = 0
-        for ptr_offset in range(Map_Infos[1], Map_Infos[1] + Map_Infos[0] * 8, 8):
-            if ( status & 1 ):
-                print "Fixing map %i" % ( count )
-            inFile.seek(OldSceneOffs[0]+ptr_offset)
-            oldMapOffs = unpack( ">LL", inFile.read(8) )
-            outFile.seek(MapStart)
-            inFile.seek(oldMapOffs[0])
-            outFile.write( inFile.read( oldMapOffs[1] - oldMapOffs[0] ) )
-            MapEnd = outFile.tell()
-            fix_map( inFile, outFile, MapStart, oldMapOffs[0], status & 1, "OoT", False, safe )
-            outFile.seek( SceneStart + ptr_offset )
-            outFile.write( pack( ">LL" , MapStart, MapEnd ) )
-            if ( status & 1 ):
-                print ( "Old offsets: %08X - %08X\nNew offsets: %08X - %08X"
-                       % ( oldMapOffs[0], oldMapOffs[1], MapStart, MapEnd ) )
-            MapStart = MapEnd
-            count += 1
-            
-        outFile.seek( OOT_SCENE_TABLE + argv[3] * 0x14 )
-        outFile.write( pack( OOT_SCENE_FMT, SceneStart, SceneEnd, 0, 0, 0 ) )
+            print "Fixing map %i" % ( count )
+        inFile.seek(OldSceneOffs[0]+ptr_offset)
+        oldMapOffs = unpack( ">LL", inFile.read(8) )
+        outFile.seek(MapStart)
+        inFile.seek(oldMapOffs[0])
+        outFile.write( inFile.read( oldMapOffs[1] - oldMapOffs[0] ) )
+        MapEnd = outFile.tell()
+        fix_map( inFile, outFile, MapStart, oldMapOffs[0], status & 1, "OoT", False, safe )
+        outFile.seek( SceneStart + ptr_offset )
+        outFile.write( pack( ">LL" , MapStart, MapEnd ) )
         if ( status & 1 ):
-            print "Done. Using space %08X - %08X for maps and scenes." % ( SceneStart, MapEnd )
-        inFile.close()
-        outFile.close()
-        break
+            print ( "Old offsets: %08X - %08X\nNew offsets: %08X - %08X"
+                   % ( oldMapOffs[0], oldMapOffs[1], MapStart, MapEnd ) )
+        MapStart = MapEnd
+        count += 1
+        
+    outFile.seek( OOT_SCENE_TABLE + argv[3] * 0x14 )
+    outFile.write( pack( OOT_SCENE_FMT, SceneStart, SceneEnd, 0, 0, 0 ) )
+    if ( status & 1 ):
+        print "Done. Using space %08X - %08X for maps and scenes." % ( SceneStart, MapEnd )
+    inFile.close()
+    outFile.close()
     return SceneStart, MapEnd
+
 if __name__ == "__main__":
     main(argv__)
