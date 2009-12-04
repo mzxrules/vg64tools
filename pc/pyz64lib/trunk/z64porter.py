@@ -6,7 +6,7 @@ from os import path, system
 from z64lib import *
 
 #When editing scene maximums, the two are located below:
-MAX_MM_SCENE    = 106
+MAX_MM_SCENE    = 105
 MAX_OOT_SCENE   = 109
 # Scene max values ^---HERE
 
