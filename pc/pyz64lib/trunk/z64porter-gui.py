@@ -9,30 +9,29 @@ import sys
 from z64porter import main as port_scene
 
 def main():
-    try:
-        f=open("z64porter.cfg")
-        idir = f.read()
-        f.close()
-    except:
-        idir = getcwd()
-    f=open("z64porter.cfg","w")
+    idir = getcwd()
     OOT_ROM_NAME = askopenfilename(title="OoT Debug ROM",filetypes=[('N64 ROM files','*.z64')],initialdir = idir)
-    idir = path.split(OOT_ROM_NAME)[0]
-    f.write(idir)
-    f.close()
+    if(not OOT_ROM_NAME):
+        return
     MM_ROM_NAME = askopenfilename(title="Decompressed MM ROM",filetypes=[('N64 ROM files','*.z64')],initialdir = idir)
+    if(not MM_ROM_NAME):
+        return
     mmtmp = open(MM_ROM_NAME,"rb")
     mmtmp.seek(0,2)
     if ( mmtmp.tell() == 0x2000000 ):
-        showerror(title = "uh lol", message = "Decompressed MM ROM, dummy!\nAborting port.")
+        showerror(title = "uh lol", message = "Decompressed MM ROM, dummy!\nAborting port!")
         sys.exit(-1)
     argv__ = ['z64porter.py', OOT_ROM_NAME, MM_ROM_NAME]
-    askaddress = 1
+    askaddress = True
     port_en = None
     while 1:
         argv_ = argv__[:]
         argv_ .append( askstring(title = "OoT scene", prompt = "Scene to replace in OoT (use 0x if hex):" ))
+        if(not argv_[-1]):
+            return
         argv_ .append( askstring(title = "MM scene", prompt = "Scene to port from MM (use 0x if hex):" ))
+        if(not argv_[-1]):
+            return
         if (askaddress):
             if (askyesno(title = "Address", message = "Insert at your own address?" )):
                 argv_.append( "-o" )
@@ -41,7 +40,7 @@ def main():
                     addr_msg += "\nReccomended: %08X"%( port_en )
                 argv_.append( "0x%s" % (askstring(title = "Address", prompt = addr_msg )))
             else:
-                askaddress = 0
+                askaddress = False
         else:
             argv_.append("-o")
             argv_.append("0x%08X" % port_en)
@@ -55,7 +54,7 @@ def main():
             port_st,port_en = port_scene( argv_ )
             showinfo(title="Success", message="Scene ported successfully\nPort offsets:\n%08X - %08X"%(port_st,port_en))
         except:
-            showerror(title="Uhoh!", message="Failure :(" )
+            showerror(title="Uhoh!", message="Failure :(.\nIf you opened this from a shell,\nplease report the error message from." )
             break
         if not (askyesno(title = "Another", message = "Port another scene?" )):
             break
