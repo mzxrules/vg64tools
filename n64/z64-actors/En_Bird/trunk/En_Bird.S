@@ -1,5 +1,7 @@
 #include <mips.h>
-
+/*
+ This is for reference only
+*/
         .text
         
         
@@ -306,21 +308,23 @@ En_Bird_f7:
         sw              s0,32($sp)
         sw              a1,60($sp)
         move            s0,a0
-        jal             0x80100290
-        lwc1            $f12,436(a0)
-        lwc1            $f6,416(s0)
-        lwc1            $f4,188(s0)
-        mtc1            $zero,$f16
-        mul.s           $f8,$f0,$f6
+
+//        jal             0x80100290
+//        lwc1            $f12,436(a0)
+//        lwc1            $f6,416(s0)
+//        lwc1            $f4,188(s0)
+//        mtc1            $zero,$f16
+//        mul.s           $f8,$f0,$f6
+//        add.s           $f10,$f4,$f8
+//        swc1            $f10,188(s0)
         lw              a1,424(s0)
         lui             a2,0x3dcc
         lw              a3,428(s0)
         ori             a2,a2,0xcccd
         addiu           a0,s0,104
-        add.s           $f10,$f4,$f8
-        swc1            $f10,188(s0)
         jal             0x80078310
-        swc1            $f16,16($sp)
+        sw              $zero,16($sp)
+/*
         addiu           a0,s0,36
         addiu           a1,s0,8
         sw              a1,40($sp)
@@ -358,8 +362,9 @@ $Lf7_02:
         nop
         addu            t2,t7,t1
         sh              t2,50(s0)
-        lh              t3,50(s0)
 $Lf7_03:
+*/
+        lh              t3,50(s0)
         addiu           a0,s0,332
         jal             0x800a49fc
         sh              t3,182(s0)
@@ -456,7 +461,7 @@ En_Bird_f9:
         /*
         *# Data; original addr: 0x809c1ff0
         */
-        
+#if 0        
         .data
         
         .global         En_Bird_dat1
@@ -467,4 +472,4 @@ En_Bird_dat1:
         .word   0x00000000
         .word   0x00000420
         .word   0x00000000
-
+#endif

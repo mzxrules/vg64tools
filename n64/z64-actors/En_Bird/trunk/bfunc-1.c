@@ -1,9 +1,7 @@
 #include "bird.h"
 
 
-void En_Bird_f1 (void * a0, void * a1 )
+void SetNextFunction (struct z64_actor_t * a, ZAFunc next_func)
 {
-    struct z64_actor_t * a;
-    a = (struct z64_actor_t*)a0;
-    AVAL(a0,u32,400) = (u32)a1;
+    a->f_next = next_func;
 }

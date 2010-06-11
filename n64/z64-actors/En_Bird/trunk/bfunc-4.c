@@ -1,13 +1,8 @@
 #include "bird.h"
 
-void
-En_Bird_f4 ( void * actor, void * u )
+void En_Bird_f4 ( struct z64_actor_t * a, u16 variable )
 {
-    float v, v2 = 0.0f;
-    struct z64_actor_t * a;
-    
-    a = (struct z64_actor_t*)actor;
-    
+    float v, v2 = 0.0f;    
     
     v = (float)func_800A2000( 0x0600006C );
     
@@ -28,6 +23,6 @@ En_Bird_f4 ( void * actor, void * u )
         0.0f
     );
     
-    En_Bird_f1( a, En_Bird_f5 );
+    SetNextFunction( a, (ZAFunc)En_Bird_f5 );
 }
 
