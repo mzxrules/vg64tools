@@ -11,7 +11,7 @@
 /* Get a value of arbitrary type from any address in the actor */
 #define AVAL(a,t,o)          \
 (                            \
-    *((*t)((u8*)(a) + (o)))  \
+    *((t)((u8*)(a) + (o)))   \
 )
 
 /* Get the address */
