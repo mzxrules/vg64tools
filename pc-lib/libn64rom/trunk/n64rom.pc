@@ -6,7 +6,7 @@ includedir=${prefix}/include
 Name: n64rom
 Description: N64 ROM library
 Version: 1.0
-Libs: -L${libdir} -ln64
+Libs: -L${libdir} -ln64rom
 Libs.private: 
 Cflags: -I${includedir}/n64rom 
 
