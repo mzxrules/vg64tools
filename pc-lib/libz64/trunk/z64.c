@@ -38,9 +38,9 @@ Z64 * z64_open ( N64Rom * rom )
 	if( (ret->at = z64at_open( ret )) )
 		ret->status |= Z64_LOADED_AT;
 	
-	/* Read the scene table 
+	/* Read the scene table */
 	if( (ret->st = z64st_open( ret )) )
-		ret->status |= Z64_LOADED_ST;*/
+		ret->status |= Z64_LOADED_ST;
 	
 	/* Store filename */
 	ret->filename = strdup((char*)rom->filename);
@@ -100,13 +100,13 @@ z64_discover_code ( Z64 * h )
 	
 	/*
 		The criteria for the code file are the following:
-		 - One of the first 10 - 40 files
+		 - One of the first 10 - 50 files
 		 - Less than 2MB but greater than 400KB
 		 - Contains the above chunk (just some debug text)
 	*/
 	
-	/* Loop through the first 40 FS elements */
-	for( i = 10; i < 40; i++ )
+	/* Loop to the 50th FS element starting at the tenth */
+	for( i = 10; i < 50; i++ )
 	{
 		/* Size a match? */
 		if( ZFileVirtSize(h->fs, i) > 400 * 1024 && 

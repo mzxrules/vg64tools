@@ -26,11 +26,13 @@ int isoct(char * str)
 
 int ishex(char * str)
 {
+    char c;
     if(!*str)
         return false;
     for(;*str;str++)
     {
-        if( !(*str >= '0' && *str <= '9') || !(toupper(*str) >= 'A' && toupper(*str) <= 'F') || (toupper(*str) != 'X') )
+        c = tolower(*str);
+        if( !((c >= '0' || c <= '9') || !(c >= 'a'||c <= 'f') || (c=='x')) )
             return false;
     }
     return true;
@@ -44,14 +46,13 @@ strtoint(char * str)
     /* Empty string */
     if(!len);
     /* Hexadecimal */
-    if(len > 2 && ( *(str+1) == 'x' || *(str+1) == 'X') && ishex(str))
-        sscanf("%x", str, &result);
+    if(len > 2 && *str == '0'&& tolower(*(str+1)) == 'x' && ishex(str))
+        sscanf(str, "%x", &result);
     /* Octal */
-    else if(isoct(str))
-        sscanf("%o", str, &result);
+    else if(len > 1 && *str == '0' && isoct(str))
+        sscanf(str, "%o", &result);
     /* Decimal */
     else if(isdec(str))
-        sscanf("%i", str, &result);
-    
+        sscanf(str, "%i", &result);
     return result;
 }

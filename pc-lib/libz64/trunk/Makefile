@@ -15,8 +15,13 @@ AR = ar
 CC = gcc
 
 # Compiler settings
-CFLAGS  = $(shell pkg-config --cflags glib-2.0 n64rom) -std=gnu99 -O3 -I. \
+CFLAGS  = $(shell pkg-config --cflags glib-2.0 n64rom) -std=gnu99 -I. \
 	  -Wall -pedantic -D_GNU_SOURCE
+ifeq ($(DBG),1)
+	CFLAGS += -g -DDEBUG
+else
+	CFLAGS += -O3
+endif
 	
 $(TARGET): $(PIECES)
 	$(AR) -rcs -o $(TARGET) $(PIECES)

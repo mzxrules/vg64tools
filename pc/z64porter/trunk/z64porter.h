@@ -9,8 +9,16 @@
 #include <n64rom.h>
 #include "strint.h"
 
-#define MUSIC_MAX_OOT	0x6C
-#define MUSIC_MAX_MM	0x7F
+#define MAX_MUSIC_OOT	0x6C
+#define MAX_MUSIC_MM	0x7F
+#define MAX_SCENE_OOT	109
+#define MAX_SCENE_MM	105
+
+#ifdef DEBUG
+ #define dump(x, fmt) fprintf(stderr, "%s: %s=" fmt ";\n", __FILE__, #x, x)
+#else
+ #define dump(x, fmt)
+#endif
 
 /* error - display and quit */
 #define error(...)\

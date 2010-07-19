@@ -21,14 +21,14 @@ table_ident_mm[] =
 {
 	0xFA, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	0xDF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 
 };
 
 /* Table terminator - MM */
 static const guint8 
 table_term_mm[] =
 {
-    0x12, 0x00, 0x41, 0x02, 0x12, 0x01, 0x41,
+	0x12, 0x00, 0x41, 0x02, 0x12, 0x01, 0x41,
 	0x02, 0x12, 0x02, 0x41, 0x02
 };
 
@@ -39,7 +39,7 @@ table_ident_oot[] =
 {
 	0x57, 0x09, 0x41, 0x83, 0x57, 0x09, 0x41, 0x83,
 	0x57, 0x09, 0x41, 0x83, 0x57, 0x09, 0x41, 0x83,
-    0x5C, 0x08, 0x41, 0x83, 0x5C, 0x08, 0x41, 0x83,
+	0x5C, 0x08, 0x41, 0x83, 0x5C, 0x08, 0x41, 0x83,
 	0x5C, 0x08, 0x41, 0x83, 0x5C, 0x08, 0x41, 0x83 
 };
 
@@ -47,7 +47,7 @@ table_ident_oot[] =
 static const guint8 
 table_term_oot[] =
 {
-	0xDB, 0x06, 0x00, 0x24
+	0xDB, 0x06, 0x00, 0x20
 };
 
 
@@ -63,7 +63,6 @@ Z64ST * z64st_open ( Z64 * h )
 	/* Allocate memory */
 	if( !(ret = calloc( sizeof(Z64ST), 1 )) )
 		return NULL;
-	
 	/* Find the start of the table */
 	if( (ret->start = z64st_discover_oot( h )) )
 		ret->game = GameOOT;
@@ -74,20 +73,16 @@ Z64ST * z64st_open ( Z64 * h )
 		return NULL;
 	}
 	
-	g_print( "Start: %X %u\nEnd: %X\n", ret->start, FALSE, ret->end );
-	
 	/* Discover end */
 	ret->end = 
-	( 
-		ret->game == GameOOT ? 
-		z64st_find_end_oot( h, ret->start ) : z64st_find_end_mm( h, ret->start ) 
+	(
+		ret->game == GameOOT ? z64st_find_end_oot( h, ret->start ) : z64st_find_end_mm( h, ret->start )
 	);
 	if( !(ret->end) )
 	{
 		free( ret );
 		return NULL;
 	}
-	
 	/* Read the table */
 	ret->entries = z64st_read_entries( h, ret );
 	
@@ -100,13 +95,14 @@ z64st_discover_mm ( Z64 * h )
 {
 	int i;
 	
-	for( i = 0; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_ident_mm); i += 16 )
+	for( i = 0; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_ident_mm); i += 1 )
 	
 		/* Compare signature */
-		if( !memcmp( h->f_code_data + i, table_ident_mm, sizeof(table_ident_mm) ) )
+		if( !memcmp( h->f_code_data + i, table_ident_mm, sizeof(table_ident_mm) ) ){
 			return( i + sizeof(table_ident_mm) );
+		}
 	
-	return TRUE;
+	return FALSE;
 }
 
 /* Discover the scene table for OoT */
@@ -115,7 +111,7 @@ z64st_discover_oot ( Z64 * h )
 {
 	int i;
 	
-	for( i = 0; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_ident_oot); i += 16 )
+	for( i = 0; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_ident_oot); i += 1 )
 	
 		/* Compare signature */
 		if( !memcmp( h->f_code_data + i, table_ident_oot, sizeof(table_ident_oot) ) )
@@ -130,7 +126,7 @@ z64st_find_end_mm ( Z64 * h, guint32 start )
 {
 	int i = 0;
 	
-	for( i = start; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_term_mm); i += 4 )
+	for( i = start; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_term_mm); i += sizeof(struct SceneEntryMM))
 	
 		/* Compare signature */
 		if( !memcmp( h->f_code_data + i, table_term_mm, sizeof(table_term_mm) ) )
@@ -145,7 +141,7 @@ z64st_find_end_oot ( Z64 * h, guint32 start )
 {
 	int i = 0;
 	
-	for( i = start; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_term_oot); i += 4 )
+	for( i = start; i < Z_FILESIZE_VIRT(h->f_code) - sizeof(table_term_oot); i += sizeof(struct SceneEntryOOT) )
 	
 		/* Compare signature */
 		if( !memcmp( h->f_code_data + i, table_term_oot, sizeof(table_term_oot) ) )
@@ -158,15 +154,18 @@ z64st_find_end_oot ( Z64 * h, guint32 start )
 static void *
 z64st_read_entries ( Z64 * h, Z64ST * s )
 {
-	guint32 * table = calloc( s->end - s->start, 1 );
 	guint32   i;
+	guint32   siz = (s->end - s->start);
+	guint32 * table = calloc( siz, 1 );
 	
-	for( i = 0; i < s->end - s->start; i += 4 )
+	/* Set scene count */
+	s->count = siz/((s->game == GameOOT) ? sizeof(struct SceneEntryOOT) : sizeof(struct SceneEntryMM));
+	
+	/* read entries */
+	for( i = 0; i < siz; i += 4 )
 	{
-		table[i] = U32( h->f_code_data + s->start + i );
-		s->count++;
+		table[i>>2] = U32( h->f_code_data + s->start + i);
 	}
-	
 	return table;
 }
 
@@ -226,4 +225,28 @@ z64st_lookup ( Z64 * h, int id )
 		
 		return -1;
 	}
+}
+
+/* Get scene[i]'s start offset */
+guint32
+z64st_getstart( Z64 * h, int id)
+{
+	if(!(h->status & Z64_LOADED_ST) ||  id < 0 || id > Z_ST_COUNT(h))
+		return -1;
+	if(h->st->game == GameOOT)
+		return Z_ST_MM(h->st->entries)[id].addr_start;
+	else
+		return Z_ST_MM(h->st->entries)[id].addr_start;
+}
+
+/* Get scene[i]'s end offset */
+guint32
+z64st_getend( Z64 * h, int id)
+{
+	if(!(h->status & Z64_LOADED_ST) ||  id < 0 || id > Z_ST_COUNT(h))
+		return -1;
+	if(h->st->game == GameOOT)
+		return Z_ST_MM(h->st->entries)[id].addr_end;
+	else
+		return Z_ST_MM(h->st->entries)[id].addr_end;
 }
