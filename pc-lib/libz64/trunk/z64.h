@@ -123,5 +123,6 @@ extern const char * z64_set_error ( Z64 *, char *, ... );
 extern const char * z64_error ( Z64 * );
 extern void z64fs_read_file ( Z64 * h, int id, unsigned char * dest );
 extern guint32 z64st_getstart( Z64 * h, int id);
+extern guint32 z64st_getend( Z64 * h, int id);
 
 #endif
