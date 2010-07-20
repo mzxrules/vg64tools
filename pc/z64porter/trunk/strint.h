@@ -7,7 +7,6 @@
 #define false	0
 
 int isdec(char * str);
-int isoct(char * str);
 int ishex(char * str);
 int strtoint(char * str);
 

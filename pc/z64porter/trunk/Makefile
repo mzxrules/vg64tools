@@ -1,5 +1,7 @@
 PROJECT = z64porter
 
+$(shell python genlist.py > convert.h)
+
 PARTS = z64porter.o strint.o
 
 CC = gcc
@@ -44,5 +46,5 @@ uninstall:
 	$(RM) -v $(OUTPUT) $(PREFIX)/$(OUTPUT)
 
 clean:
-	$(RM) -vf $(PARTS) $(OUTPUT)
+	$(RM) -vf $(PARTS) convert.h $(OUTPUT)
 
