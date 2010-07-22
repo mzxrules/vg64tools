@@ -6,8 +6,6 @@
 #define true	1
 #define false	0
 
-int isdec(char * str);
-int ishex(char * str);
 int strtoint(char * str);
 
 #endif /* _STR_INT_H_ */

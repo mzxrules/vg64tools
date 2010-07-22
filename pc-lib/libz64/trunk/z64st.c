@@ -47,7 +47,7 @@ table_ident_oot[] =
 static const guint8 
 table_term_oot[] =
 {
-	0xDB, 0x06, 0x00, 0x20
+	0xDB, 0x06, 0x00/*, 0x20*/
 };
 
 
@@ -159,13 +159,14 @@ z64st_read_entries ( Z64 * h, Z64ST * s )
 	guint32 * table = calloc( siz, 1 );
 	
 	/* Set scene count */
-	s->count = siz/((s->game == GameOOT) ? sizeof(struct SceneEntryOOT) : sizeof(struct SceneEntryMM));
+	s->count = (siz/((s->game == GameOOT) ? sizeof(struct SceneEntryOOT) : sizeof(struct SceneEntryMM))) - 1;
 	
 	/* read entries */
 	for( i = 0; i < siz; i += 4 )
 	{
 		table[i>>2] = U32( h->f_code_data + s->start + i);
 	}
+	
 	return table;
 }
 

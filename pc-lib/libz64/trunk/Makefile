@@ -16,7 +16,7 @@ CC = gcc
 
 # Compiler settings
 CFLAGS  = $(shell pkg-config --cflags glib-2.0 n64rom) -std=gnu99 -I. \
-	  -Wall -pedantic -D_GNU_SOURCE
+	  -Wall -pedantic -D_GNU_SOURCE -U_FORTIFY_SOURCE
 ifeq ($(DBG),1)
 	CFLAGS += -g -DDEBUG
 else

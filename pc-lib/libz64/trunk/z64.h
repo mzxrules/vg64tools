@@ -119,10 +119,11 @@ extern void z64_read_file ( Z64 *, int, unsigned char * );
 extern gboolean z64_discover_code ( Z64 * );
 extern Z64AT * z64at_open ( Z64 * );
 extern Z64ST * z64st_open ( Z64 * );
+extern guint32 z64st_getstart( Z64 * h, int id);
+extern guint32 z64st_getend( Z64 * h, int id);
 extern const char * z64_set_error ( Z64 *, char *, ... );
 extern const char * z64_error ( Z64 * );
 extern void z64fs_read_file ( Z64 * h, int id, unsigned char * dest );
-extern guint32 z64st_getstart( Z64 * h, int id);
-extern guint32 z64st_getend( Z64 * h, int id);
+int z64fs_seach_offset( Z64 * h, guint32 VirtStart);
 
 #endif

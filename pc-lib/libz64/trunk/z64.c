@@ -30,9 +30,9 @@ Z64 * z64_open ( N64Rom * rom )
 	}
 	ret->status |= Z64_LOADED_FS;
 	
-	/* Read the name table */
+	/* Read the name table *
 	if( (ret->nt = z64nt_open( ret->handle )) )
-		ret->status |= Z64_LOADED_NT;
+		ret->status |= Z64_LOADED_NT; */
 	
 	/* Read the actor table */
 	if( (ret->at = z64at_open( ret )) )

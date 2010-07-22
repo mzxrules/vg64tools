@@ -8,7 +8,7 @@ CC = gcc
 
 LIBS = glib-2.0 n64rom z64
 
-CFLAGS = $(shell pkg-config --cflags $(LIBS)) -U_FORTIFY_SOURCE -Wall
+CFLAGS = $(shell pkg-config --cflags $(LIBS)) -U_FORTIFY_SOURCE -Wall -Werror
 
 LDFLAGS = $(shell pkg-config --libs $(LIBS))
 

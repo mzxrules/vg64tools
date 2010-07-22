@@ -1,31 +1,17 @@
 #include "strint.h"
 
-int isdec(char * str)
-{
-    int result;
-    sscanf(str, "%u", &result);
-    return (result != -1) ? true : false;
-}
-
-int ishex(char * str)
-{
-    int result;
-    sscanf(str, "%x", &result);
-    return (result != -1) ? true : false;
-}
-
 int
 strtoint(char * str)
 {
-    int result = 0, len = strlen(str);
+    int check, result = 0, len = strlen(str);
     
     /* Empty string */
     if(!len);
     /* Hexadecimal */
-    else if(len > 2 && !strncmp(str, "0x", 2) && ishex(str))
-        sscanf(str, "%x", &result);
+    else if(len > 2 && !strncmp(str, "0x", 2) && sscanf(str, "%x", &check) == 1)
+        result = check;
     /* Decimal */
-    else if(isdec(str))
-        sscanf(str, "%i", &result);
+    else if(sscanf(str, "%u", &check) == 1)
+        result = check;
     return result;
 }

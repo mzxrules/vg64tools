@@ -3,19 +3,23 @@
 
 
 typedef struct {
-    unsigned long start, end;
+    size_t size;
+    unsigned char * data;
 } MapPointer;
 
 /* Global variables */
 int verbose = 1;
 int warnflag = 0, warnignore = 0;
-int scene_to, scene_from;
-int music, destgame;
-int safe;
+int scene_to=0, scene_from=0;
+int music=0, destgame=GameOOT;
+int safe=0;
+unsigned char * map_list=0;
+int map_count=0;
+unsigned char * scene_orig=NULL, * scene_fixed=NULL;
 float rotval;
-MapPointer * MapList;
-N64Rom *N64_TO, *N64_FROM;
-Z64 *Z64_TO, *Z64_FROM;
+MapPointer * MapList = NULL;
+N64Rom *N64_TO=NULL, *N64_FROM=NULL;
+Z64 *Z64_TO=NULL, *Z64_FROM=NULL;
 
 /* cleanup function */
 void
@@ -30,7 +34,19 @@ cleanup()
     if(Z64_FROM != NULL)
         z64_close(Z64_FROM);
     if(MapList != NULL)
+    {
+        int i;
+        for(i=0;i<sizeof(MapList)/sizeof(MapList[0]);i++)
+        {
+            if(MapList[i].data != NULL)
+                free(MapList[i].data);
+        }
         free(MapList);
+    }
+    if(scene_orig != NULL)
+        free(scene_orig);
+    if(scene_fixed !=NULL)
+        free(scene_fixed);
 }
 
 /* Parse arguments */
@@ -271,17 +287,29 @@ fix_link_actors(unsigned char * list, int count)
 }
 
 void
-set_maps(unsigned char * list, int count)
+set_maps()
 {
-    int i;
+    unsigned char * list = map_list, * data;
+    int i, fileno;
     if(MapList != NULL)
         return;
-    MapList = calloc(count, sizeof(MapPointer));
-    for(i=0;i<count;i++,list+=8)
+    MapList = calloc(map_count, sizeof(MapPointer));
+    memset(MapList, 0, sizeof(MapList));
+    msg(2, "%i maps found, setting up...", map_count);
+    for(i=0;i<map_count;i++,list+=8)
     {
-        MapList[i].start = U32(list);
-        MapList[i].end = U32(list+4);
+        fileno = z64fs_seach_offset(Z64_FROM, U32(list));
+        if(fileno == -1)
+            error("cannot find map with offsets %08X-%08X in file list", U32(list), U32(list+4));
+        dump(i, "%i");
+        dump(fileno, "%i");
+        MapList[i].size = ZFileVirtSize(Z64_FROM->fs, fileno);
+        dump(MapList[i].size, "%#x");
+        data = malloc(MapList[i].size);
+        z64fs_read_file(Z64_FROM, fileno, data);
+        MapList[i].data = data;
     }
+    msg(2, "%i maps successfully set up", i);
         
 }
 
@@ -291,6 +319,7 @@ fix_area(unsigned char * src, size_t siz, char bank)
     int pos, inheader = 1;
     unsigned char * dest = malloc(siz);
     memcpy(dest, src, siz);
+    msg(2, "Interpreting header...");
     for(pos=0; pos<siz; pos+=8)
     {
         if(inheader)
@@ -298,24 +327,29 @@ fix_area(unsigned char * src, size_t siz, char bank)
             switch(dest[pos])
             {
             case ZLH_ENTRANCES:
+                msg(3, " - Fixing link instances");
                 fix_link_actors(dest + U24(dest + pos + 5), dest[pos+1]);
                 break;
             case ZLH_ACTORS:
+                msg(3, " - Fixing actors")
                 if(dest[pos+4] == bank && !safe)
                     fix_actors(dest + U24(dest + pos + 5), dest[pos+1]);
                 else
                     dest[pos+1] = 0;
                 break;
             case ZLH_OBJECTS:
+                msg(3, " - Fixing objects");
                 if(dest[pos+4] == bank && !safe)
                     fix_objects(dest + U24(dest + pos + 5), dest[pos+1]);
                 else
                     dest[pos+1] = 0;
                 break;
             case ZLH_END:
+                msg(3, " - End of header");
                 inheader = 0;
                 break;
             case ZLH_COLLISION: /* Kill special camera angles */
+                msg(3, " - Killing special camera angles");
                 setU32(dest + U24(dest + pos + 5) + 0x20, 0x00000000);
                 break;
             case ZLH_SKYCONTROL:
@@ -324,7 +358,9 @@ fix_area(unsigned char * src, size_t siz, char bank)
                 setU32(dest+4, 0x00000000);
                 break;
             case ZLH_MAPS:
-                set_maps(dest + U24(dest + pos + 5), dest[pos+1]);
+                map_list = dest + U24(dest + pos + 5);
+                map_count = dest[pos+1];
+                set_maps();
                 break;
             default:
                 break;
@@ -345,6 +381,37 @@ do_port()
 {
     msg(1, "To: %08X - %08X", z64st_getstart( Z64_TO, scene_to ), z64st_getend( Z64_TO, scene_to ) );
     msg(1, "From: %08X - %08X", z64st_getstart( Z64_FROM, scene_from ), z64st_getend( Z64_FROM, scene_from ) );
+    
+    int scene_fs_num, i;
+    size_t scene_size;
+    
+    /* Get scene FS number */
+    scene_fs_num = z64fs_seach_offset(Z64_FROM, z64st_getstart(Z64_FROM, scene_from));
+    if(scene_fs_num == -1)
+        error("Error: Cannot find scene in filesystem");
+    scene_size = ZFileVirtSize(Z64_FROM->fs, scene_fs_num);
+    dump(scene_fs_num, "%i");
+    dump(scene_size, "%i");
+    /* Allocate memory and read it */
+    scene_orig = malloc(scene_size);
+    z64fs_read_file(Z64_FROM, scene_fs_num, scene_orig);
+    if(destgame != Z64_FROM->st->game)
+    {
+        /* fix scene */
+        msg(2, "Fixing scene...");
+        scene_fixed = fix_area(scene_orig, scene_size, 2);
+        /* Fix maps */
+        for(i=0;i<map_count;i++)
+        {
+            msg(2, "Fixing map %i...", i);
+            MapList[i].data = fix_area(MapList[i].data, MapList[i].size, 3);
+        }
+    }
+    /*
+    else
+    {
+    }
+    */
     return 1;
 }
 

@@ -169,9 +169,22 @@ void z64fs_read_file ( Z64 * h, int id, unsigned char * dest )
 	/* Compressed? */
 	if( Z_COMPRESSED(f) )
 	{
-		unsigned char * tmp = malloc( 1 * 1024 * 1024 );
-		z64yaz0_decode( dest + 16, tmp, Z_FILESIZE_VIRT(f) );
-		memcpy( dest, tmp, Z_FILESIZE_VIRT(f) );
+		unsigned char * tmp = malloc( ZFileVirtSize(h->fs, id) );
+		z64yaz0_decode( dest + 16, tmp, ZFileVirtSize(h->fs, id) );
+		memcpy( dest, tmp, ZFileVirtSize(h->fs, id) );
 		free( tmp );
 	}
+}
+
+/* Get a file ID for a start offset */
+int
+z64fs_seach_offset( Z64 * h, guint32 VirtStart)
+{
+	int i;
+	for(i = 0; i < z64fs_entries(h->fs); i++)
+	{
+		if(ZFileVirtStart(h->fs, i) == VirtStart)
+			return i;
+	}
+	return -1;
 }
