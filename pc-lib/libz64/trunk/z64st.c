@@ -235,7 +235,7 @@ z64st_getstart( Z64 * h, int id)
 	if(!(h->status & Z64_LOADED_ST) ||  id < 0 || id > Z_ST_COUNT(h))
 		return -1;
 	if(h->st->game == GameOOT)
-		return Z_ST_MM(h->st->entries)[id].addr_start;
+		return Z_ST_OOT(h->st->entries)[id].addr_start;
 	else
 		return Z_ST_MM(h->st->entries)[id].addr_start;
 }
@@ -247,7 +247,7 @@ z64st_getend( Z64 * h, int id)
 	if(!(h->status & Z64_LOADED_ST) ||  id < 0 || id > Z_ST_COUNT(h))
 		return -1;
 	if(h->st->game == GameOOT)
-		return Z_ST_MM(h->st->entries)[id].addr_end;
+		return Z_ST_OOT(h->st->entries)[id].addr_end;
 	else
 		return Z_ST_MM(h->st->entries)[id].addr_end;
 }
