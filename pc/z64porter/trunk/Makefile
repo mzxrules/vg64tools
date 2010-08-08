@@ -2,7 +2,7 @@ PROJECT = z64porter
 
 $(shell python genlist.py > convert.h)
 
-PARTS = z64porter.o strint.o
+PARTS = z64porter.o strint.o yaz0.o
 
 CC = gcc
 

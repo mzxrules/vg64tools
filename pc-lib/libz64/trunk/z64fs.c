@@ -178,7 +178,7 @@ void z64fs_read_file ( Z64 * h, int id, unsigned char * dest )
 
 /* Get a file ID for a start offset */
 int
-z64fs_seach_offset( Z64 * h, guint32 VirtStart)
+z64fs_search_offset( Z64 * h, guint32 VirtStart)
 {
 	int i;
 	for(i = 0; i < z64fs_entries(h->fs); i++)

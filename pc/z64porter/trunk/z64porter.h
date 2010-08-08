@@ -62,7 +62,9 @@
 
 /* Default actor numbers */
 #define OOT_ACT_FLAME	8
+#define OOT_ACT_DOOR	9
 #define MM_ACT_FLAME	4
+#define MM_ACT_DOOR	5
 
 /* Maximum music values */
 #define MAX_MUSIC_OOT	0x6C
@@ -77,10 +79,10 @@
 /* error - display and quit */
 #define error(...)\
 {\
-    cleanup();\
-    fprintf(stderr, "z64porter: ");\
+    fprintf(stderr, "error: ");\
     fprintf(stderr, __VA_ARGS__);\
     fprintf(stderr, "\n");\
+    cleanup();\
     exit(EXIT_FAILURE);\
 }
 
@@ -91,6 +93,9 @@ if(verbose >= pri)\
     fprintf(stderr, __VA_ARGS__);\
     fprintf(stderr, "\n");\
 }
+
+/* Check allocated memory - error if null */
+#define check_mem(mem) if(mem == NULL) error("cannot allocate memory (%i in %s)", __LINE__ - 1, __FUNCTION__)
 
 int verbose;
 
