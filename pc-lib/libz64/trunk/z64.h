@@ -125,5 +125,6 @@ extern const char * z64_set_error ( Z64 *, char *, ... );
 extern const char * z64_error ( Z64 * );
 extern void z64fs_read_file ( Z64 * h, int id, unsigned char * dest );
 extern int z64fs_search_offset( Z64 * h, guint32 VirtStart);
+extern int z64fs_max_offset( Z64 * h, int ignore);
 
 #endif

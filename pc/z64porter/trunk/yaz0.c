@@ -1,10 +1,5 @@
 /*
- yaz0 decompression and compression, concatenated from yaz0dec.cpp
- and yaz0enc.c. Original header of both files follow
-Decompression:
-    //version 1.0 (20050213)
-    //by thakis
-Compresssion:
+ yaz0 compression, concatenated from yaz0enc.c. Original header:
     Yaz0 recompressor
     -----------------
     Original by `shevious`, made into more of a UNIX

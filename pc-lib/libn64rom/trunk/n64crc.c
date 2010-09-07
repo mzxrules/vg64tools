@@ -172,6 +172,21 @@ void n64rom_crc ( N64Rom * h, unsigned * dest )
     free( buffer );
 }
 
+/* CRC function without closing ROM */
+void n64rom_crc_fix ( N64Rom * r )
+{
+	unsigned int CRC[2];
+	int i, k;
+	
+	n64rom_crc( r, CRC );
+	
+	fseek( r->handle, N64_CRC1, SEEK_SET );
+	
+	for( i = 0; i < 2; i++ )
+		for( k = 0; k < 4; k++ )
+			fputc( CRC[i] >> (24 - k * 8), r->handle );
+}
+
 /* Quick CRC recalculate function */
 int n64rom_crc_quick ( char * filename )
 {

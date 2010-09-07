@@ -16,7 +16,7 @@ AR = ar
 
 # Compiler settings
 CFLAGS  = $(shell pkg-config --cflags glib-2.0) --std=gnu99 -O3 -I. \
-	  -Wall -pedantic
+	  -Wall -pedantic -U_FORTIFY_SOURCE
 	
 $(TARGET): $(PIECES)
 	$(AR) -rcs -o $(TARGET) $(PIECES)

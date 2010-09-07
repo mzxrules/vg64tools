@@ -67,6 +67,7 @@ const char * n64rom_strendian ( enum N64Endian e );
 void         n64rom_error_set ( char * fmt, ...  );
 const char * n64rom_error     ( void             );
 void n64rom_crc ( N64Rom * h, unsigned *dest );
+void n64rom_crc_fix ( N64Rom * r );
 int n64rom_crc_quick ( char * filename );
 
 #endif /* __LN64ROM_H */

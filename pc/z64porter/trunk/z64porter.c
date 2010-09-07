@@ -3,9 +3,11 @@
 #include "yaz0.h"
 
 #define count(x)	sizeof(x)/sizeof(x[0])
+#define SCENEATFREE	1
+#define MAPATFREE	2
 
 typedef struct {
-    size_t size, comp_size;
+    size_t size, actual_size;
     unsigned char * data;
 } MapPointer;
 
@@ -24,7 +26,7 @@ int freed_file_count = 0;
 int map_count=0;
 float rotval;
 size_t scene_size;
-unsigned char * map_list=0;
+unsigned char * map_list;
 unsigned char * scene_orig=NULL, * scene_fixed=NULL;
 int * freed_files = NULL;
 int * voffsets = NULL;
@@ -246,7 +248,7 @@ fix_objects(unsigned char * list, int count)
     
     /* Get max object number and object lookup table */
     limit = (destgame == GameOOT) ? OOT_OBJ_MAX : MM_OBJ_MAX;
-    obj_lookup = (destgame == GameOOT) ? obj_lookup_oot : obj_lookup_mm;
+    obj_lookup = (destgame != GameOOT) ? obj_lookup_oot : obj_lookup_mm;
     
     for(i=0;i<count;i++,list+=2)
     {
@@ -268,11 +270,11 @@ fix_actors(unsigned char * list, int count)
     if(!(Z64_TO->status&Z64_LOADED_AT)) /* Actor table may not be loaded for some odd reason */
         limit = (destgame == GameOOT) ? MM_ACT_MAX : OOT_ACT_MAX;
     else
-        limit = Z_AT_COUNT( Z64_TO );
+        limit = Z_AT_COUNT( Z64_FROM );
     
     /* Get default actor and lookup table */
     act_default = (destgame == GameOOT) ? OOT_ACT_FLAME : MM_ACT_FLAME;
-    act_lookup = (destgame == GameOOT) ? act_lookup_oot : act_lookup_mm;
+    act_lookup = (destgame != GameOOT) ? act_lookup_oot : act_lookup_mm;
     
     for(i=0;i<count;i++,list+=16)
     {
@@ -318,11 +320,11 @@ fix_doors(unsigned char * list, int count)
     if(!(Z64_TO->status&Z64_LOADED_AT)) /* Actor table may not be loaded for some odd reason */
         limit = (destgame == GameOOT) ? MM_ACT_MAX : OOT_ACT_MAX;
     else
-        limit = Z_AT_COUNT( Z64_TO );
+        limit = Z_AT_COUNT( Z64_FROM );
     
     /* Get default actor and lookup table */
     act_default = (destgame == GameOOT) ? OOT_ACT_DOOR : MM_ACT_DOOR;
-    act_lookup = (destgame == GameOOT) ? act_lookup_oot : act_lookup_mm;
+    act_lookup = (destgame != GameOOT) ? act_lookup_oot : act_lookup_mm;
     
     for(i=0;i<count;i++,list+=16)
     {
@@ -348,23 +350,20 @@ set_maps()
         return;
     MapList = calloc(map_count, sizeof(MapList[0]));
     memset(MapList, 0, sizeof(MapList));
-    msg(2, "%i maps found, setting up...", map_count);
+    msg(2, " - %i maps found, setting up...", map_count);
     for(i=0;i<map_count;i++,list+=8)
     {
         fileno = z64fs_search_offset(Z64_FROM, U32(list));
         if(fileno == -1)
-            error("cannot find map with offsets %08X-%08X in file list", U32(list), U32(list+4));
-        dump(i, "%i");
-        dump(fileno, "%i");
+            error("cannot find map with offsets %#08x-%#08x in file list", U32(list), U32(list+4));
         MapList[i].size = ZFileVirtSize(Z64_FROM->fs, fileno);
-        dump(MapList[i].size, "%#x");
         data = malloc(MapList[i].size);
         check_mem(data);
         z64fs_read_file(Z64_FROM, fileno, data);
         MapList[i].data = data;
-        MapList[i].comp_size = MapList[i].size;
+        MapList[i].actual_size = MapList[i].size;
     }
-    msg(2, "%i maps successfully set up", i);
+    msg(2, " - %i maps successfully set up", i);
 }
 
 unsigned char *
@@ -399,6 +398,13 @@ fix_area(unsigned char * src, size_t siz, char bank)
                 else
                     dest[pos+1] = 0;
                 break;
+            case ZLH_DOORS:
+                msg(3, " - Fixing transtion actors");
+                if(dest[pos+1] == bank && !safe)
+                    fix_doors(dest + U24(dest+pos+5), dest[pos+1]);
+                else
+                    dest[pos+1] = 0;
+                break;
             case ZLH_END:
                 msg(3, " - End of header");
                 inheader = 0;
@@ -407,10 +413,18 @@ fix_area(unsigned char * src, size_t siz, char bank)
                 msg(3, " - Killing special camera angles");
                 setU32(dest + U24(dest + pos + 5) + 0x20, 0x00000000);
                 break;
+            case ZLH_SKYSET:
+                if(destgame == GameOOT)
+                {
+                    if(dest[pos+6])
+                        memcpy(dest+pos+1, "\x00\x00\x00\x01\x00\x00\x00", 7);
+                    else
+                        memcpy(dest+pos+1, "\x00\x00\x00\x00\x00\x01\x00", 7);
+                }
+                break;
             case ZLH_SKYCONTROL:
             case ZLH_ALT_HEADERS:
-                setU32(dest, 0x01000000);
-                setU32(dest+4, 0x00000000);
+                memcpy(dest+pos, "\x01\x00\x00\x00\x00\x00\x00\x00", 8);
                 break;
             case ZLH_MAPS:
                 msg(3, " - Reading in map list");
@@ -425,28 +439,28 @@ fix_area(unsigned char * src, size_t siz, char bank)
         /* Kill display list jumps to undefined banks... */
         else if(dest[pos] == 0xDE && !U24(dest+pos+1) && dest[pos+4] != bank)
         {
-            msg(3, "Killing display list jump to %08X", U32(dest+pos+4));
+            msg(3, "Killing display list jump to %#08x", U32(dest+pos+4));
             dest[pos] = 0;
         }
     }
     return dest;
 }
 
-
 void
 get_uneeded_files()
 {
-    int map_count=0, i, pos;
-    unsigned char *tmp_scene;
+    int map_count=0, i;
+    unsigned char *tmp_scene, *pos;
     size_t old_scene_size;
     
+    msg(2, "Getting uneeded files...");
     /* Get old scene filenumber */
     freed_files = malloc(sizeof(int));
     check_mem(freed_files);
-    freed_files[0] = z64fs_search_offset(Z64_TO, scene_to);
+    freed_files[0] = z64fs_search_offset(Z64_TO, z64st_getstart( Z64_TO, scene_to ));
     if(freed_files[0] == -1)
         error("could not find scene to be overwritten in filesystem");
-    msg(3, "old scene is file %i", freed_files[0]);
+    msg(3, "  - old scene is file %i", freed_files[0]);
     freed_file_count = 1;
     
     /* read in old scene */
@@ -456,29 +470,29 @@ get_uneeded_files()
     z64fs_read_file(Z64_TO, freed_files[0], tmp_scene);
     
     /* Get old maps */
-    for(pos=0;pos<old_scene_size;pos+=8)
+    for(pos=tmp_scene;pos<tmp_scene+old_scene_size;pos+=8)
     {
-        if(tmp_scene[pos] == ZLH_MAPS)
+        if(*pos == ZLH_MAPS)
         {
-            map_count = tmp_scene[pos+1];
-            freed_files = realloc(freed_files, sizeof(int) * map_count);
-            check_mem(freed_files);
-            pos = U24(scene_fixed + pos + 5);
+            map_count = *(pos+1);
+            pos = tmp_scene + U24(pos + 5);
             for(i=1; i<=map_count; i++, pos+=8 )
             {
-                freed_files[i] = z64fs_search_offset(Z64_TO, U32((char*)pos));
+                freed_files = realloc(freed_files, sizeof(int) * (i+1));
+                check_mem(freed_files);
+                freed_files[i] = z64fs_search_offset(Z64_TO, U32(pos));
                 if(freed_files[i] == -1) /* This will probably happen with cen's room 120 fix,
                                             or any similar hacks for that matter */
                 {
                     free(tmp_scene);
                     error("could not find map %i of old scene in filesystem", i);
                 }
-                msg(3, "old map %i is file %i", i - 1, freed_files[i]);
+                msg(3, "  - old map %i is file %i", i - 1, freed_files[i]);
                 freed_file_count ++;
             }
             break;
         }
-        else if(tmp_scene[pos] == ZLH_END)
+        else if(*pos == ZLH_END)
             break;
     }
     
@@ -487,9 +501,9 @@ get_uneeded_files()
     if(!map_count)
         error("no old maps found");
     
-    msg(2, "found %i files that are not needed", freed_file_count);
+    msg(2, " - found %i files that are not needed", freed_file_count);
 }
-
+# if 0
 int
 calcsize(int scene_size)
 {
@@ -497,19 +511,20 @@ calcsize(int scene_size)
     int i;
     
     for(i=0;i<count(MapList);i++)
-        siz+=MapList[i].comp_size;
+        siz+=MapList[i].actual_size;
     
     return siz;
 }
-
+#endif
 void
-calc_voffsets()
+calc_voffsets(int first)
 {
     int i;
-    voffsets  = malloc(map_count + 2);
+    msg(2, " - Calculating virtual offsets...");
+    voffsets  = malloc((map_count + 2) * sizeof(int));
     check_mem(voffsets);
     /* First two are for the scene... */
-    voffsets[0] = ZFileVirtEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1);
+    voffsets[0] = first;//ZFileVirtEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1);
     /* End of scene = start of map 0 */
     voffsets[1] = voffsets[0] + scene_size;
     /* Calculate map offsets */
@@ -529,7 +544,6 @@ compress_files()
 {
     unsigned char * tmp;
     int i;
-    msg(1, "Compressing maps and scene");
     for(i=0;i<map_count;i++)
     {
         tmp = encodeAll(MapList[i].data, MapList[i].size);
@@ -538,21 +552,19 @@ compress_files()
         check_mem(MapList[i].data);
         memcpy(MapList[i].data, tmp, dstSize);
         free(tmp);
-        msg(2, "Compressed map %i to %#x bytes from %#x bytes", i, dstSize, MapList[i].size);
-        MapList[i].comp_size = dstSize;
+        msg(2, " - Compressed map %i to %#x bytes from %#x bytes", i, dstSize, MapList[i].size);
+        MapList[i].actual_size = dstSize;
     }
     tmp = encodeAll(scene_fixed, scene_size);
     free(scene_fixed); /*free the uncompressed scene */
     scene_fixed = malloc(dstSize);
     check_mem(scene_fixed);
     memcpy(scene_fixed, tmp, dstSize);
-    msg(2, "Compressed scene to %#x bytes from %#x bytes", dstSize, scene_size);
+    msg(2, " - Compressed scene to %#x bytes from %#x bytes", dstSize, scene_size);
     scene_size = dstSize;
     free(tmp);
 }
 
-#define SCENEATFREE	1
-#define MAPATFREE	2
 
 /* Save a file - write virt and phys pointers, data */
 void
@@ -563,7 +575,10 @@ write_file(Z64 * z64, int f, int vs, int ve, int ps, int pe, unsigned char * dat
     setU32(buff+0x0, vs);
     setU32(buff+0x4, ve);
     setU32(buff+0x8, ps);
-    setU32(buff+0xC, pe);
+    if(!memcmp(data, "Yaz0", 4))
+        setU32(buff+0xC, pe)
+    else
+        setU32(buff+0xC, 0);
     /* write pointers */
     fseek(z64->handle, z64->fs->start + (f * 0x10), SEEK_SET);
     fwrite(buff, 1, 0x10, z64->handle);
@@ -574,16 +589,13 @@ write_file(Z64 * z64, int f, int vs, int ve, int ps, int pe, unsigned char * dat
 }
 
 /* Write scene pointers
-Note: This does not save to ROM! */
+Note: This does not save to ROM! call save_code to save to ROM */
 void
-write_scene(Z64 * z64, int s, int f)
+write_scene(Z64 * z64, int s, int start, int end)
 {
-    char * buff = (destgame == GameOOT) ? malloc(0x14) : malloc(0x10);
-    check_mem(buff);
-    memset(buff, 0, sizeof(buff));
-    setU32(buff+0x0, ZFileVirtStart(z64->fs, f));
-    setU32(buff+0x4, ZFileVirtEnd(z64->fs, f));
-    memcpy(z64->f_code_data + (s * sizeof(buff)), buff, sizeof(buff));
+    unsigned char * buff =z64->f_code_data + z64->st->start + s * ((destgame == GameOOT) ? 0x14 : 0x10);
+    setU32(buff+0x0, start);
+    setU32(buff+0x4, end);
 }
 
 /* Save 'code' */
@@ -625,22 +637,24 @@ save_code(Z64 * z64)
 void
 insert_port()
 {
-    int freed_start, freed_end, flags=0, maps_at_free=0, i;
+    int freed_start, freed_end, flags=0, maps_at_free=0, i, in;
     size_t freed_size, siz_calc;
-    
-    /* Get uneeded files */
-    get_uneeded_files();
-    if(freed_file_count < map_count+1)
-        error("not enough files freed as needed");
     
     /* Get start, end, and size of area freed */
     freed_start = ZFileStart(Z64_TO->fs, freed_files[0]);
     freed_end = ZFileEnd(Z64_TO->fs, freed_files[freed_file_count-1]);
+    i=2;
+    /* Sometimes stuff gets screwed up */
+    while(i <= freed_file_count && freed_end > ZFileStart(Z64_TO->fs, freed_files[freed_file_count]))
+    {
+        freed_end = ZFileEnd(Z64_TO->fs, freed_files[freed_file_count-i]);
+        i++;
+    }
     freed_size = freed_end-freed_start;
+    msg(2, " - Freed region: %#08x-%#08x (%#08xb)", freed_start, freed_end, freed_size)
+    msg(1, "Inserting scene and maps...");
     
     /* Calculate where everything is going */
-    if(calcsize(scene_size) > freed_size)
-    {
         if(scene_size > freed_size)
             siz_calc = 0;
         else
@@ -650,16 +664,18 @@ insert_port()
         }
         for(i=0;i<map_count;i++)
         {
-            siz_calc+=MapList[i].comp_size;
+            siz_calc+=MapList[i].actual_size;
             if(siz_calc > freed_size)
             {
-                maps_at_free = --i;
+                siz_calc-=MapList[i].actual_size;
                 break;
             }
         }
-        if(i < 0 && !(flags & SCENEATFREE))
+        maps_at_free = i;
+        if(maps_at_free < 1 && !(flags & SCENEATFREE))
         {
-            /* Shit, that freed space is useless */
+            msg(2, " - Nevermind, that free'd region is useless");
+            /* Shit, that freed space is useless. I guess that makes it easy on us, though. */
             ins[0].start = ZFileEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1);
             ins[0].size = Z64_TO->filesize - ins[0].start;
         }
@@ -668,25 +684,64 @@ insert_port()
             /* Fuck. The port is going to have to be done in two areas */
             ins[0].start = freed_start;
             ins[0].size = freed_size;
-            ins[1].start = ZFileEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1);
+            ins[1].start = z64fs_max_offset(Z64_TO, freed_files[freed_file_count-1]);/* ZFileEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1); */
             ins[1].size = Z64_TO->filesize - ins[1].start;
             flags |= MAPATFREE;
+            msg(1, "Note: Putting port into two regions (%#08x-%#08x, %#08x-%#08x)",
+            	ins[0].start, ins[0].start+ins[0].size,
+            	ins[1].start, ins[1].start+ins[1].size
+            );
         }
-    }
+    
+    /* Figure out which region scene will be in */
+    if(flags & SCENEATFREE || !ins[1].start)
+        in = 0;
     else
-    {/* whoo, this is going to be easy */
-        ins[0].start = freed_start;
-        ins[0].size = freed_size;
+        in = 1;
+    
+    /* Insert scene */
+    write_file(Z64_TO, freed_files[0], voffsets[0], voffsets[1],
+    	ins[in].start, ins[in].start + scene_size,
+    	scene_fixed, scene_size
+    );
+    
+    /* write scene pointers in code */
+    write_scene(Z64_TO, scene_to, voffsets[0], voffsets[1]);
+    
+    msg(2, " - Put scene at %#08x-%#08x", ins[in].start, ins[in].start + scene_size);
+    
+    /* update region descriptors */
+    ins[in].size-=scene_size;
+    ins[in].start+=scene_size;
+    
+    
+    /* Insert maps */
+    for(i=0; i<map_count; i++)
+    {
+        if((flags & MAPATFREE && i<maps_at_free) || !flags)
+            /* Either it is at the freed area, or there is no freed area */
+            in=0;
+        else
+            /* At the second region */
+            in=1;
+        
+        /* write file */
+        write_file(Z64_TO, freed_files[i+1], voffsets[i+1], voffsets[i+2],
+        	ins[in].start, ins[in].start + MapList[i].actual_size,
+        	MapList[i].data, MapList[i].actual_size
+        );
+        
+        msg(2, " - Put map %i at %#08x-%#08x", i, ins[in].start, ins[in].start + MapList[i].actual_size);
+        /* update region descriptors */
+        ins[in].start+=MapList[i].actual_size;
+        ins[in].size-=MapList[i].actual_size;
     }
     
-    /* Insert scene * / this is basically all that's left
-    if(flags & SCENEATFREE)
-    {
-        write_file(Z64_TO, freed_files[0], voffsets[0], voffsets[1], ins[0].start, ins[0].start + scene_size, scene_fixed, scene_size);
-        write_scene(Z64_TO, scene_to, freed_files[0]);
-    }
-    else if( flag & MAPATFREE)*/
-        
+    /* Save code */
+    save_code(Z64_TO);
+    
+    /* Recalc CRC */
+    n64rom_crc_fix ( Z64_TO->rom );
 }
 
 void
@@ -695,19 +750,18 @@ do_port()
     int scene_fs_num, i;
     
     /* Check that the scene from exists (some MM scenes are NULL) */
-    if(!z64st_getstart( Z64_FROM, scene_to ))
-        error("Scene to is a null scene");
+    if(!z64st_getstart( Z64_FROM, scene_from ))
+        error("Scene from is a null scene");
     
-    msg(2, "Scene to: %08X - %08X", z64st_getstart( Z64_TO, scene_to ), z64st_getend( Z64_TO, scene_to ) );
-    msg(2, "Scene from: %08X - %08X", z64st_getstart( Z64_FROM, scene_from ), z64st_getend( Z64_FROM, scene_from ) );
+    msg(1, "Doing port...");
+    msg(2, " - Scene from: %#08x - %#08x", z64st_getstart( Z64_FROM, scene_from ), z64st_getend( Z64_FROM, scene_from ) );
+    msg(2, " - Scene to: %#08x - %#08x", z64st_getstart( Z64_TO, scene_to ), z64st_getend( Z64_TO, scene_to ) );
     
     /* Get scene file information */
     scene_fs_num = z64fs_search_offset(Z64_FROM, z64st_getstart(Z64_FROM, scene_from));
     if(scene_fs_num == -1)
         error("cannot find destination scene in filesystem");
     scene_size = ZFileVirtSize(Z64_FROM->fs, scene_fs_num);
-    dump(scene_fs_num, "%i");
-    dump(scene_size, "%i");
     
     /* Allocate memory for scene and read it */
     scene_orig = malloc(scene_size);
@@ -718,7 +772,7 @@ do_port()
     if(destgame != Z64_FROM->st->game)
     {
         /* fix scene */
-        msg(2, "Fixing scene...");
+        msg(2, " - Fixing scene...");
         scene_fixed = fix_area(scene_orig, scene_size, 2);
         
         /* Check for the map list before continuing */
@@ -728,7 +782,7 @@ do_port()
         /* Fix maps */
         for(i=0;i<map_count;i++)
         {
-            msg(2, "Fixing map %i...", i);
+            msg(2, " - Fixing map %i...", i);
             MapList[i].data = fix_area(MapList[i].data, MapList[i].size, 3);
         }
     }
@@ -757,13 +811,20 @@ do_port()
             error("no maps found");
     }
     
+    /* Get uneeded files */
+    get_uneeded_files();
+    if(freed_file_count < map_count+1)
+        error("not enough files freed as needed. Try porting over another scene");
+    
     /* Calculate virtual offsets */
-    calc_voffsets();
+    calc_voffsets(ZFileVirtStart(Z64_TO->fs, freed_files[0]));
     
     /* Compress? */
     if(compress)
+    {
+        msg(2, " - Compressing files... ");
         compress_files();
-        
+    }
     insert_port();
 }
 
@@ -776,14 +837,7 @@ main(int argc, char ** argv)
     parse_args(argc, argv);
     check_setup();
     
-    dump(verbose, "%i");
-    dump(music, "%i");
-    dump(warnflag, "%i");
-    dump(scene_from, "%i");
-    dump(scene_to, "%i");
-    dump(N64_FROM->filename, "%s");
-    dump(N64_TO->filename, "%s");
-    
+    /* Continue despite any warnings? */
     if(warnflag && !warnignore)
     {
         printf("Continue despite warnings? (y/n): ");
@@ -797,9 +851,10 @@ main(int argc, char ** argv)
         }
     }
   port:
-    msg(3, "Doing port...");
+    /* do the port */
     do_port();
     
+    /* cleanup */
     cleanup();
     
     return EXIT_SUCCESS;

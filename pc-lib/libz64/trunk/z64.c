@@ -21,6 +21,7 @@ Z64 * z64_open ( N64Rom * rom )
 	
 	/* Copy file handle for ROM */
 	ret->handle = rom->handle;
+	ret->filesize = rom->filesize;
 	
 	/* Read filesystem */
 	if( !(ret->fs = z64fs_open( ret->handle )) )

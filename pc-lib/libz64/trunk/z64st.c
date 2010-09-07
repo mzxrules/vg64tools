@@ -99,7 +99,7 @@ z64st_discover_mm ( Z64 * h )
 	
 		/* Compare signature */
 		if( !memcmp( h->f_code_data + i, table_ident_mm, sizeof(table_ident_mm) ) ){
-			return( i + sizeof(table_ident_mm) );
+			return( i + sizeof(table_ident_mm) + (7 * 0x10) );
 		}
 	
 	return FALSE;

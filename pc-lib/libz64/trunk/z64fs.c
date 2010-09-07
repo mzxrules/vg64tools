@@ -188,3 +188,15 @@ z64fs_search_offset( Z64 * h, guint32 VirtStart)
 	}
 	return -1;
 }
+
+int
+z64fs_max_offset( Z64 * h, int ignore)
+{
+	int max=0,i;
+	for(i = 0; i < z64fs_entries(h->fs); i++)
+	{
+		if(i != ignore && ZFileEnd(h->fs, i) > max)
+			max = ZFileEnd(h->fs, i);
+	}
+	return max;
+}
