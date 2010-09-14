@@ -57,10 +57,10 @@ cleanup()
         }
         free(MapList);
     }
+    if(scene_fixed !=NULL && scene_fixed != scene_orig)
+        free(scene_fixed);
     if(scene_orig != NULL)
         free(scene_orig);
-    if(scene_fixed !=NULL)
-        free(scene_fixed);
     if(freed_files != NULL)
         free(freed_files);
     if(voffsets != NULL)
@@ -192,6 +192,10 @@ check_setup()
         error("cannot open %s as a Zelda ROM", N64_TO->filename);
     if((Z64_FROM = z64_open(N64_FROM)) == NULL)
         error("cannot open %s as a Zelda ROM", N64_FROM->filename);
+    if(Z64_TO->st == NULL)
+        error("could not load scene table for rom %s", N64_TO->filename);
+    if(Z64_FROM->st == NULL)
+        error("could not load scene table for rom %s", N64_FROM->filename);
     
     /* set destination game */
     destgame = Z64_TO->st->game;
@@ -416,7 +420,7 @@ fix_area(unsigned char * src, size_t siz, char bank)
             case ZLH_SKYSET:
                 if(destgame == GameOOT)
                 {
-                    if(dest[pos+6])
+                    if(!dest[pos+6])
                         memcpy(dest+pos+1, "\x00\x00\x00\x01\x00\x00\x00", 7);
                     else
                         memcpy(dest+pos+1, "\x00\x00\x00\x00\x00\x01\x00", 7);
@@ -503,19 +507,8 @@ get_uneeded_files()
     
     msg(2, " - found %i files that are not needed", freed_file_count);
 }
-# if 0
-int
-calcsize(int scene_size)
-{
-    size_t siz = scene_size;
-    int i;
-    
-    for(i=0;i<count(MapList);i++)
-        siz+=MapList[i].actual_size;
-    
-    return siz;
-}
-#endif
+
+/* Calculate virtual offsets */
 void
 calc_voffsets(int first)
 {
@@ -524,7 +517,7 @@ calc_voffsets(int first)
     voffsets  = malloc((map_count + 2) * sizeof(int));
     check_mem(voffsets);
     /* First two are for the scene... */
-    voffsets[0] = first;//ZFileVirtEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1);
+    voffsets[0] = first;
     /* End of scene = start of map 0 */
     voffsets[1] = voffsets[0] + scene_size;
     /* Calculate map offsets */
@@ -539,6 +532,7 @@ calc_voffsets(int first)
     }
 }
 
+/* Compress maps and scene */
 void
 compress_files()
 {
@@ -557,6 +551,7 @@ compress_files()
     }
     tmp = encodeAll(scene_fixed, scene_size);
     free(scene_fixed); /*free the uncompressed scene */
+    scene_fixed = NULL;
     scene_fixed = malloc(dstSize);
     check_mem(scene_fixed);
     memcpy(scene_fixed, tmp, dstSize);
@@ -608,6 +603,11 @@ save_code(Z64 * z64)
     /* Compress? */
     if(z64->f_code->end)
     {
+        if(verbose)
+        {
+            printf("Compressing code, this may take a bit...");
+            fflush(stdout);
+        }
         tmp = encodeAll(z64->f_code_data, z64->f_code->vend - z64->f_code->vstart);
         siz = dstSize;
         if(siz > z64->f_code->end - z64->f_code->start)
@@ -615,6 +615,11 @@ save_code(Z64 * z64)
         /* FFFFFFFFFFFUUUUU */
             free(tmp);
             error("code ended up compressing bigger than before, I don't know what to do")
+        }
+        if(verbose)
+        {
+            printf(" Done\n");
+            fflush(stdout);
         }
     }
     else
@@ -629,11 +634,15 @@ save_code(Z64 * z64)
             free(tmp);
         error("cannot find code file number");
     }
-    write_file(z64, fileno, z64->f_code->vstart, z64->f_code->vend, z64->f_code->start, z64->f_code->start + siz, tmp, siz);
+    write_file(z64, fileno, z64->f_code->vstart, z64->f_code->vend,
+        z64->f_code->start, z64->f_code->start + siz, tmp, siz
+    );
     if(z64->f_code->end)
         free(tmp);
 }
 
+/* Insert port - calculate where it will physically go, and put
+it there, update scene and file tables, fix crc */
 void
 insert_port()
 {
@@ -676,7 +685,7 @@ insert_port()
         {
             msg(2, " - Nevermind, that free'd region is useless");
             /* Shit, that freed space is useless. I guess that makes it easy on us, though. */
-            ins[0].start = ZFileEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1);
+            ins[0].start = z64fs_max_offset(Z64_TO, 0);
             ins[0].size = Z64_TO->filesize - ins[0].start;
         }
         else
@@ -684,7 +693,7 @@ insert_port()
             /* Fuck. The port is going to have to be done in two areas */
             ins[0].start = freed_start;
             ins[0].size = freed_size;
-            ins[1].start = z64fs_max_offset(Z64_TO, freed_files[freed_file_count-1]);/* ZFileEnd(Z64_TO->fs, z64fs_entries(Z64_TO->fs)-1); */
+            ins[1].start = z64fs_max_offset(Z64_TO, freed_files[freed_file_count-1]);
             ins[1].size = Z64_TO->filesize - ins[1].start;
             flags |= MAPATFREE;
             msg(1, "Note: Putting port into two regions (%#08x-%#08x, %#08x-%#08x)",
