@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <z64yaz0.h>
 #include <z64fs.h>
 
@@ -15,6 +16,13 @@
 
 /* Macros */
 #define U32(x)      ((x)[0] << 24 | (x)[1] << 16 | (x)[2] << 8 | (x)[3])
+#define setU32(x,val)			\
+{					\
+	(x)[0] = ((val)>>24) & 0xFF;	\
+	(x)[1] = ((val)>>16) & 0xFF;	\
+	(x)[2] = ((val)>>8) & 0xFF;	\
+	(x)[3] = (val) & 0xFF;		\
+}
 
 /* Create a filesystem context */
 struct Zelda64FileTable *
@@ -22,8 +30,7 @@ z64fs_open ( FILE * handle )
 {
     unsigned char * buffer, * seek;
     Z64FS         * ret;
-    unsigned        i, count, tstart, k;
-    unsigned        dmad_start, dmad_end;
+    unsigned        i, tstart, k;
     
     /* Create return */
     ret = calloc( sizeof(Z64FS), 1 );
@@ -83,16 +90,17 @@ fs_found:
         }
     
     /* Read address of DMA data */
-    dmad_start = U32(buffer + tstart + 2 * 16);
-    dmad_end   = U32(buffer + tstart + 2 * 16 + 4);
+    ret->start = U32(buffer + tstart + 2 * 16);
+    ret->end   = U32(buffer + tstart + 2 * 16 + 4);
     
-    /* Set filecount */
+    /* Set filecount *
     for( count = 1; U32(&buffer[tstart+count*16]); count++ );
-        ret->filecount = count;
+        ret->filecount = count;*/
+    ret->filecount = (ret->end - ret->start) / 0x10;
     
-    /* Set address */
+    /* Set address *
     ret->start = ftell(handle) - CHUNK_SIZE + tstart;
-    ret->end   = ret->start + count * 16;
+    ret->end   = ret->start + count * 16;*/
     
     /* Allocate memory for final storage */
     ret->files = malloc( ret->end - ret->start );
@@ -192,11 +200,81 @@ z64fs_search_offset( Z64 * h, guint32 VirtStart)
 int
 z64fs_max_offset( Z64 * h, int ignore)
 {
-	int max=0,i;
+	signed int max=0,i;
 	for(i = 0; i < z64fs_entries(h->fs); i++)
 	{
-		if(i != ignore && ZFileEnd(h->fs, i) > max)
-			max = ZFileEnd(h->fs, i);
+		if(i != ignore && (signed)ZFileEnd(h->fs, i) > max)
+			max = (signed)ZFileEnd(h->fs, i);
 	}
 	return max;
+}
+
+void
+z64fs_write_file_ptr( Z64 * h, int id, Z64FSEntry *file_entry )
+{
+    char buff[16];
+    
+    memcpy(&h->fs->files[id], file_entry, sizeof(Z64FSEntry));
+    
+    setU32(buff+0x0, file_entry->vstart);
+    setU32(buff+0x4, file_entry->vend);
+    setU32(buff+0x8, file_entry->start);
+    setU32(buff+0xC, file_entry->end);
+    
+    /* write pointers */
+    fseek(h->handle, h->fs->start + (id * 0x10), SEEK_SET);
+    fwrite(buff, 1, 0x10, h->handle);
+}
+
+/* Save a file - write virt and phys pointers, data */
+void
+z64fs_write_file(Z64 * h, int id, Z64FSEntry *file_entry, unsigned char * data, size_t siz)
+{
+    if(memcmp(data, "Yaz0", 4))
+        file_entry->end = 0;
+    
+    /* write pointer in filetable */
+    z64fs_write_file_ptr( h, id, file_entry );
+    
+    /* write data */
+    fseek(h->handle, file_entry->start, SEEK_SET);
+    fwrite(data, 1, siz, h->handle);
+}
+
+/* internal */
+int
+filecmp(const void *a, const void *b)
+{
+    Z64FSEntry *f1, *f2;
+    f1 = (Z64FSEntry*)a;
+    f2 = (Z64FSEntry*)b;
+    if(!f1->vend)
+        return LONG_MAX;
+    else if(!f2->vend)
+        return LONG_MIN;
+    return ( f1->vstart - f2->vstart );
+}
+
+int
+z64fs_fix_filetable( Z64 * h )
+{
+    int i;
+    if(h->fs == NULL)
+        return -1;
+    
+    qsort(h->fs->files, h->fs->filecount, sizeof(Z64FSEntry), filecmp);
+    
+    fseek(h->handle, h->fs->start, SEEK_SET);
+    for(i = 0; i < h->fs->filecount && ZFileVirtEnd(h->fs, i+1); i++)
+    {
+        z64fs_write_file_ptr( h, i, &h->fs->files[i] );
+      #ifdef DEBUG
+        printf("%04i %08X %08X %08X %08X\n", i,
+               ZFileVirtStart(h->fs, i), ZFileVirtEnd(h->fs, i),
+               ZFileRealStart(h->fs, i), ZFileRealRealEnd(h->fs, i)
+        );
+      #endif
+    }
+    
+    return 0;
 }

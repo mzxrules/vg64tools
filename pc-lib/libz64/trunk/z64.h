@@ -95,7 +95,7 @@ struct z64_t
 	Z64ST * st;		/* Scene table  */
 
 	/* Important files */
-	const Z64FSEntry * f_code;			/* The game's Code file */
+	/*const*/ Z64FSEntry * f_code;			/* The game's Code file */
 	guint8           * f_code_data;		/* Code file data 		*/
 
 	/* Reserved... */
@@ -126,5 +126,8 @@ extern const char * z64_error ( Z64 * );
 extern void z64fs_read_file ( Z64 * h, int id, unsigned char * dest );
 extern int z64fs_search_offset( Z64 * h, guint32 VirtStart);
 extern int z64fs_max_offset( Z64 * h, int ignore);
+int z64fs_fix_filetable( Z64 * h );
+void z64fs_write_file(Z64 * h, int id, Z64FSEntry *file_entry, unsigned char * data, size_t siz);
+void z64fs_write_file_ptr( Z64 * h, int id, Z64FSEntry *file_entry );
 
 #endif

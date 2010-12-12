@@ -43,6 +43,7 @@ unsigned z64fs_size_phys ( Z64FS * h );
 #define ZFileSize(h, id)            (ZFileEnd(h, id) - ZFileStart(h, id))
 #define ZFileRealStart(h, id)       ((h)->files[id].start)
 #define ZFileRealEnd(h, id)         (ZFileEnd(h, id))
+#define ZFileRealRealEnd(h, id)     ((h)->files[id].end)
 #define ZFileRealSize(h, id)        (ZFileRealEnd(h, id) - ZFileRealStart(h, id))
 #define ZFileVirtStart(h, id)       ((h)->files[id].vstart)
 #define ZFileVirtEnd(h, id)         ((h)->files[id].vend)
@@ -60,7 +61,7 @@ unsigned z64fs_size_phys ( Z64FS * h );
 */
 
 /* Return a pointer to the file entry of an id */
-static inline const Z64FSEntry * 
+static inline /*const*/ Z64FSEntry * 
 z64fs_file ( Z64FS * h, int id )
 {
     return &h->files[id];
