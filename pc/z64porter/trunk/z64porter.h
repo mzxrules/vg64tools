@@ -79,7 +79,7 @@
 /* error - display and quit */
 #define error(...)\
 {\
-    fprintf(stderr, "error: ");\
+    fprintf(stderr, "%s: %i: error: ", __FILE__, __LINE__);\
     fprintf(stderr, __VA_ARGS__);\
     fprintf(stderr, "\n");\
     cleanup();\
