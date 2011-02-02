@@ -117,10 +117,7 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
         
         /* Unset? */
         if( !tgt )
-        {
-            /* Yep. Can't handle this */
-            goto failed;
-        }
+            return;
         
         /* Finish the target address */
         tgt += (w & 0x00FFFFFF) / 4;
@@ -200,16 +197,8 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
             break;
             
             default:
-             goto failed;
+             return;
         }
-        
-        continue;
-      
-        /* Error during relocation */
-      failed:
-          
-        /* Do not zero instruction
-        *tgt = 0; */
     }
 }
 
