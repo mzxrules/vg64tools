@@ -208,8 +208,8 @@ z_ovl_adapt ( void * data, struct ovl_header * ovl, void * ovl_base )
         /* Error during relocation */
       failed:
           
-        /* Zero instruction */
-        *tgt = 0;
+        /* Do not zero instruction
+        *tgt = 0; */
     }
 }
 
